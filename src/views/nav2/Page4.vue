@@ -1,10 +1,10 @@
-<template>
-  <div>
-    <h1>vuex 测试</h1>
-    Clicked: {{ getCount }} times
-    <button @click="increment">+</button>
-    <button @click="decrement">-</button>
-  </div>
+<template lang="pug">
+  div
+    h1  vuex  test
+    | Clicked : {{ getCount }} times
+    button(@click='increment') +
+    button(@click='decrement') -
+
 </template>
 
 <script>
