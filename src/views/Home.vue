@@ -13,16 +13,16 @@
 				<el-dropdown trigger="hover">
 					<span class="el-dropdown-link userinfo-inner"><img :src="this.sysUserAvatar" /> {{sysUserName}}</span>
 					<el-dropdown-menu slot="dropdown">
-						<el-dropdown-item>我的消息</el-dropdown-item>
-						<el-dropdown-item>设置</el-dropdown-item>
-						<el-dropdown-item divided @click.native="logout">退出登录</el-dropdown-item>
+						<el-dropdown-item>My message</el-dropdown-item>
+						<el-dropdown-item>Profile</el-dropdown-item>
+						<el-dropdown-item divided @click.native="logout">Log out</el-dropdown-item>
 					</el-dropdown-menu>
 				</el-dropdown>
 			</el-col>
 		</el-col>
 		<el-col :span="24" class="main">
 			<aside :class="collapsed?'menu-collapsed':'menu-expanded'">
-				<!--导航菜单-->
+				<!-- Navigation -->
 				<el-menu :default-active="$route.path" class="el-menu-vertical-demo" @open="handleopen" @close="handleclose" @select="handleselect"
 					 unique-opened router v-show="!collapsed">
 					<template v-for="(item,index) in $router.options.routes" v-if="!item.hidden">
@@ -103,10 +103,9 @@
 			},
 			handleselect: function (a, b) {
 			},
-			//退出登录
 			logout: function () {
 				var _this = this;
-				this.$confirm('确认退出吗?', '提示', {
+				this.$confirm('Are you sure to exit?', 'warning', {
 					//type: 'warning'
 				}).then(() => {
 					sessionStorage.removeItem('user');
@@ -117,7 +116,7 @@
 
 
 			},
-			//折叠导航栏
+			// Fold the navigation bar
 			collapse:function(){
 				this.collapsed=!this.collapsed;
 			},

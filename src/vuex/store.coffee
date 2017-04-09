@@ -13,7 +13,7 @@ state =
 #  Mutations
 mutations =
   INCREMENT: (state) -> state.count += 1
-  DECREMENT: (state) -> state.count += 2
+  DECREMENT: (state) -> state.count -= 1
 
 
 vuex_store = new Vuex.Store { actions, getters, state, mutations }

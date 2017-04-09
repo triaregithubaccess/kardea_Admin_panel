@@ -20,7 +20,7 @@ mutations = {
     return state.count += 1;
   },
   DECREMENT: function(state) {
-    return state.count += 2;
+    return state.count -= 1;
   }
 };
 
@@ -32,3 +32,5 @@ vuex_store = new Vuex.Store({
 });
 
 export default vuex_store;
+
+//# sourceMappingURL=store.js.map

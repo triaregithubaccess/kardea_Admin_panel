@@ -2,8 +2,10 @@ import babelpolyfill from 'babel-polyfill'
 import Vue from 'vue'
 import App from './App.vue'
 import ElementUI from 'element-ui'
+import locale from 'element-ui/lib/locale/lang/en'
 import 'element-ui/lib/theme-default/index.css'
 #//import './assets/theme/theme-green/index.css'
+import './styles/theme/button.css'
 import VueRouter from 'vue-router'
 import store from './vuex/store.js'
 import Vuex from 'vuex'
@@ -14,7 +16,7 @@ import Mock from './mock/mock.js'
 Mock.bootstrap();
 import 'font-awesome/css/font-awesome.min.css'
 
-Vue.use(ElementUI)
+Vue.use(ElementUI, { locale })
 Vue.use(VueRouter)
 Vue.use(Vuex)
 
