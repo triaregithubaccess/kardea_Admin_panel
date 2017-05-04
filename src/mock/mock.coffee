@@ -31,9 +31,9 @@ export_default =
               return true;
 
           if hasUser
-            resolve([200, { code: 200, msg: '请求成功', user }]);
+            resolve([200, { code: 200, msg: 'success', user }]);
           else
-            resolve([200, { code: 500, msg: '账号或密码错误' }]);
+            resolve([200, { code: 500, msg: 'Incorrect username or password' }]);
         , 1000
 
 #    //获取用户列表
@@ -50,6 +50,7 @@ export_default =
 
 #    //获取用户列表（分页）
     mock.onGet('/user/listpage').reply (config) =>
+      console.log("in MOCK -user-listPgae!!---->>");
       {page, name} = config.params;
       mockUsers = _Users.filter (user) =>
         if name && user.name.indexOf(name) == -1

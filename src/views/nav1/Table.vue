@@ -1,47 +1,48 @@
 <template>
 	<section>
-		<!--工具条-->
 		<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
 			<el-form :inline="true" :model="filters">
 				<el-form-item>
-					<el-input v-model="filters.name" placeholder="姓名"></el-input>
+					<el-input v-model="filters.name" placeholder="user name"></el-input>
 				</el-form-item>
 				<el-form-item>
-					<el-button type="primary" v-on:click="getUsers">查询</el-button>
+					<el-button type="primary" v-on:click="getUsers">Search</el-button>
 				</el-form-item>
 				<el-form-item>
-					<el-button type="primary" @click="handleAdd">新增</el-button>
+					<el-button type="primary" @click="handleAdd">Add new user</el-button>
 				</el-form-item>
 			</el-form>
 		</el-col>
 
-		<!--列表-->
 		<el-table :data="users" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
 			<el-table-column type="selection" width="55">
 			</el-table-column>
 			<el-table-column type="index" width="60">
 			</el-table-column>
-			<el-table-column prop="name" label="姓名" width="120" sortable>
+
+			<el-table-column prop="user_name" label="Name" width="100" sortable>
 			</el-table-column>
-			<el-table-column prop="sex" label="性别" width="100" :formatter="formatSex" sortable>
+			<el-table-column prop="sex" label="Sex" width="100" :formatter="formatSex" sortable>
 			</el-table-column>
-			<el-table-column prop="age" label="年龄" width="100" sortable>
+			<el-table-column prop="_id" label="Age2" width="150" sortable>
 			</el-table-column>
-			<el-table-column prop="birth" label="生日" width="120" sortable>
+			<el-table-column prop="age" label="Age" width="150" sortable>
 			</el-table-column>
-			<el-table-column prop="addr" label="地址" min-width="180" sortable>
+			<el-table-column prop="birth_year" label="Birth" width="120" sortable>
 			</el-table-column>
-			<el-table-column label="操作" width="150">
+			<el-table-column prop="addr" label="Addr" min-width="180" sortable>
+			</el-table-column>
+			<el-table-column label="Edit" width="150">
 				<template scope="scope">
-					<el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-					<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
+					<el-button size="small" @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
+					<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">delete</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
 
-		<!--工具条-->
+
 		<el-col :span="24" class="toolbar">
-			<el-button type="danger" @click="batchRemove" :disabled="this.sels.length===0">批量删除</el-button>
+			<el-button type="danger" @click="batchRemove" :disabled="this.sels.length===0">Batch delete</el-button>
 			<el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="20" :total="total" style="float:right;">
 			</el-pagination>
 		</el-col>
@@ -54,8 +55,8 @@
 				</el-form-item>
 				<el-form-item label="性别">
 					<el-radio-group v-model="editForm.sex">
-						<el-radio class="radio" :label="1">男</el-radio>
-						<el-radio class="radio" :label="0">女</el-radio>
+						<el-radio class="radio" :label="1">men</el-radio>
+						<el-radio class="radio" :label="0">women</el-radio>
 					</el-radio-group>
 				</el-form-item>
 				<el-form-item label="年龄">
@@ -82,8 +83,8 @@
 				</el-form-item>
 				<el-form-item label="性别">
 					<el-radio-group v-model="addForm.sex">
-						<el-radio class="radio" :label="1">男</el-radio>
-						<el-radio class="radio" :label="0">女</el-radio>
+						<el-radio class="radio" :label="1">man</el-radio>
+						<el-radio class="radio" :label="0">women</el-radio>
 					</el-radio-group>
 				</el-form-item>
 				<el-form-item label="年龄">
@@ -119,16 +120,16 @@
 				total: 0,
 				page: 1,
 				listLoading: false,
-				sels: [],//列表选中列
+				sels: [],//selected rows
 
-				editFormVisible: false,//编辑界面是否显示
+				editFormVisible: false,
 				editLoading: false,
 				editFormRules: {
 					name: [
-						{ required: true, message: '请输入姓名', trigger: 'blur' }
+						{ required: true, message: 'Please type user name', trigger: 'blur' }
 					]
 				},
-				//编辑界面数据
+				// Edit
 				editForm: {
 					id: 0,
 					name: '',
@@ -159,7 +160,7 @@
 		methods: {
 			//性别显示转换
 			formatSex: function (row, column) {
-				return row.sex == 1 ? '男' : row.sex == 0 ? '女' : '未知';
+				return row.sex == 1 ? 'man' : row.sex == 0 ? 'women' : 'unknown';
 			},
 			handleCurrentChange(val) {
 				this.page = val;
@@ -173,12 +174,15 @@
 				};
 				this.listLoading = true;
 				//NProgress.start();
+				console.log("GGG getUsers...before req");
 				getUserListPage(para).then((res) => {
-					this.total = res.data.total;
-					this.users = res.data.users;
+
+					console.log("GGG getUsers...,,,", res.data.result.length, res.data.result);
+					this.total = res.data.result.length;
+					this.users = res.data.result;
 					this.listLoading = false;
 					//NProgress.done();
-				});
+				}).catch((err) => {console.log("in catch ggg", err);} );
 			},
 			//删除
 			handleDel: function (index, row) {

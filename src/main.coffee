@@ -13,7 +13,17 @@ import Vuex from 'vuex'
 #//import 'nprogress/nprogress.css'
 import routes from './routes.js'
 import Mock from './mock/mock.js'
-Mock.bootstrap()
+
+
+
+
+#Mock.bootstrap()
+
+
+
+
+
+
 import 'font-awesome/css/font-awesome.min.css'
 
 Vue.use ElementUI, { locale }
