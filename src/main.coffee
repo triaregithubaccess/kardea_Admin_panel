@@ -30,15 +30,21 @@ Vue.use ElementUI, { locale }
 Vue.use VueRouter
 Vue.use Vuex
 
-#//NProgress.configure({ showSpinner: false });
+#//NProgress.configure({  showSpinner: false });
 
 router = new VueRouter { routes }
 
 router.beforeEach (to, from, next) =>
 #  //NProgress.start();
+  console.log("router each---------------------------")
   sessionStorage.removeItem 'user' if to.path is '/login'
   user = JSON.parse sessionStorage.getItem('user')
-  if !user and to.path != '/login'
+  console.log("user=", user?)
+  if user?.token?
+    console.log("tok=", user.token)
+    router.token = user.token
+    console.log("tok2=", router.token )
+  if !user and to.path !=  '/login'
     next path: '/login'
   else
     next()

@@ -157,3 +157,4 @@ fabric.properties
 
 *.map
 
+.idea/jsLibraryMappings.xml

@@ -2,7 +2,8 @@ import Login from './views/Login.vue'
 import NotFound from './views/404.vue'
 import Home from './views/Home.vue'
 import Main from './views/Main.vue'
-import Table from './views/nav1/Table.vue'
+import UsersList from './views/nav1/UsersList.vue'
+import ChannelsList from './views/nav1/Channels.vue'
 import Form from './views/nav1/Form.vue'
 import user from './views/nav1/user.vue'
 import Page4 from './views/nav2/Page4.vue'
@@ -31,7 +32,8 @@ routes = [
         iconCls: 'el-icon-message'
         children: [
             { path: '/main', component: Main, name: 'Main-1', hidden: true }
-            { path: '/table', component: Table, name: 'Table' }
+            { path: '/users', component: UsersList, name: 'Users' }
+            { path: '/channels', component: ChannelsList, name: 'Channels' }
             { path: '/form', component: Form, name: 'Form' }
             { path: '/user', component: user, name: 'User' }
         ]

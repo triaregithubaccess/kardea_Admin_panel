@@ -40,10 +40,17 @@ router = new VueRouter({
 router.beforeEach((function(_this) {
   return function(to, from, next) {
     var user;
+    console.log("router each---------------------------");
     if (to.path === '/login') {
       sessionStorage.removeItem('user');
     }
     user = JSON.parse(sessionStorage.getItem('user'));
+    console.log("user=", user != null);
+    if ((user != null ? user.token : void 0) != null) {
+      console.log("tok=", user.token);
+      router.token = user.token;
+      console.log("tok2=", router.token);
+    }
     if (!user && to.path !== '/login') {
       return next({
         path: '/login'

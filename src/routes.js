@@ -9,7 +9,9 @@ import Home from './views/Home.vue';
 
 import Main from './views/Main.vue';
 
-import Table from './views/nav1/Table.vue';
+import UsersList from './views/nav1/UsersList.vue';
+
+import ChannelsList from './views/nav1/Channels.vue';
 
 import Form from './views/nav1/Form.vue';
 
@@ -46,9 +48,13 @@ routes = [
         name: 'Main-1',
         hidden: true
       }, {
-        path: '/table',
-        component: Table,
-        name: 'Table'
+        path: '/users',
+        component: UsersList,
+        name: 'Users'
+      }, {
+        path: '/channels',
+        component: ChannelsList,
+        name: 'Channels'
       }, {
         path: '/form',
         component: Form,

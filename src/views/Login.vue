@@ -16,15 +16,16 @@
 </template>
 
 <script>
-  import { requestLogin } from '../api/api';
+  import { requestLogin, cur_axios } from '../api/api';
+  import axios from 'axios';
   //import NProgress from 'nprogress'
   export default {
     data() {
       return {
         logining: false,
         ruleForm2: {
-          account: 'admin',
-          checkPass: '123456'
+          account: 'eee@eee.com',
+          checkPass: 'pass'
         },
         rules2: {
           account: [
@@ -57,17 +58,20 @@
               console.log("login data=",data);
               this.logining = false;
               //NProgress.done();
-              let { meta,  user } = data;
+              let { meta,  result , token} = data;
+              let user = result
+              user.token = token
+              // set token
+              axios.defaults.headers.common["token"] = token
               if (meta.code !== 200) {
                 this.$message({
                   message: meta.message,
                   type: 'error'
                 });
               } else {
-                console.log("sccss2");
+                console.log("routed to the users list", user);
                 sessionStorage.setItem('user', JSON.stringify(user));
-                this.$router.push({ path: '/table' });
-                console.log("sccss_and push", this.$router);
+                this.$router.push({ path: '/users' });
               }
             });
           } else {
