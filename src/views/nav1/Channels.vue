@@ -38,7 +38,7 @@
 	          el-option(v-for="lang in langs", :key="lang.value", :label="lang.label", :value="lang.value")
 
 	      el-upload(class="avatar-uploader",
-			action="https://localhost:5505/user/upload?width=100&height=100",
+	        :action="upload_url",
 			:show-file-list="false",
 			:on-success="handleAvatarSuccess" ,
 			:before-upload="beforeAvatarUpload")
@@ -46,9 +46,9 @@
 	        i( v-else class="el-icon-plus avatar-uploader-icon")
 
 
-	  .dialog-footer(slot='footer')
-	    el-button(@click.native='editFormVisible = false') Cancel
-	    el-button(type='primary', @click.native='editSubmit', :loading='editLoading') Submit
+	    .dialog-footer(slot='footer')
+	      el-button(@click.native='editFormVisible = false') Cancel
+	      el-button(type='primary', @click.native='editSubmit', :loading='editLoading') Submit
 	  // Create Interface
 	  el-dialog(title='New', v-model='addFormVisible', :close-on-click-modal='false')
 	    el-form(:model='addForm', label-width='80px', :rules='addFormRules', ref='addForm')
@@ -73,11 +73,12 @@
 <script>
 	import util from '../../common/js/util'
 	//import NProgress from 'nprogress'
-	import { getChannelListPage, removeChannel, batchRemoveChannel, editChannel, addChannel } from '../../api/api';
+	import { getChannelListPage, removeChannel, batchRemoveChannel, editChannel, addChannel,  api_domen, image_upload_url2 } from '../../api/api';
 
 	export default {
 		data() {
 			return {
+				upload_url: image_upload_url2,
 				langs:  [
 					{
 					value: 'de',
@@ -110,6 +111,7 @@
 					description: '',
 					picture: '',
 					wide_picture: '',
+					iuu: image_upload_url2,
 				},
 
 				addFormVisible: false,
@@ -131,7 +133,7 @@
 		},
 		methods: {
 			handleAvatarSuccess(file, fileList) {
-				console.log(file, fileList);
+				this.editForm.picture = api_domen + file.result
 			},
 			beforeAvatarUpload(file) {
 				console.log(file);

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-let base = 'http://localhost:5505';
+let base = 'http://gena.mac:5505';
 
 export const requestLogin = params => { return axios.post(`${base}/users/login_with_email`, params).then(res => res.data); };
 
@@ -22,5 +22,8 @@ export const batchRemoveUser = params => { return axios.get(`${base}/user/batchr
 export const editUser = params => { return axios.get(`${base}/user/edit`, { params: params }); };
 
 export const addUser = params => { return axios.get(`${base}/user/add`, { params: params }); };
+
+export const api_domen =  `${base}`
+export const image_upload_url2 =  `${base}/user/upload?width=103&height=103`
 
 export const cur_axios = axios;
