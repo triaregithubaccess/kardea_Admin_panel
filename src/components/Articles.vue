@@ -3,26 +3,30 @@
 	  el-col.toolbar(:span='24', style='padding-bottom: 0px;')
 	    el-form(:inline='true', :model='filters')
 	      el-form-item
-	        el-input(v-model='filters.name', placeholder='channel name')
+	        el-input(v-model='filters.name', placeholder='article name')
 	      el-form-item
-	        el-button(type='primary', v-on:click='getChannels') Search
+	        el-button(type='primary', v-on:click='getArticles') Search
 	      el-form-item
-	        el-button(type='primary', @click='handleAdd') Add new Channel
-	  el-table(:data='channels', highlight-current-row='', v-loading='listLoading', @selection-change='selsChange', style='width: 100%;')
+	        el-button(type='primary', @click='handleAdd') Add new Article
+	  el-table(:data='articles', highlight-current-row='', v-loading='listLoading', @selection-change='selsChange', style='width: 100%;')
 	    el-table-column(type='expand', width='55')
 	      template( scope="props")
 	        p
-	          b Description :
-	          |  {{ props.row.description }}
-	        article_list(:che_id='props.row._id')
+	          b Abstract :
+	          |  {{ props.row.abstract }}
+	        p
+	          b Full Text :
+	          |  {{ props.row.full_text }}
+	        p
+	          b Source :
+	          |  {{ props.row.source }}
 	    el-table-column(prop='_id', label='ID', width='200', sortable='')
-	    el-table-column(prop='title', label='Title', width='200', sortable='')
+	    el-table-column(prop='headline', label='Headline', width='200', sortable='')
+	    el-table-column(prop='subtitle', label='Subtitle', width='200', sortable='')
+	    el-table-column(prop='source_name', label='Source name', width='200', sortable='')
 	    el-table-column(label='Picture')
 	      template( scope="scope")
 	        img(:src="scope.row.picture   + '?width=100&height=100'")
-	    el-table-column(label='Wide Pic')
-	      template( scope="scope")
-	        img(:src="scope.row.wide_picture   + '?width=150&height=150'")
 	    el-table-column(prop='language', label='Lang', width='100', sortable='')
 	    el-table-column(prop='updated_at', label='Updated at', wi-dth='200', sortable='', :formatter='formatDate')
 	    el-table-column(prop='created_at', label='Created at', wid-th='200', sortable='', :formatter='formatDate')
@@ -80,15 +84,12 @@
 </template>
 
 <script>
-	import util from '../../common/js/util'
-	import articles from '../../components/Articles'
+	import util from '../common/js/util'
 	//import NProgress from 'nprogress'
-	import { getChannelListPage, removeChannel, batchRemoveChannel, editChannel, addChannel,  api_domen, image_upload_url2 } from '../../api/api';
+	import { getArticleListPage, removeArticle, editArticle, addArticle,  api_domen, image_upload_url2 } from '../api/api';
 
 	export default {
-		components: {
-			'article_list': articles
-		},
+		props: ["che_id"],
 		data() {
 			return {
 				upload_url: image_upload_url2,
@@ -105,10 +106,10 @@
 			    filters: {
 					name: ''
 				},
-				channels: [],
+				articles: [],
 				total: 0,
 				page: 1,
-				per_page_const: 14,
+				per_page_const: 4,
 				listLoading: false,
 				sels: [],//selected rows
 
@@ -121,10 +122,9 @@
 				},
 				// Edit
 				editForm: {
-					title: '',
-					description: '',
+					headline: '',
+					abstract: '',
 					picture: '',
-					wide_picture: '',
 					iuu: image_upload_url2,
 				},
 
@@ -155,25 +155,27 @@
 
 			handleCurrentChange(val) {
 				this.page = val;
-				this.getChannels();
+				this.getArticles();
 			},
 			formatDate: function (row, column) {
 				let cur = new Date(row[column.property]);
 				return util.formatDate.format(cur, 'yyyy-MM-dd hh:mm:ss');
 			},
 
-			//Get the channel list
-			getChannels() {
+			//Get the article list
+			getArticles() {
 				let para = {
 					page: this.page,
 					per_page: this.per_page_const,
-					name: this.filters.name
+					name: this.filters.name,
+					che_id: this.che_id,
+					token:  this.$router.token
 				};
 				this.listLoading = true;
 				//NProgress.start();
-				getChannelListPage(para).then((res) => {
+				getArticleListPage(para).then((res) => {
 					this.total = res.data.count;
-					this.channels = res.data.result;
+					this.articles = res.data.result;
 					this.listLoading = false;
 					//NProgress.done();
 				}).catch((err) => {console.log("in catch ggg", err);} );
@@ -187,7 +189,7 @@
 					//NProgress.start();
 				    console.log("in DELETE:", this.$router.token, row._id, row);
 					let para = { _id: row._id, token: this.$router.token };
-					removeChannel(para).then((res) => {
+					removeArticle(para).then((res) => {
 						let meta = res.data.meta;
 						console.log("meta and res",meta, res)
 				        if (meta.code != 200) {
@@ -203,7 +205,7 @@
 								message: 'successfully  deleted',
 								type: 'success'
 							});
-							this.getChannels();
+							this.getArticles();
 						}
 					});
 				}).catch(() => {
@@ -233,7 +235,7 @@
 							this.editLoading = true;
 							//NProgress.start();
 							let para = Object.assign({}, this.editForm);
-							editChannel(para, this.$router.token).then((res) => {
+							editArticle(para, this.$router.token).then((res) => {
 								this.editLoading = false;
 								//NProgress.done();
 								this.$message({
@@ -242,7 +244,7 @@
 								});
 								this.$refs['editForm'].resetFields();
 								this.editFormVisible = false;
-								this.getChannels();
+								this.getArticles();
 							});
 						});
 					}
@@ -257,7 +259,7 @@
 							//NProgress.start();
 							let para = Object.assign({}, this.addForm);
 							para.birth = (!para.birth || para.birth == '') ? '' : util.formatDate.format(new Date(para.birth), 'yyyy-MM-dd');
-							addChannel(para).then((res) => {
+							addArticle(para).then((res) => {
 								this.addLoading = false;
 								//NProgress.done();
 								this.$message({
@@ -266,7 +268,7 @@
 								});
 								this.$refs['addForm'].resetFields();
 								this.addFormVisible = false;
-								this.getChannels();
+								this.getArticles();
 							});
 						});
 					}
@@ -284,14 +286,14 @@
 					this.listLoading = true;
 					//NProgress.start();
 					let para = { ids: ids };
-					batchRemoveChannel(para).then((res) => {
+					batchRemoveArticle(para).then((res) => {
 						this.listLoading = false;
 						//NProgress.done();
 						this.$message({
 							message: 'successfully deleted',
 							type: 'success'
 						});
-						this.getChannels();
+						this.getArticles();
 					});
 				}).catch(() => {
 
@@ -299,7 +301,8 @@
 			}
 		},
 		mounted() {
-			this.getChannels();
+		    console.log("my-props=", this.che_id);
+			this.getArticles();
 		}
 	}
 
