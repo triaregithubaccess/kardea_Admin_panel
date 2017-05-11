@@ -13,6 +13,8 @@ import UsersList from './views/nav1/UsersList.vue';
 
 import ChannelsList from './views/nav1/Channels.vue';
 
+import ArticlesList from './components/Articles.vue';
+
 import Form from './views/nav1/Form.vue';
 
 import user from './views/nav1/user.vue';
@@ -56,19 +58,15 @@ routes = [
         component: ChannelsList,
         name: 'Channels'
       }, {
-        path: '/form',
-        component: Form,
-        name: 'Form'
-      }, {
-        path: '/user',
-        component: user,
-        name: 'User'
+        path: '/articles',
+        component: ArticlesList,
+        name: 'Articles'
       }
     ]
   }, {
     path: '/',
     component: Home,
-    name: 'Navigation',
+    name: 'Analitics',
     iconCls: 'fa fa-id-card-o',
     children: [
       {

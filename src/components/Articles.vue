@@ -8,7 +8,12 @@
 	        el-button(type='primary', v-on:click='getArticles') Search
 	      el-form-item
 	        el-button(type='primary', @click='handleAdd') Add new Article
-	  el-table(:data='articles', highlight-current-row='', v-loading='listLoading', @selection-change='selsChange', style='width: 100%;')
+	  el-table(:data='articles', highlight-current-row='',
+	      v-loading='listLoading',
+	      @selection-change='selsChange',
+	      @sort-change='sortChange',
+
+	      style='width: 100%;')
 	    el-table-column(type='expand', width='55')
 	      template( scope="props")
 	        p
@@ -20,29 +25,45 @@
 	        p
 	          b Source :
 	          |  {{ props.row.source }}
-	    el-table-column(prop='_id', label='ID', width='200', sortable='')
-	    el-table-column(prop='headline', label='Headline', width='200', sortable='')
-	    el-table-column(prop='subtitle', label='Subtitle', width='200', sortable='')
-	    el-table-column(prop='source_name', label='Source name', width='200', sortable='')
+	        p
+	          b Tags :
+	          |  {{ props.row.tags }}
+	    //el-table-column(prop='_id', label='ID', width='200', sortable='')
+
+	    el-table-column(v-if='che_id == undefined', prop='channel_name', label='Channel', width='150', sortable='')
+	    el-table-column(prop='headline', label='Headline', width='150', sortable='')
+	    el-table-column(prop='subtitle', label='Subtitle', width='150', sortable='')
+	    el-table-column(prop='source_name' label='Source name', width='150', sortable='')
+	    el-table-column(label='Source', width='300', sortable='')
+	      template( scope="scope")
+	        a(:href="scope.row.source", target="_blank") {{scope.row.source}}
+
+	    el-table-column(prop='language', label='Lang', width='80')
 	    el-table-column(label='Picture')
 	      template( scope="scope")
 	        img(:src="scope.row.picture   + '?width=100&height=100'")
-	    el-table-column(prop='language', label='Lang', width='100', sortable='')
-	    el-table-column(prop='updated_at', label='Updated at', wi-dth='200', sortable='', :formatter='formatDate')
-	    el-table-column(prop='created_at', label='Created at', wid-th='200', sortable='', :formatter='formatDate')
+	    el-table-column(v-if='che_id == undefined', prop='updated_at', label='Updated at', wi-dth='150', sortable='', :formatter='formatDate')
+	    el-table-column(v-if='che_id == undefined', prop='created_at', label='Created at', wid-th='150', sortable='', :formatter='formatDate')
 	    el-table-column(label='Edit', width='150')
 	      template(scope='scope')
 	        el-button(size='small', @click='handleEdit(scope.$index, scope.row)') Edit
 	        el-button(type='danger', size='small', @click='handleDel(scope.$index, scope.row)') delete
 	  el-col.toolbar(:span='24')
 	    el-pagination(layout='prev, pager, next', @current-change='handleCurrentChange', :page-size='per_page_const', :total='total', style='float:right;')
-	  // Edit-->
+	  // Edit
 	  el-dialog(title='Edit', v-model='editFormVisible', :close-on-click-modal='false')
 	    el-form(:model='editForm', label-width='80px', :rules='editFormRules', ref='editForm')
-	      el-form-item(label='Title', prop='title')
-	        el-input(v-model='editForm.title', auto-complete='off')
-	      el-form-item(label='Description', prop='description')
-	        el-input(type="textarea" , v-model='editForm.description', auto-complete='off')
+	      el-form-item(label='Headline', prop='headline')
+	        el-input(v-model='editForm.headline', auto-complete='off')
+	      el-form-item(label='Subtitle', prop='subtitle')
+	        el-input( v-model='editForm.subtitle', auto-complete='off')
+	      el-form-item(label='Abstract', prop='abstract')
+	        el-input(type="textarea" , v-model='editForm.abstract', auto-complete='off')
+	      el-form-item(label='Full text', prop='full_text')
+	        el-input(type="textarea" , v-model='editForm.full_text', auto-complete='off')
+	      el-form-item(label='Channel')
+	        el-select(type='year', placeholder='channel', v-model='editForm.channel_id')
+	          el-option(v-for="lang in langs", :key="lang.value", :label="lang.label", :value="lang.value")
 	      el-form-item(label='Language')
 	        el-select(type='year', placeholder='language', v-model='editForm.language')
 	          el-option(v-for="lang in langs", :key="lang.value", :label="lang.label", :value="lang.value")
@@ -86,13 +107,14 @@
 <script>
 	import util from '../common/js/util'
 	//import NProgress from 'nprogress'
-	import { getArticleListPage, removeArticle, editArticle, addArticle,  api_domen, image_upload_url2 } from '../api/api';
+	import { getArticleListPage, getArticleListPageByChe, removeArticle, editArticle, addArticle,  api_domen, image_upload_url2 } from '../api/api';
 
 	export default {
 		props: ["che_id"],
 		data() {
 			return {
 				upload_url: image_upload_url2,
+				sort_obj: null,
 				langs:  [
 					{
 					value: 'de',
@@ -153,6 +175,8 @@
 				console.log(file);
 			},
 
+
+
 			handleCurrentChange(val) {
 				this.page = val;
 				this.getArticles();
@@ -164,16 +188,42 @@
 
 			//Get the article list
 			getArticles() {
-				let para = {
-					page: this.page,
-					per_page: this.per_page_const,
-					name: this.filters.name,
-					che_id: this.che_id,
-					token:  this.$router.token
-				};
+				let get_func;
+				let para2 = {};
+				if (this.che_id == undefined) {
+					para2 = {
+						page: this.page,
+						per_page: this.per_page_const,
+						name: this.filters.name,
+						token: this.$router.token
+					};
+					get_func = getArticleListPage;
+
+				}else{
+
+					para2 = {
+						page: this.page,
+						per_page: this.per_page_const,
+						name: this.filters.name,
+						che_id: this.che_id,
+						token: this.$router.token
+					};
+					get_func = getArticleListPageByChe;
+				}
+				let sort_str = '_id';
+				if (this.sort_obj != null){
+					sort_str = this.sort_obj.prop;
+					if (this.sort_obj.order != 'ascending'){
+						sort_str = '-'+ sort_str;
+					}
+					para2["sort"] = sort_str
+				}
+
+				console.log("para2=", para2)
 				this.listLoading = true;
 				//NProgress.start();
-				getArticleListPage(para).then((res) => {
+
+				get_func(para2).then((res) => {
 					this.total = res.data.count;
 					this.articles = res.data.result;
 					this.listLoading = false;
@@ -276,6 +326,11 @@
 			},
 			selsChange: function (sels) {
 				this.sels = sels;
+			},
+			sortChange: function (obj) {
+				console.log("sort change(c,p,o)=",obj.column, obj.prop, obj.order)
+				this.sort_obj = obj
+				this.getArticles();
 			},
 			//
 			batchRemove: function () {

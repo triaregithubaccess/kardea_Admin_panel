@@ -42,7 +42,7 @@ export_default = {
               return resolve([
                 200, {
                   code: 200,
-                  msg: '请求成功',
+                  msg: 'success',
                   user: user
                 }
               ]);
@@ -50,7 +50,7 @@ export_default = {
               return resolve([
                 200, {
                   code: 500,
-                  msg: '账号或密码错误'
+                  msg: 'Incorrect username or password'
                 }
               ]);
             }

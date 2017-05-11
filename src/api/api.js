@@ -9,12 +9,13 @@ export const getUserList = params => { return axios.get(`${base}/user/list`, { p
 export const getUserListPage = params => { return axios.get(`${base}/users`, { params: params }); };
 
 export const getChannelListPage = params => {return axios.get(`${base}/channels`, { params: params }); };
-export const editChannel = (params, token) => {return axios.post(`${base}/channels/${params._id}`, params); };
+export const editChannel = (params, token) => {return axios.post(`${base}/channels/${params._id}?token=${token}`, params); };
 
 export const getArticleListPage2 = params => {return axios.get(`${base}/articles`, { params: params }); };
 export const editArticle2 = (params, token) => {return axios.post(`${base}/articles/${params._id}`, params); };
 
-export const getArticleListPage = params => {return axios.get(`${base}/channels/${params.che_id}/articles`, { params: params }); };
+export const getArticleListPage = params => {return axios.get(`${base}/articles`, { params: params }); };
+export const getArticleListPageByChe = params => {return axios.get(`${base}/channels/${params.che_id}/articles`, { params: params }); };
 export const editArticle = (params, token) => {return axios.post(`${base}/articles/${params._id}`, params); };
 
 export const removeUser = params => {return axios.delete(`${base}/users/${params._id}`, { params: params }); };

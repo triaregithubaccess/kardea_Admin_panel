@@ -15,7 +15,7 @@
 	          b Description :
 	          |  {{ props.row.description }}
 	        article_list(:che_id='props.row._id')
-	    el-table-column(prop='_id', label='ID', width='200', sortable='')
+	    //el-table-column(prop='_id', label='ID', width='200', sortable='')
 	    el-table-column(prop='title', label='Title', width='200', sortable='')
 	    el-table-column(label='Picture')
 	      template( scope="scope")
@@ -23,7 +23,12 @@
 	    el-table-column(label='Wide Pic')
 	      template( scope="scope")
 	        img(:src="scope.row.wide_picture   + '?width=150&height=150'")
-	    el-table-column(prop='language', label='Lang', width='100', sortable='')
+	    el-table-column(prop='language', label='Lang', width='100',
+	            :filters="langs",
+	            :filter-method="filterLang",
+	            filter-placement="bottom-end")
+	      template( scope="scope")
+	        el-tag(:type="scope.row.language === 'de' ? 'primary' : 'success' ", close-transition ) {{scope.row.language}}
 	    el-table-column(prop='updated_at', label='Updated at', wi-dth='200', sortable='', :formatter='formatDate')
 	    el-table-column(prop='created_at', label='Created at', wid-th='200', sortable='', :formatter='formatDate')
 	    el-table-column(label='Edit', width='150')
@@ -32,7 +37,7 @@
 	        el-button(type='danger', size='small', @click='handleDel(scope.$index, scope.row)') delete
 	  el-col.toolbar(:span='24')
 	    el-pagination(layout='prev, pager, next', @current-change='handleCurrentChange', :page-size='per_page_const', :total='total', style='float:right;')
-	  // Edit-->
+	  // Edit
 	  el-dialog(title='Edit', v-model='editFormVisible', :close-on-click-modal='false')
 	    el-form(:model='editForm', label-width='80px', :rules='editFormRules', ref='editForm')
 	      el-form-item(label='Title', prop='title')
@@ -95,10 +100,12 @@
 				langs:  [
 					{
 					value: 'de',
+					text: 'DE',
 					label: 'DE'
 					},
 					{
 					value: 'en',
+					text: 'EN',
 					label: 'EN'
 					},
 				    ],
@@ -151,6 +158,11 @@
 			},
 			beforeAvatarUpload(file) {
 				console.log(file);
+			},
+
+			filterLang(value, row) {
+				console.log("in Filter Langs", value, row);
+				return row.language === value;
 			},
 
 			handleCurrentChange(val) {

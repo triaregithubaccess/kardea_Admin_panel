@@ -24,7 +24,7 @@
 	  el-col.toolbar(:span='24')
 	    el-button(type='danger', @click='batchRemove', :disabled='this.sels.length===0') Batch delete
 	    el-pagination(layout='prev, pager, next', @current-change='handleCurrentChange', :page-size='20', :total='total', style='float:right;')
-	  // Edit-->
+	  // Edit
 	  el-dialog(title='Edit', v-model='editFormVisible', :close-on-click-modal='false')
 	    el-form(:model='editForm', label-width='80px', :rules='editFormRules', ref='editForm')
 	      el-form-item(label='Name', prop='user_name')

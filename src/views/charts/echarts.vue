@@ -4,18 +4,7 @@
             <el-col :span="12">
                 <div id="chartColumn" style="width:100%; height:400px;"></div>
             </el-col>
-            <el-col :span="12">
-                <div id="chartBar" style="width:100%; height:400px;"></div>
-            </el-col>
-            <el-col :span="12">
-                <div id="chartLine" style="width:100%; height:400px;"></div>
-            </el-col>
-            <el-col :span="12">
-                <div id="chartPie" style="width:100%; height:400px;"></div>
-            </el-col>
-            <el-col :span="24">
-                <a href="http://echarts.baidu.com/examples.html" target="_blank" style="float: right;">more>></a>
-            </el-col>
+
         </el-row>
     </section>
 </template>
@@ -36,19 +25,19 @@
             var _this = this;
             //基于准备好的dom，初始化echarts实例
             this.chartColumn = echarts.init(document.getElementById('chartColumn'));
-            this.chartBar = echarts.init(document.getElementById('chartBar'));
-            this.chartLine = echarts.init(document.getElementById('chartLine'));
-            this.chartPie = echarts.init(document.getElementById('chartPie'));
+//            this.chartBar = echarts.init(document.getElementById('chartBar'));
+//            this.chartLine = echarts.init(document.getElementById('chartLine'));
+//            this.chartPie = echarts.init(document.getElementById('chartPie'));
 
             this.chartColumn.setOption({
                 title: { text: 'Column Chart' },
                 tooltip: {},
                 xAxis: {
-                    data: ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"]
+                    data: ["One", "two", "Tree", "Four", "Five", "Six"]
                 },
                 yAxis: {},
                 series: [{
-                    name: '销量',
+                    name: 'Trend',
                     type: 'bar',
                     data: [5, 20, 36, 10, 10, 20]
                 }]
@@ -195,7 +184,7 @@
         height: 400px;
         float: left;
     }*/
-    
+
     .el-col {
         padding: 30px 20px;
     }
