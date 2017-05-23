@@ -5,6 +5,7 @@ import Main from './views/Main.vue'
 import UsersList from './views/nav1/UsersList.vue'
 import ChannelsList from './views/nav1/Channels.vue'
 import ArticlesList from './components/Articles.vue'
+import SmallTables from './components/SmallTables.vue'
 import Form from './views/nav1/Form.vue'
 import user from './views/nav1/user.vue'
 import Page4 from './views/nav2/Page4.vue'
@@ -36,6 +37,7 @@ routes = [
             { path: '/users', component: UsersList, name: 'Users' }
             { path: '/channels', component: ChannelsList, name: 'Channels' }
             { path: '/articles', component: ArticlesList, name: 'Articles' }
+            { path: '/smalls', component: SmallTables, name: 'Small Tables' }
 #            { path: '/form', component: Form, name: 'Form' }
 #            { path: '/user', component: user, name: 'User' }
         ]

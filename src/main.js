@@ -15,10 +15,6 @@ import './assets/theme/theme-custom/index.css';
 
 import VueRouter from 'vue-router';
 
-import store from './vuex/store.js';
-
-import Vuex from 'vuex';
-
 import routes from './routes.js';
 
 import Mock from './mock/mock.js';
@@ -30,8 +26,6 @@ Vue.use(ElementUI, {
 });
 
 Vue.use(VueRouter);
-
-Vue.use(Vuex);
 
 router = new VueRouter({
   routes: routes
@@ -63,7 +57,6 @@ router.beforeEach((function(_this) {
 
 params = {
   router: router,
-  store: store,
   render: (function(_this) {
     return function(h) {
       return h(App);

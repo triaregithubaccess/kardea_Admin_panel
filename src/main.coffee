@@ -7,8 +7,8 @@ import locale from 'element-ui/lib/locale/lang/en'
 import './assets/theme/theme-custom/index.css'
 #import './styles/theme/button.css'
 import VueRouter from 'vue-router'
-import store from './vuex/store.js'
-import Vuex from 'vuex'
+#import store from './vuex/store.js'
+#import Vuex from 'vuex'
 #//import NProgress from 'nprogress'
 #//import 'nprogress/nprogress.css'
 import routes from './routes.js'
@@ -28,7 +28,7 @@ import 'font-awesome/css/font-awesome.min.css'
 
 Vue.use ElementUI, { locale }
 Vue.use VueRouter
-Vue.use Vuex
+#Vue.use Vuex
 
 #//NProgress.configure({  showSpinner: false });
 
@@ -63,7 +63,6 @@ router.beforeEach (to, from, next) =>
 
 params =
   router: router
-  store: store
   render: (h) => h(App)
 
 new Vue(params).$mount('#app')

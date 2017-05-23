@@ -1,113 +1,120 @@
 <template lang="pug">
 	section
-	  el-col.toolbar(:span='24', style='padding-bottom: 0px;')
-	    el-form(:inline='true', :model='filters')
-	      el-form-item
-	        el-input(v-model='filters.name', placeholder='article name')
-	      el-form-item
-	        el-button(type='primary', v-on:click='getArticles') Search
-	      el-form-item
-	        el-button(type='primary', @click='handleAdd') Add new Article
-	  el-table(:data='articles', highlight-current-row='',
-	      v-loading='listLoading',
-	      @selection-change='selsChange',
-	      @sort-change='sortChange',
+		el-col.toolbar(:span='24', style='padding-bottom: 0px;')
+			el-form(:inline='true', :model='filters')
+				el-form-item
+					el-input(v-model='filters.name', placeholder='article name')
+				el-form-item
+					el-button(type='primary', v-on:click='getArticles') Search
+				el-form-item
+					el-button(type='primary', @click='handleAdd') Add new Article
+		el-table(:data='articles', highlight-current-row='',
+				v-loading='listLoading',
+				@selection-change='selsChange',
+				@sort-change='sortChange',
 
-	      style='width: 100%;')
-	    el-table-column(type='expand', width='55')
-	      template( scope="props")
-	        p
-	          b Abstract :
-	          |  {{ props.row.abstract }}
-	        p
-	          b Full Text :
-	          |  {{ props.row.full_text }}
-	        p
-	          b Source :
-	          |  {{ props.row.source }}
-	        p
-	          b Tags :
-	          |  {{ props.row.tags }}
-	    //el-table-column(prop='_id', label='ID', width='200', sortable='')
+				style='width: 100%;')
+			el-table-column(type='expand', width='55')
+				template( scope="props")
+					p
+						b Abstract :
+						|  {{ props.row.abstract }}
+					p
+						b Full Text :
+						|  {{ props.row.full_text }}
+					p
+						b Source :
+						|  {{ props.row.source }}
+					p
+						b Tags :
+						|  {{ props.row.tags }}
+			//el-table-column(prop='_id', label='ID', width='200', sortable='')
 
-	    el-table-column(v-if='che_id == undefined', prop='channel_name', label='Channel', width='150', sortable='')
-	    el-table-column(prop='headline', label='Headline', width='150', sortable='')
-	    el-table-column(prop='subtitle', label='Subtitle', width='150', sortable='')
-	    el-table-column(prop='source_name' label='Source name', width='150', sortable='')
-	    el-table-column(label='Source', width='300', sortable='')
-	      template( scope="scope")
-	        a(:href="scope.row.source", target="_blank") {{scope.row.source}}
+			el-table-column(v-if='che_id == undefined', prop='channel_name', label='Channel', width='150', sortable='')
+			el-table-column(prop='headline', label='Headline', width='150', sortable='')
+			el-table-column(prop='subtitle', label='Subtitle', width='150', sortable='')
+			el-table-column(prop='source_name' label='Source name', width='150', sortable='')
+			el-table-column(label='Source', width='300', sortable='')
+				template( scope="scope")
+					a(:href="scope.row.source", target="_blank") {{scope.row.source}}
 
-	    el-table-column(prop='language', label='Lang', width='80')
-	    el-table-column(label='Picture')
-	      template( scope="scope")
-	        img(:src="scope.row.picture   + '?width=100&height=100'")
-	    el-table-column(v-if='che_id == undefined', prop='updated_at', label='Updated at', wi-dth='150', sortable='', :formatter='formatDate')
-	    el-table-column(v-if='che_id == undefined', prop='created_at', label='Created at', wid-th='150', sortable='', :formatter='formatDate')
-	    el-table-column(label='Edit', width='150')
-	      template(scope='scope')
-	        el-button(size='small', @click='handleEdit(scope.$index, scope.row)') Edit
-	        el-button(type='danger', size='small', @click='handleDel(scope.$index, scope.row)') delete
-	  el-col.toolbar(:span='24')
-	    el-pagination(layout='prev, pager, next', @current-change='handleCurrentChange', :page-size='per_page_const', :total='total', style='float:right;')
-	  // Edit
-	  el-dialog(title='Edit', v-model='editFormVisible', :close-on-click-modal='false')
-	    el-form(:model='editForm', label-width='80px', :rules='editFormRules', ref='editForm')
-	      el-form-item(label='Headline', prop='headline')
-	        el-input(v-model='editForm.headline', auto-complete='off')
-	      el-form-item(label='Subtitle', prop='subtitle')
-	        el-input( v-model='editForm.subtitle', auto-complete='off')
-	      el-form-item(label='Abstract', prop='abstract')
-	        el-input(type="textarea" , v-model='editForm.abstract', auto-complete='off')
-	      el-form-item(label='Full text', prop='full_text')
-	        el-input(type="textarea" , v-model='editForm.full_text', auto-complete='off')
-	      el-form-item(label='Channel')
-	        el-select(type='year', placeholder='channel', v-model='editForm.channel_id')
-	          el-option(v-for="lang in langs", :key="lang.value", :label="lang.label", :value="lang.value")
-	      el-form-item(label='Language')
-	        el-select(type='year', placeholder='language', v-model='editForm.language')
-	          el-option(v-for="lang in langs", :key="lang.value", :label="lang.label", :value="lang.value")
+			el-table-column(prop='language', label='Lang', width='80')
+			el-table-column(label='Picture')
+				template( scope="scope")
+					img(:src="scope.row.picture   + '?width=100&height=100'")
+			el-table-column(v-if='che_id == undefined', prop='updated_at', label='Updated at', wi-dth='150', sortable='', :formatter='formatDate')
+			el-table-column(v-if='che_id == undefined', prop='created_at', label='Created at', wid-th='150', sortable='', :formatter='formatDate')
+			el-table-column(label='Edit', width='150')
+				template(scope='scope')
+					el-button(size='small', @click='handleEdit(scope.$index, scope.row)') Edit
+					el-button(type='danger', size='small', @click='handleDel(scope.$index, scope.row)') delete
+		el-col.toolbar(:span='24')
+			el-pagination(layout='prev, pager, next', @current-change='handleCurrentChange', :page-size='per_page_const', :total='total', style='float:right;')
+		// Edit
+		el-dialog(title='Edit', v-model='editFormVisible', :close-on-click-modal='false')
+			el-form(:model='editForm', label-width='80px', :rules='editFormRules', ref='editForm')
+				el-form-item(label='Headline', prop='headline')
+					el-input(v-model='editForm.headline', auto-complete='off')
+				el-form-item(label='Subtitle', prop='subtitle')
+					el-input( v-model='editForm.subtitle', auto-complete='off')
+				el-form-item(label='Abstract', prop='abstract')
+					el-input(type="textarea" , v-model='editForm.abstract', auto-complete='off')
+				el-form-item(label='Full text', prop='full_text')
+					el-input(type="textarea" , v-model='editForm.full_text', auto-complete='off')
+				el-form-item(label='Channel')
+					el-select(type='year', placeholder='channel', v-model='editForm.channel_id')
+						el-option(v-for="che in  channels", :key="che._id", :label="che.title", :value="che._id")
+				el-form-item(label='Language')
+					el-select(type='year', placeholder='language', v-model='editForm.language')
+						el-option(v-for="lang in langs", :key="lang.value", :label="lang.label", :value="lang.value")
 
-	      el-upload(class="avatar-uploader",
-	        :action="upload_url",
+				el-upload(class="avatar-uploader",
+					:action="upload_url",
 			:show-file-list="false",
-			:on-success="handleAvatarSuccess" ,
-			:before-upload="beforeAvatarUpload")
-	        img( v-if="editForm.picture", :src="editForm.picture", class="avatar")
-	        i( v-else class="el-icon-plus avatar-uploader-icon")
+			:on-success="handlePictureSuccess" ,
+			:before-upload="beforePictureUpload")
+					img( v-if="editForm.picture", :src="editForm.picture", class="avatar")
+					i( v-else class="el-icon-plus avatar-uploader-icon")
 
 
-	    .dialog-footer(slot='footer')
-	      el-button(@click.native='editFormVisible = false') Cancel
-	      el-button(type='primary', @click.native='editSubmit', :loading='editLoading') Submit
-	  // Create Interface
-	  el-dialog(title='New', v-model='addFormVisible', :close-on-click-modal='false')
-	    el-form(:model='addForm', label-width='80px', :rules='addFormRules', ref='addForm')
-	      el-form-item(label='Title', prop='title')
-	        el-input(v-model='editForm.title', auto-complete='off')
-	      el-form-item(label='Description', prop='description')
-	        el-input(type="textarea" , v-model='editForm.description', auto-complete='off')
-	      el-form-item(label='Language')
-	        el-select(type='year', placeholder='language', v-model='editForm.language')
-	          el-option(v-for="lang in langs", :key="lang.value", :label="lang.label", :value="lang.value")
+			.dialog-footer(slot='footer')
+				el-button(@click.native='editFormVisible = false') Cancel
+				el-button(type='primary', @click.native='editSubmit', :loading='editLoading') Submit
+		// Create Interface
+		el-dialog(title='New', v-model='addFormVisible', :close-on-click-modal='false')
+			el-form(:model='addForm', label-width='80px', :rules='addFormRules', ref='addForm')
+				el-form-item(label='Headline', prop='headline')
+					el-input(v-model='addForm.headline', auto-complete='off')
+				el-form-item(label='Subtitle', prop='subtitle')
+					el-input(v-model='addForm.subtitle', auto-complete='off')
+				el-form-item(label='Description', prop='description')
+					el-input(type="textarea" , v-model='addForm.description', auto-complete='off')
+				el-form-item(label='Picture')
+					el-upload(class="avatar-uploader",
+						:action="upload_url",
+						:show-file-list="false",
+						:on-success="handlePictureSuccess" ,
+						:before-upload="beforePictureUpload")
+						img( v-if="addForm.picture", :src="addForm.picture", class="avatar")
+						i( v-else class="el-icon-plus avatar-uploader-icon")
+				el-form-item(label='Channel')
+					el-select(type='year', placeholder='channel', v-model='addForm.channel_id')
+						el-option(v-for="che in channels", :key="che._id", :label="che.title", :value="che._id")
 
-	      el-upload(class="avatar-uploader",
-	        :action="upload_url",
-	        :show-file-list="false",
-	        :on-success="handleAvatarSuccess" ,
-	        :before-upload="beforeAvatarUpload")
-	        img( v-if="editForm.picture", :src="editForm.picture", class="avatar")
-	        i( v-else class="el-icon-plus avatar-uploader-icon")
-	    .dialog-footer(slot='footer')
-	      el-button(@click.native='addFormVisible = false') Cancel
-	      el-button(type='primary', @click.native='addSubmit', :loading='addLoading') Create
+				el-form-item(label='Language')
+					el-select(type='year', placeholder='language', v-model='addForm.language')
+						el-option(v-for="lang in langs", :key="lang.value", :label="lang.label", :value="lang.value")
+			.dialog-footer(slot='footer')
+				el-button(@click.native='addFormVisible = false') Cancel
+				el-button(type='primary', @click.native='addSubmit', :loading='addLoading') Create
 
 </template>
 
-<script>
+<script >
 	import util from '../common/js/util'
+	import _ from 'lodash'
 	//import NProgress from 'nprogress'
-	import { getArticleListPage, getArticleListPageByChe, removeArticle, editArticle, addArticle,  api_domen, image_upload_url2 } from '../api/api';
+	import { getArticleListPage,getChannelListPage, getArticleListPageByChe, removeArticle, editArticle, addArticle,  api_domen, image_upload_url2 } from '../api/api';
 
 	export default {
 		props: ["che_id"],
@@ -125,10 +132,11 @@
 					label: 'EN'
 					},
 				    ],
-			    filters: {
+			  filters: {
 					name: ''
 				},
 				articles: [],
+				channels: [],
 				total: 0,
 				page: 1,
 				per_page_const: 4,
@@ -146,8 +154,10 @@
 				editForm: {
 					headline: '',
 					abstract: '',
+					description: '',
 					picture: '',
-					iuu: image_upload_url2,
+					channel_id: '',
+					iuu: image_upload_url2
 				},
 
 				addFormVisible: false,
@@ -159,19 +169,26 @@
 				},
 
 				addForm: {
-					title: '',
+					headline: '',
+					subtitle: '',
 					description: '',
-					picture: '',
-					wide_picture: '',
+					language: '',
+					channel_id: '',
+					picture: ''
 				}
 
 			}
 		},
 		methods: {
-			handleAvatarSuccess(file, fileList) {
+			handlePictureSuccess(file, fileList) {
+	      console.log(' Success pic!!');
 				this.editForm.picture = api_domen + file.result
 			},
-			beforeAvatarUpload(file) {
+			handlePictureSuccessAdd(file, fileList) {
+	      console.log(' Success pic!!');
+				this.addForm.picture = api_domen + file.result
+			},
+			beforePictureUpload(file) {
 				console.log(file);
 			},
 
@@ -265,26 +282,38 @@
 			// Edit
 			handleEdit: function (index, row) {
 				this.editFormVisible = true;
+				this.getChannels();
 				this.editForm = Object.assign({}, row);
 			},
 			// Create
 			handleAdd: function () {
 				this.addFormVisible = true;
+        this.getChannels();
+
 				this.addForm = {
-					title: '',
+					headline: '',
+					subtitle: '',
 					description: '',
 					picture: '',
-					wide_picture: ''
+					channel_id: '',
+					language: ''
 				};
+        if (this.che_id != null) {
+					this.addForm.channel_id = this.che_id;
+				}
 			},
 			// Edit save
 			editSubmit: function () {
 				this.$refs.editForm.validate((valid) => {
 					if (valid) {
-						this.$confirm('Are you sure？', 'warning', {}).then(() => {
+						this.$confirm('Are you sure ', 'warning', {}).then(() => {
 							this.editLoading = true;
 							//NProgress.start();
 							let para = Object.assign({}, this.editForm);
+							// find channel by id and get title
+							let che = _.find(this.channels, (x) =>{ return x._id == para.channel_id })
+							if (che !=  null) { para.channel_name = che.title; }
+
 							editArticle(para, this.$router.token).then((res) => {
 								this.editLoading = false;
 								//NProgress.done();
@@ -300,6 +329,15 @@
 					}
 				});
 			},
+			getChannels: function () {
+				let para = { };
+        console.log("in get  Che");
+				getChannelListPage(para, this.$router.token).then((res) => {
+					this.channels = res.data.result;
+          console.log("resp che=", this.channels.length);
+				}).catch((err) => {console.log("in catch  ggg", err);} );
+			},
+
 			//
 			addSubmit: function () {
 				this.$refs.addForm.validate((valid) => {
@@ -308,8 +346,10 @@
 							this.addLoading = true;
 							//NProgress.start();
 							let para = Object.assign({}, this.addForm);
-							para.birth = (!para.birth || para.birth == '') ? '' : util.formatDate.format(new Date(para.birth), 'yyyy-MM-dd');
-							addArticle(para).then((res) => {
+					    // find channel by id and get title
+					    let che = _.find(this.channels, (x) =>{ return x._id == para.channel_id })
+				      if (che !=  null) { para.channel_name = che.title; }
+							addArticle(para, this.$router.token).then((res) => {
 								this.addLoading = false;
 								//NProgress.done();
 								this.$message({

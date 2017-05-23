@@ -15,6 +15,8 @@ import ChannelsList from './views/nav1/Channels.vue';
 
 import ArticlesList from './components/Articles.vue';
 
+import SmallTables from './components/SmallTables.vue';
+
 import Form from './views/nav1/Form.vue';
 
 import user from './views/nav1/user.vue';
@@ -61,6 +63,10 @@ routes = [
         path: '/articles',
         component: ArticlesList,
         name: 'Articles'
+      }, {
+        path: '/smalls',
+        component: SmallTables,
+        name: 'Small Tables'
       }
     ]
   }, {
