@@ -25,6 +25,8 @@ export const editTag = (params, token) => {return axios.post(`${base}/tags/${par
 export const addTag = (params, token) => {return axios.put(`${base}/tags`, params); };
 export const removeTag = (params, token) => {return axios.delete(`${base}/tags/${params._id}`, params); };
 
+export const getAllTags = params => {return axios.get(`${base}/tags?select=name&as_array=true&sort=name`, { params: params }); };
+
 export const getBWListPage = params => {return axios.get(`${base}/badwords`, { params: params }); };
 export const editBW = (params, token) => {return axios.post(`${base}/badwords/${params._id}`, params); };
 export const addBW = (params, token) => {return axios.put(`${base}/badwords`, params); };

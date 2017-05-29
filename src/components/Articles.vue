@@ -7,7 +7,7 @@
 				el-form-item
 					el-button(type='primary', v-on:click='getArticles') Search
 				el-form-item
-					el-button(type='primary', @click='handleAdd') Add new Article
+					el-button(type='primary',  @click='handleAdd') Add new Article
 		el-table(:data='articles', highlight-current-row='',
 				v-loading='listLoading',
 				@selection-change='selsChange',
@@ -61,21 +61,24 @@
 					el-input(type="textarea" , v-model='editForm.abstract', auto-complete='off')
 				el-form-item(label='Full text', prop='full_text')
 					el-input(type="textarea" , v-model='editForm.full_text', auto-complete='off')
-				el-form-item(label='Channel')
-					el-select(type='year', placeholder='channel', v-model='editForm.channel_id')
-						el-option(v-for="che in  channels", :key="che._id", :label="che.title", :value="che._id")
-				el-form-item(label='Language')
-					el-select(type='year', placeholder='language', v-model='editForm.language')
-						el-option(v-for="lang in langs", :key="lang.value", :label="lang.label", :value="lang.value")
-
-				el-upload(class="avatar-uploader",
-					:action="upload_url",
-			:show-file-list="false",
-			:on-success="handlePictureSuccess" ,
-			:before-upload="beforePictureUpload")
+				el-col( :span="11")
+					el-form-item(label='Channel')
+						el-select(type='year', placeholder='channel', v-model='editForm.channel_id')
+							el-option(v-for="che in  channels", :key="che._id", :label="che.title", :value="che._id")
+				el-col( :span="11")
+					el-form-item(label='Language')
+						el-select(type='year', placeholder='language', v-model='editForm.language')
+							el-option(v-for="lang in langs", :key="lang.value", :label="lang.label", :value="lang.value")
+				el-form-item(label='Picture')
+					el-upload(class="avatar-uploader",label='Picture',
+					  :action="upload_url",
+				  :show-file-list="false",
+				  :on-success="handlePictureSuccess" ,
+				  :before-upload="beforePictureUpload")
 					img( v-if="editForm.picture", :src="editForm.picture", class="avatar")
 					i( v-else class="el-icon-plus avatar-uploader-icon")
-
+				el-form-item(label='Tags', props='tags')
+					viewtags(:dynamicTags='editForm.tags')
 
 			.dialog-footer(slot='footer')
 				el-button(@click.native='editFormVisible = false') Cancel
@@ -115,10 +118,14 @@
 	import _ from 'lodash'
 	//import NProgress from 'nprogress'
 	import { getArticleListPage,getChannelListPage, getArticleListPageByChe, removeArticle, editArticle, addArticle,  api_domen, image_upload_url2 } from '../api/api';
-
+  import dtags from './Tags'
 	export default {
 		props: ["che_id"],
-		data() {
+		components:
+			{
+				'viewtags': dtags
+			},
+	data() {
 			return {
 				upload_url: image_upload_url2,
 				sort_obj: null,
@@ -131,7 +138,7 @@
 					value: 'en',
 					label: 'EN'
 					},
-				    ],
+					],
 			  filters: {
 					name: ''
 				},
@@ -157,6 +164,7 @@
 					description: '',
 					picture: '',
 					channel_id: '',
+					tags: [],
 					iuu: image_upload_url2
 				},
 
@@ -181,11 +189,11 @@
 		},
 		methods: {
 			handlePictureSuccess(file, fileList) {
-	      console.log(' Success pic!!');
+		  console.log(' Success pic!!');
 				this.editForm.picture = api_domen + file.result
 			},
 			handlePictureSuccessAdd(file, fileList) {
-	      console.log(' Success pic!!');
+		  console.log(' Success pic!!');
 				this.addForm.picture = api_domen + file.result
 			},
 			beforePictureUpload(file) {
@@ -254,12 +262,12 @@
 				}).then(() => {
 					this.listLoading = true;
 					//NProgress.start();
-				    console.log("in DELETE:", this.$router.token, row._id, row);
+					console.log("in DELETE:", this.$router.token, row._id, row);
 					let para = { _id: row._id, token: this.$router.token };
 					removeArticle(para).then((res) => {
 						let meta = res.data.meta;
 						console.log("meta and res",meta, res)
-				        if (meta.code != 200) {
+						if (meta.code != 200) {
 							this.listLoading = false;
 							this.$message({
 								message: 'something wrong!',
@@ -288,7 +296,7 @@
 			// Create
 			handleAdd: function () {
 				this.addFormVisible = true;
-        this.getChannels();
+		this.getChannels();
 
 				this.addForm = {
 					headline: '',
@@ -298,7 +306,7 @@
 					channel_id: '',
 					language: ''
 				};
-        if (this.che_id != null) {
+		if (this.che_id != null) {
 					this.addForm.channel_id = this.che_id;
 				}
 			},
@@ -331,10 +339,10 @@
 			},
 			getChannels: function () {
 				let para = { };
-        console.log("in get  Che");
+		console.log("in get  Che");
 				getChannelListPage(para, this.$router.token).then((res) => {
 					this.channels = res.data.result;
-          console.log("resp che=", this.channels.length);
+		  console.log("resp che=", this.channels.length);
 				}).catch((err) => {console.log("in catch  ggg", err);} );
 			},
 
@@ -346,9 +354,9 @@
 							this.addLoading = true;
 							//NProgress.start();
 							let para = Object.assign({}, this.addForm);
-					    // find channel by id and get title
-					    let che = _.find(this.channels, (x) =>{ return x._id == para.channel_id })
-				      if (che !=  null) { para.channel_name = che.title; }
+						// find channel by id and get title
+						let che = _.find(this.channels, (x) =>{ return x._id == para.channel_id })
+					  if (che !=  null) { para.channel_name = che.title; }
 							addArticle(para, this.$router.token).then((res) => {
 								this.addLoading = false;
 								//NProgress.done();
@@ -396,7 +404,7 @@
 			}
 		},
 		mounted() {
-		    console.log("my-props=", this.che_id);
+			console.log("my-props=", this.che_id);
 			this.getArticles();
 		}
 	}
