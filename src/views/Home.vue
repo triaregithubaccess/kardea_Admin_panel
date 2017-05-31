@@ -9,9 +9,9 @@
 					<i class="fa fa-align-justify"></i>
 				</div>
 			</el-col>
-			<el-col :span="4" class="userinfo">
+			<el-col :span="8" class="userinfo">
 				<el-dropdown trigger="hover">
-					<span class="el-dropdown-link userinfo-inner"><img :src="this.sysUserAvatar" /> {{sysUserName}}</span>
+					<span class="el-dropdown-link userinfo-inner"><img :src="this.sysUserAvatar" /> {{$router.token}} : {{sysUserName}}</span>
 					<el-dropdown-menu slot="dropdown">
 						<el-dropdown-item>My message</el-dropdown-item>
 						<el-dropdown-item>Profile</el-dropdown-item>
@@ -130,6 +130,7 @@
 				user = JSON.parse(user);
 				this.sysUserName = user.email || '';
 				this.sysUserAvatar = user.avatar || '';
+				this.sysUserToken = this.$router.token || '';
 			}
 
 		}

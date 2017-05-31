@@ -3,10 +3,10 @@
 
 		//el-row
 
-		el-col(:span="8")
+		el-col(:span="9")
 			onetable( :myp='tagApiService', name_t='TAGs')
 
-		el-col(:span="8")
+		el-col(:span="9")
 			onetable( :myp='badwordApiService', name_t='BWs')
 
 		el-col.toolbar(:span='24')
@@ -44,12 +44,16 @@
   let tagApiService = {
 		getList: getTagListPage,
 		addItem: addTag,
+    editItem: editTag,
+		removeItem: removeTag,
 		f1: 'name'
 	};
 
   let badwordApiService = {
 		getList: getBWListPage,
 		addItem: addBW ,
+    editItem: editTag,
+    removeItem: removeBW,
 		f1: 'word'
 	};
 

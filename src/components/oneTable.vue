@@ -1,15 +1,15 @@
 <template lang="pug">
 	section
-		el-col.toolbar(:span='22', style='padding-bottom: 0px;')
+		el-col.toolbar(:span='21', style='padding-bottom: 0px;')
 				el-form(:inline='true', :model='filters')
 					el-form-item
 						el-input(v-model='filters.name', placeholder='tag name')
 					el-form-item
-						el-button(type='primary', v-on:click='getTags') Search
+						el-button(type='primary', v-on:click='getItems' ) Search
 					el-form-item
 						el-button(type='primary', @click='handleAdd') Addnew{{name_t}}--
 
-		el-col(:span="22")
+		el-col(:span="21")
 			h3 {{name_t}}
 			el-table(:data='items', highlight-current-row='',
 					v-loading='listLoading',
@@ -24,7 +24,7 @@
 						el-button(size='small', @click='handleEdit(scope.$index, scope.row)') Edit
 						el-button(type='danger', size='small', @click='handleDel(scope.$index, scope.row)') delete
 
-		el-col.toolbar(:span='22')
+		el-col.toolbar(:span='21')
 			el-pagination(layout='prev, pager, next', @current-change='handleCurrentChange', :page-size='per_page_const', :total='total', style='float:left;')
 			// Edit
 			el-dialog(title='Edit', v-model='editFormVisible', :close-on-click-modal='false')
@@ -65,7 +65,7 @@
 	      items: [],
 				total: 0,
 				page: 1,
-				per_page_const: 4,
+				per_page_const: 14,
 				listLoading: false,
 				sels: [],
 
@@ -89,11 +89,11 @@
 
 			handleCurrentChange(val) {
 				this.page = val;
-				this.getTags();
+				this.getItems();
 			},
 
 			//Get the Tag list
-			getTags() {
+      getItems() {
 				let para2 = {
 						page: this.page,
 						per_page: this.per_page_const,
@@ -129,8 +129,8 @@
 					this.listLoading = true;
 					//NProgress.start();
 				    console.log("in DELETE:", this.$router.token, row._id, row);
-					let para = { _id: row._id, token: this.$router.token };
-					removeTag(para).then((res) => {
+					let para = { _id: row._id};
+          this.myp.removeItem(para, this.$router.token).then((res) => {
 						let meta = res.data.meta;
 						console.log("meta and res",meta, res)
 				        if (meta.code != 200) {
@@ -146,7 +146,7 @@
 								message: 'successfully  deleted',
 								type: 'success'
 							});
-							this.getTags();
+							this.getItems();
 						}
 					});
 				}).catch(() => {
@@ -156,14 +156,14 @@
 			// Edit
 			handleEdit: function (index, row) {
 				this.editFormVisible = true;
-				this.getTags();
+				this.getItems();
 				this.editForm = Object.assign({}, row);
 			},
 			// Create
 			handleAdd: function () {
 				console.log("add clicked")
 				this.addFormVisible = true;
-        this.getTags();
+        this.getItems();
 
 				this.addForm = {}
 				this.addForm[this.myp.f1] = ''
@@ -178,7 +178,7 @@
 							//NProgress.start();
 							let para = Object.assign({}, this.editForm);
 
-							editTag(para, this.$router.token).then((res) => {
+              this.myp.editItem(para, this.$router.token).then((res) => {
 								this.editLoading = false;
 								//NProgress.done();
 								this.$message({
@@ -206,14 +206,14 @@
 				      console.log("add papa=", para, this.addForm);
 							this.myp.addItem(para, this.$router.token).then((res) => {
 								this.addLoading = false;
-								//NProgress.done();
+								//NProgress.done() ;
 								this.$message({
 									message: 'success',
 									type: 'success'
 								});
 								this.$refs['addForm'].resetFields();
 								this.addFormVisible = false;
-								this.getTags();
+								this.getItems();
 							});
 						});
 					}
@@ -225,12 +225,12 @@
 			sortChange: function (obj) {
 				console.log("sort change(c,p,o)=",obj.column, obj.prop, obj.order)
 				this.sort_obj = obj
-				this.getTags();
+				this.getItems();
 			}
 		},
 		mounted() {
-
-			this.getTags();
+      console.log("one table props=", this.myp, this.name_t);
+			this.getItems();
 
 		}
 	}
