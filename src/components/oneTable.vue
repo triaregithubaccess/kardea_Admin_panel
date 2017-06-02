@@ -110,7 +110,7 @@
 					para2["sort"] = sort_str
 				}
 
-				console.log("para2=", para2)
+//				console.log("para2=", para2)
 				this.listLoading = true;
 				//NProgress.start();
 
@@ -128,11 +128,11 @@
 				}).then(() => {
 					this.listLoading = true;
 					//NProgress.start();
-				    console.log("in DELETE:", this.$router.token, row._id, row);
+//				    console.log("in DELETE:", this.$router.token, row._id, row);
 					let para = { _id: row._id};
           this.myp.removeItem(para, this.$router.token).then((res) => {
 						let meta = res.data.meta;
-						console.log("meta and res",meta, res)
+//						console.log("meta and res",meta, res)
 				        if (meta.code != 200) {
 							this.listLoading = false;
 							this.$message({
@@ -161,7 +161,7 @@
 			},
 			// Create
 			handleAdd: function () {
-				console.log("add clicked")
+//				console.log("add clicked")
 				this.addFormVisible = true;
         this.getItems();
 
@@ -203,7 +203,7 @@
 							this.addLoading = true;
 							//NProgress.start();
 							let para = Object.assign({}, this.addForm);
-				      console.log("add papa=", para, this.addForm);
+//				      console.log("add papa=", para, this.addForm);
 							this.myp.addItem(para, this.$router.token).then((res) => {
 								this.addLoading = false;
 								//NProgress.done() ;
@@ -223,13 +223,13 @@
 				this.sels = sels;
 			},
 			sortChange: function (obj) {
-				console.log("sort change(c,p,o)=",obj.column, obj.prop, obj.order)
+//				console.log("sort change(c,p,o)=",obj.column, obj.prop, obj.order)
 				this.sort_obj = obj
 				this.getItems();
 			}
 		},
 		mounted() {
-      console.log("one table props=", this.myp, this.name_t);
+//      console.log("one table props=", this.myp, this.name_t);
 			this.getItems();
 
 		}

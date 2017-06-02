@@ -14,6 +14,8 @@ export const getUserListPage = params => { return axios.get(`${base}/users`, { p
 export const getChannelListPage = params => {return axios.get(`${base}/channels`, { params: params }); };
 export const getChannelShortListPage = params => {return axios.get(`${base}/channels?select=_id,title`, { params: params }); };
 export const editChannel = (params, token) => {return axios.post(`${base}/channels/${params._id}?token=${token}`, params); };
+export const addChannel = (params, token) => {return axios.put(`${base}/channels?token=${token}`, params); };
+export const removeChannel = (params, token) => {return axios.delete(`${base}/channels/${params._id}?token=${token}`, params); };
 
 export const getArticleListPage = params => {return axios.get(`${base}/articles`, { params: params }); };
 export const getArticleListPageByChe = params => {return axios.get(`${base}/channels/${params.che_id}/articles`, { params: params }); };

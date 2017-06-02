@@ -65,7 +65,7 @@
 
       getTags: function () {
 				let para = { };
-        console.log("in get Tags");
+//        console.log("in get Tags");
 				getAllTags(para, this.$router.token).then((res) => {
 					this.all_tags = res.data.result;
           //console.log("resp tags=", this.all_tags);
@@ -75,7 +75,7 @@
 
     }  ,
     mounted() {
-      console.log("tag-props=", this.dynamicTags);
+//      console.log("tag-props=", this.dynamicTags);
       this.getTags();
     }
   }

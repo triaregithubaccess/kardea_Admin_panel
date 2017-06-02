@@ -194,7 +194,7 @@
         channels: [],
         total: 0,
         page: 1,
-        per_page_const:  4,
+        per_page_const:  10,
         listLoading: false,
         sels: [],//selected rows
 
@@ -222,23 +222,23 @@
     },
     methods: {
       handlePictureSuccess(file, fileList) {
-        console.log(' Success pic!!');
+//        console.log(' Success pic!!');
         this.editForm.picture = api_domen + file.result
       },
       handlePictureSuccessAdd(file, fileList) {
-        console.log(' Success pic!!');
+//        console.log(' Success pic!!');
         this.addForm.picture = api_domen + file.result
       },
       beforePictureUpload(file) {
-        console.log(file);
+//        console.log(file);
       },
       gettmpcom(x) {
-        console.log('in get gggggg');
+//        console.log('in get gggggg');
         let g = [{cou: '34 com-ts', name: x}];
         return g
       },
       exp(a,b){
-        console.log("in exp----2-------",a,b);
+//        console.log("in exp----2-------",a,b);
         this.cur_news = a._id
       },
 
@@ -284,7 +284,7 @@
           para2["sort"] = sort_str
         }
 
-        console.log("para2=", para2)
+//        console.log("para2=", para2)
         this.listLoading = true;
         //NProgress.start();
 
@@ -302,11 +302,11 @@
         }).then(() => {
           this.listLoading = true;
           //NProgress.start();
-          console.log("in DELETE:", this.$router.token, row._id, row);
-          let para = { _id: row._id, token: this.$router.token };
-          removeArticle(para).then((res) => {
+//          console.log("in DELETE:", this.$router.token, row._id, row);
+          let para = { _id: row._id};
+          removeArticle(para, this.$router.token ).then((res) => {
             let meta = res.data.meta;
-            console.log("meta and res",meta, res)
+//            console.log("meta and res",meta, res)
             if (meta.code != 200) {
               this.listLoading = false;
               this.$message({
@@ -366,7 +366,7 @@
                 this.$refs['editForm'].resetFields();
                 this.editFormVisible = false;
                 this.getArticles();
-                console.log('before call tags method');
+//                console.log('before call tags method');
                 this.$refs['editTagList'].getTags();
               });
             });
@@ -375,10 +375,10 @@
       },
       getChannels: function () {
         let para = { };
-        console.log("in get  Che");
+//        console.log("in get  Che");
         getChannelShortListPage(para, this.$router.token).then((res) => {
           this.channels = res.data.result;
-          console.log("resp che=", this.channels.length);
+//          console.log("resp che=", this.channels.length);
         }).catch((err) => {console.log("in catch  ggg", err);} );
       },
 
@@ -413,7 +413,7 @@
         this.sels = sels;
       },
       sortChange: function (obj) {
-        console.log("sort change(c,p,o)=",obj.column, obj.prop, obj.order)
+//        console.log("sort change(c,p,o)=",obj.column, obj.prop, obj.order)
         this.sort_obj = obj
         this.getArticles();
       },
@@ -441,7 +441,10 @@
       }
     },
     mounted() {
-      console.log("my-props=", this.che_id);
+//      console.log("my-props=", this.che_id);
+      if (this.che_id != null){
+        this.per_page_const = 5;
+      }
       this.getArticles();
     }
   }

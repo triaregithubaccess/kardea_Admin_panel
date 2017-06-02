@@ -7,7 +7,7 @@
 			onetable( :myp='tagApiService', name_t='TAGs')
 
 		el-col(:span="9")
-			onetable( :myp='badwordApiService', name_t='BWs')
+			onetable( :myp='badwordApiService', name_t='Bad Words')
 
 		el-col.toolbar(:span='24')
 			// el-pagination(layout='prev, pager, next', @current-change='handleCurrentChange', :page-size='per_page_const', :total='total', style='float:right;')
@@ -126,7 +126,7 @@
 					para2["sort"] = sort_str
 				}
 
-				console.log("para2=", para2)
+//				console.log("para2=", para2)
 				this.listLoading = true;
 				//NProgress.start();
 
@@ -144,11 +144,11 @@
 				}).then(() => {
 					this.listLoading = true;
 					//NProgress.start();
-				    console.log("in DELETE:", this.$router.token, row._id, row);
+//				    console.log("in DELETE:", this.$router.token, row._id, row);
 					let para = { _id: row._id, token: this.$router.token };
 					removeTag(para).then((res) => {
 						let meta = res.data.meta;
-						console.log("meta and res",meta, res)
+//						console.log("meta and res",meta, res)
 				        if (meta.code != 200) {
 							this.listLoading = false;
 							this.$message({
@@ -239,13 +239,13 @@
 				this.sels = sels;
 			},
 			sortChange: function (obj) {
-				console.log("sort change(c,p,o)=",obj.column, obj.prop, obj.order)
+//				console.log("sort change(c,p,o)=",obj.column, obj.prop, obj.order)
 				this.sort_obj = obj
 				this.getTags();
 			}
 		},
 		mounted() {
-		    console.log("my-props=", this.che_id);
+//		    console.log("my-props=", this.che_id);
 			//this.getTags();
 		}
 	}

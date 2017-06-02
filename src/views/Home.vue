@@ -11,7 +11,7 @@
 			</el-col>
 			<el-col :span="8" class="userinfo">
 				<el-dropdown trigger="hover">
-					<span class="el-dropdown-link userinfo-inner"><img :src="this.sysUserAvatar" /> {{$router.token}} : {{sysUserName}}</span>
+					<span class="el-dropdown-link userinfo-inner"><img :src="this.sysUserAvatar" /> {{sysUserName}}</span>
 					<el-dropdown-menu slot="dropdown">
 						<el-dropdown-item>My message</el-dropdown-item>
 						<el-dropdown-item>Profile</el-dropdown-item>

@@ -117,7 +117,7 @@
       getComments() {
         let get_func;
         let para = {};
-        console.log('news-id=', this.news_id);
+//        console.log('news-id=', this.news_id);
         if (this.news_id == undefined) {
           para = {
             page: this.page,
@@ -148,7 +148,7 @@
           para["sort"] = sort_str
         }
 
-        console.log("para=", para)
+//        console.log("para=", para)
         this.listLoading = true;
         //NProgress.start() ;
 
@@ -166,11 +166,11 @@
         }).then(() => {
           this.listLoading = true;
           //NProgress.start();
-          console.log("in DELETE:", this.$router.token, row._id, row);
+//          console.log("in DELETE:", this.$router.token, row._id, row);
           let para = { _id: row._id};
           removeComment(para, this.$router.token ).then((res) => {
             let meta = res.data.meta;
-            console.log("meta and res",meta, res)
+//            console.log("meta and res",meta, res)
             if (meta.code != 200) {
               this.listLoading = false;
               this.$message({
@@ -269,14 +269,14 @@
         this.sels = sels;
       },
       sortChange: function (obj) {
-        console.log("sort change(c,p,o)=",obj.column, obj.prop, obj.order)
+//        console.log("sort change(c,p,o)=",obj.column, obj.prop, obj.order)
         this.sort_obj = obj
         this.getComments();
       },
 
     },
     mounted() {
-      console.log("comm my-props=", this.news_id);
+//      console.log("comm my-props=", this.news_id);
       this.getComments();
     }
   }
