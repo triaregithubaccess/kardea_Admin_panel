@@ -1,77 +1,55 @@
-<template>
-  <el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-position="left" label-width="0px" class="demo-ruleForm login-container">
-    <h3 class="title">Login</h3>
-    <el-form-item prop="account">
-      <el-input type="text" v-model="ruleForm2.account" auto-complete="off" placeholder="username"></el-input>
-    </el-form-item>
-    <el-form-item prop="checkPass">
-      <el-input type="password" v-model="ruleForm2.checkPass" auto-complete="off" placeholder="password"></el-input>
-    </el-form-item>
-    <el-checkbox v-model="checked" checked class="remember">remember me</el-checkbox>
-    <el-form-item style="width:100%;">
-      <el-button type="primary" style="width:100%;" @click.native.prevent="handleSubmit2" :loading="logining">log in</el-button>
-      <!--<el-button @click.native.prevent="handleReset2">重置</el-button>-->
-    </el-form-item>
-  </el-form>
+<template  lang="pug">
+  el-form( :model="ruleForm2", :rules="rules", ref="ruleForm2", label-position="left", label-width="0px", class="demo-ruleForm, login-container")
+    h3( class="title") Forgot password
+    el-form-item( prop="account")
+      el-input( type="text", v-model="ruleForm2.email", auto-complete="off", placeholder="email")
+    el-form-item( style="width:100%;")
+      el-button( type="primary", style="width:100%;", @click.native.prevent="handleSubmit", :loading="sending") Send me email with password
+    a( href="#/login") Login
 </template>
 
 <script>
-  import { requestLogin, cur_axios } from '../api/api';
+  import { requestForgot, cur_axios } from '../api/api';
   import axios from 'axios';
-  //import NProgress from 'nprogress'
+
   export default {
     data() {
       return {
-        logining: false,
+        sending: false,
         ruleForm2: {
-          account: 'eee@eee.com',
-          checkPass: 'pass'
+          email: ''
         },
-        rules2: {
-          account: [
-            { required: true, message: 'Please input Username', trigger: 'blur' },
+        rules: {
+          email: [
+            { required: true, message: 'Please input email', trigger: 'blur' },
             //{ validator: validaePass }
-          ],
-          checkPass: [
-            { required: true, message: 'Please enter your password', trigger: 'blur' },
-            //{ validator: validaePass2 }
           ]
         },
         checked: true
       };
     },
     methods: {
-      handleReset2() {
-        this.$refs.ruleForm2.resetFields();
-      },
-      handleSubmit2(ev) {
+
+      handleSubmit(ev) {
         var _this = this;
-        console.log("GGG in login submit");
+
         this.$refs.ruleForm2.validate((valid) => {
           if (valid) {
-            //_this.$router.replace('/table');
-            this.logining = true;
-            //NProgress.start();
-            var loginParams = { login: true, email: this.ruleForm2.account, password: this.ruleForm2.checkPass };
-            console.log("GGG before req login -", loginParams);
-            requestLogin(loginParams).then(data => {
-              console.log("login data=",data);
-              this.logining = false;
-              //NProgress.done();
-              let { meta,  result , token} = data;
-              let user = result
-              user.token = token
-              // set token
-              axios.defaults.headers.common["token"] = token
+            this.sending = true;
+
+            var forgotParams = { email: this.ruleForm2.email};
+
+            requestForgot(forgotParams).then(data => {
+              this.sending = false;
+
+              let { meta, result} = data.data;
               if (meta.code !== 200) {
                 this.$message({
-                  message: meta.message,
+                  message: "User with this Email not found! ",
                   type: 'error'
                 });
               } else {
-                console.log("routed to the users list", user);
-                sessionStorage.setItem('user', JSON.stringify(user));
-                this.$router.push({ path: '/users' });
+                this.$router.push({ path: '/' });
               }
             });
           } else {
@@ -86,6 +64,11 @@
 </script>
 
 <style lang="scss" scoped>
+  a {
+    color: blue;
+
+    text-decoration: underline;
+  }
   .login-container {
     /*box-shadow: 0 0px 8px 0 rgba(0, 0, 0, 0.06), 0 1px 0px 0 rgba(0, 0, 0, 0.02);*/
     -webkit-border-radius: 5px;

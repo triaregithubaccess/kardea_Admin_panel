@@ -1,18 +1,18 @@
 <template>
   <el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-position="left" label-width="0px" class="demo-ruleForm login-container">
-    <h3 class="title">Login</h3>
-    <el-form-item prop="account">
-      <el-input type="text" v-model="ruleForm2.account" auto-complete="off" placeholder="username"></el-input>
-    </el-form-item>
+    <h3 class="title">Set new Password</h3>
     <el-form-item prop="checkPass">
-      <el-input type="password" v-model="ruleForm2.checkPass" auto-complete="off" placeholder="password"></el-input>
+      <el-input type="text" v-model="ruleForm2.checkPass" auto-complete="off" placeholder="password"></el-input>
     </el-form-item>
-    <el-checkbox v-model="checked" checked class="remember">remember me</el-checkbox>
+    <el-form-item prop="checkPass2">
+      <el-input type="password" v-model="ruleForm2.checkPass2" auto-complete="off" placeholder="repeat password"></el-input>
+    </el-form-item>
+
     <el-form-item style="width:100%;">
       <el-button type="primary" style="width:100%;" @click.native.prevent="handleSubmit2" :loading="logining">log in</el-button>
 
     </el-form-item>
-    <a href="#/forgot">Forgot password</a>
+    <a href="#/login">Forgot password</a>
   </el-form>
 
 </template>
@@ -26,23 +26,26 @@
       return {
         logining: false,
         ruleForm2: {
-          account: 'eee@eee.com',
-          checkPass: 'pass'
+          checkPass: '',
+          checkPass2: ''
         },
         rules2: {
-          account: [
-            { required: true, message: 'Please input Username', trigger: 'blur' },
-            //{ validator: validaePass }
+          checkPass2: [
+            { required: true, message: 'Please password twice', trigger: 'blur' },
+            { validator: validaePass }
           ],
           checkPass: [
             { required: true, message: 'Please enter your password', trigger: 'blur' },
-            //{ validator: validaePass2 }
+            { validator: validaePass }
           ]
         },
         checked: true
       };
     },
     methods: {
+      validaePass() {
+
+      },
       handleReset2() {
         this.$refs.ruleForm2.resetFields();
       },
