@@ -194,7 +194,7 @@
     full_text: '',
     source: '',
     source_name: '',
-    publish_at: '',
+    published_at: '',
     tags: [],
     push_on_publish: '',
     site_on_publish: '',
