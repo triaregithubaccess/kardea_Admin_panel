@@ -48,31 +48,36 @@
       },
       handleSubmit2(ev) {
         var _this = this;
+        console.log("GGG in login submit");
         this.$refs.ruleForm2.validate((valid) => {
           if (valid) {
             //_this.$router.replace('/table');
             this.logining = true;
             //NProgress.start();
-            //console.log("pered login ")
             var loginParams = { login: true, email: this.ruleForm2.account, password: this.ruleForm2.checkPass };
+            console.log("GGG before req login -", loginParams);
             requestLogin(loginParams).then(data => {
+              console.log("login data=",data);
               this.logining = false;
-//              console.log("data in login =", data);
+              //NProgress.done();
               let { meta,  result , token} = data;
+              let user = result
+              user.token = token
+              // set token
+              axios.defaults.headers.common["token"] = token
               if (meta.code !== 200) {
                 this.$message({
                   message: meta.message,
                   type: 'error'
                 });
               } else {
-                let user = result
-                user.token = token
+                console.log("routed to the users list", user);
                 sessionStorage.setItem('user', JSON.stringify(user));
-                this.$router.token = token
                 this.$router.push({ path: '/users' });
               }
             });
           } else {
+            console.log('error submit!!');
             return false;
           }
         });

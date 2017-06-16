@@ -3,9 +3,7 @@ import axios from 'axios';
 let base = 'http://localhost:5505';
 //let base = 'http://138.201.108.157:5505';
 
-export const requestLogin = params => {
-    console.log("base=", base);
-    return axios.post(`${base}/users/login_with_email`, params).then(res => res.data); };
+export const requestLogin = params => { return axios.post(`${base}/users/login_with_email`, params).then(res => res.data); };
 
 export const getUserList = params => { return axios.get(`${base}/user/list`, { params: params }); };
 
@@ -42,6 +40,7 @@ export const addBW = (params, token) => {return axios.put(`${base}/badwords?toke
 export const removeBW = (params, token) => {return axios.delete(`${base}/badwords/${params._id}?token=${token}`, params); };
 
 export const removeUser = (params, token) => { return axios.delete(`${base}/users/${params._id}?token=${token}`, { params: params }); };
+export const requestForgot = (params) => { return axios.post(`${base}/user/forgot_password?`, params); };
 
 export const batchRemoveUser = params => { return axios.get(`${base}/user/batchremove`, { params: params }); };
 

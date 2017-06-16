@@ -36,16 +36,15 @@ router = new VueRouter { routes }
 
 router.beforeEach (to, from, next) =>
 #  //NProgress.start();
-#  console.log("router each---------------------------")
   sessionStorage.removeItem 'user' if to.path is '/login'
   user = JSON.parse sessionStorage.getItem('user')
-#  console.log("user=", user?)
   if user?.token?
-#    console.log("tok=", user.token)
     router.token = user.token
-#    console.log("tok2=", router.token )
   if !user and to.path !=  '/login'
-    next path: '/login'
+    if to.path is '/forgot'
+      next()
+    else
+      next path: '/login'
   else
     next()
 

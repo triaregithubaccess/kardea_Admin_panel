@@ -42,9 +42,13 @@ router.beforeEach((function(_this) {
       router.token = user.token;
     }
     if (!user && to.path !== '/login') {
-      return next({
-        path: '/login'
-      });
+      if (to.path === '/forgot') {
+        return next();
+      } else {
+        return next({
+          path: '/login'
+        });
+      }
     } else {
       return next();
     }

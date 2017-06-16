@@ -63,79 +63,114 @@
     el-col.toolbar(:span='24')
       el-pagination(layout='prev, pager, next', @current-change='handleCurrentChange', :page-size='per_page_const', :total='total', style='float:right;')
     // Edit
-    el-dialog(title='Edit', v-model='editFormVisible', :close-on-click-modal='false')
+    el-dialog(title='Edit', v-model='editFormVisible', :close-on-click-modal='false', size="large")
       el-form(:model='editForm', label-width='80px', :rules='editFormRules', ref='editForm')
-        el-form-item(label='Headline', prop='headline')
-          el-input(v-model='editForm.headline', auto-complete='off')
-        el-form-item(label='Subtitle', prop='subtitle')
-          el-input( v-model='editForm.subtitle', auto-complete='off')
-        el-form-item(label='Abstract', prop='abstract')
-          el-input(type="textarea" , v-model='editForm.abstract', auto-complete='off')
-        el-form-item(label='Full text', prop='full_text')
-          el-input(type="textarea" , v-model='editForm.full_text', auto-complete='off')
-        el-form-item(label='Source Name', prop='source_name')
-          el-input(v-model='editForm.source_name', auto-complete='off')
-        el-form-item(label='Source', prop='source')
-          el-input(v-model='editForm.source', auto-complete='off', placeholder='http://site.com')
         el-row(:span="23")
+
           el-col( :span="11")
-            el-form-item(label='Channel')
-              el-select(type='year', placeholder='channel', v-model='editForm.channel_id')
-                el-option(v-for="che in  channels", :key="che._id", :label="che.title", :value="che._id")
-          el-col( :span="11")
-            el-form-item(label='Language')
-              el-select(type='year', placeholder='language', v-model='editForm.language')
-                el-option(v-for="lang in langs", :key="lang.value", :label="lang.label", :value="lang.value")
-        el-form-item(label='Picture')
-          el-upload(class="avatar-uploader",label='Picture',
-            :action="upload_url",
-            :show-file-list="false",
-            :on-success="handlePictureSuccess" ,
-            :before-upload="beforePictureUpload")
-            img( v-if="editForm.picture", :src="editForm.picture", class="avatar")
-            i( v-else class="el-icon-plus avatar-uploader-icon")
-        el-form-item(label='Tags',  props='tags')
-          viewtags(:dynamicTags='editForm.tags', ref='editTagList')
+            el-form-item(label='Headline', prop='headline')
+              el-input(v-model='editForm.headline', auto-complete='off')
+            el-form-item(label='Subtitle', prop='subtitle')
+              el-input( v-model='editForm.subtitle', auto-complete='off')
+            el-form-item(label='Abstract', prop='abstract')
+              el-input(type="textarea" , v-model='editForm.abstract', auto-complete='off')
+            el-form-item(label='Source Name', prop='source_name')
+              el-input(v-model='editForm.source_name', auto-complete='off')
+            el-form-item(label='Source', prop='source')
+              el-input(v-model='editForm.source', auto-complete='off', placeholder='http://site.com')
+            el-row(:span="23")
+              el-col( :span="11")
+                el-form-item(label='Channel')
+                  el-select(type='year', placeholder='channel', v-model='editForm.channel_id')
+                    el-option(v-for="che in  channels", :key="che._id", :label="che.title", :value="che._id")
+              el-col( :span="11")
+                el-form-item(label='Language')
+                  el-select(type='year', placeholder='language', v-model='editForm.language')
+                    el-option(v-for="lang in langs", :key="lang.value", :label="lang.label", :value="lang.value")
+            el-form-item(label='Picture')
+              el-upload(class="avatar-uploader",label='Picture',
+                :action="upload_url",
+                :show-file-list="false",
+                :on-success="handlePictureSuccess" ,
+                :before-upload="beforePictureUpload")
+                img( v-if="editForm.picture", :src="editForm.picture", class="avatar")
+                i( v-else class="el-icon-plus avatar-uploader-icon")
+            el-form-item(label='Tags',  props='tags')
+              viewtags(:dynamicTags='editForm.tags', ref='editTagList')
+
+            el-form-item(label='Publish at', prop='published_at')
+              el-date-picker(v-model='editForm.published_at',type="datetime",placeholder="If empty - live now", :disabled="!pre")
+            el-col( :span="5")
+              el-form-item(label='Push', prop='push_on_publish')
+                el-checkbox( v-model='editForm.push_on_publish')
+            el-col( :span="5")
+              el-form-item(label='To Site', prop='site_on_publish')
+                el-checkbox( v-model='editForm.site_on_publish', disabled)
+            el-col( :span="5")
+              el-form-item(label='To FB', prop='fb_on_publish')
+                el-checkbox( v-model='editForm.fb_on_publish', disabled)
+
+
+          el-col( :span="7", :offset="2")
+            el-form-item(label='Full text', prop='full_text')
+              el-input(type="textarea" , v-model='editForm.full_text', auto-complete='off', rows=29)
 
       .dialog-footer(slot='footer')
         el-button(@click.native='editFormVisible = false') Cancel
         el-button(type='primary', @click.native='editSubmit', :loading='editLoading') Submit
     // Create Interface
-    el-dialog(title='New', v-model='addFormVisible', :close-on-click-modal='false')
+    el-dialog(title='New', v-model='addFormVisible', :close-on-click-modal='false', size="large")
       el-form(:model='addForm', label-width='80px', :rules='addFormRules', ref='addForm')
-        el-form-item(label='Headline', prop='headline')
-          el-input(v-model='addForm.headline', auto-complete='off')
-        el-form-item(label='Subtitle', prop='subtitle')
-          el-input(v-model='addForm.subtitle', auto-complete='off')
-        el-form-item(label='Abstract', prop='abstract')
-          el-input(type="textarea" , v-model='addForm.abstract', auto-complete='off')
-        el-form-item(label='Full text', prop='full_text')
-          el-input(type="textarea" , v-model='addForm.full_text', auto-complete='off')
-        el-form-item(label='Source Name', prop='source_name')
-          el-input(v-model='addForm.source_name', auto-complete='off')
-        el-form-item(label='Source', prop='source')
-          el-input(v-model='addForm.source', auto-complete='off', placeholder='http://site.com')
-
         el-row(:span="23")
-          el-col( :span="11")
-            el-form-item(label='Channel')
-              el-select(type='year', placeholder='channel', v-model='addForm.channel_id')
-                el-option(v-for="che in channels", :key="che._id", :label="che.title", :value="che._id")
-          el-col( :span="11")
-            el-form-item(label='Language')
-              el-select(type='year', placeholder='language', v-model='addForm.language')
-                el-option(v-for="lang in langs", :key="lang.value", :label="lang.label", :value="lang.value")
-        el-form-item(label='Picture')
-          el-upload(class="avatar-uploader",label='Picture',
-            :action="upload_url",
-            :show-file-list="false",
-            :on-success="handlePictureSuccessAdd" ,
-            :before-upload="beforePictureUpload")
-            img( v-if="addForm.picture", :src="addForm.picture", class="avatar")
-            i( v-else class="el-icon-plus  avatar-uploader-icon")
 
-        el-form-item(label='Tags', props='tags')
-          viewtags(:dynamicTags='addForm.tags',  ref='addTagList')
+          el-col( :span="11")
+            el-form-item(label='Headline', prop='headline')
+              el-input(v-model='addForm.headline', auto-complete='off')
+            el-form-item(label='Subtitle', prop='subtitle')
+              el-input(v-model='addForm.subtitle', auto-complete='off')
+            el-form-item(label='Abstract', prop='abstract')
+              el-input(type="textarea" , v-model='addForm.abstract', auto-complete='off')
+
+            el-form-item(label='Source Name', prop='source_name')
+              el-input(v-model='addForm.source_name', auto-complete='off')
+            el-form-item(label='Source', prop='source')
+              el-input(v-model='addForm.source', auto-complete='off', placeholder='http://site.com')
+
+            el-row(:span="23")
+              el-col( :span="11")
+                el-form-item(label='Channel')
+                  el-select(type='year', placeholder='channel', v-model='addForm.channel_id')
+                    el-option(v-for="che in channels", :key="che._id", :label="che.title", :value="che._id")
+              el-col( :span="11")
+                el-form-item(label='Language')
+                  el-select(type='year', placeholder='language', v-model='addForm.language')
+                    el-option(v-for="lang in langs", :key="lang.value", :label="lang.label", :value="lang.value")
+            el-form-item(label='Picture')
+              el-upload(class="avatar-uploader",label='Picture',
+                :action="upload_url",
+                :show-file-list="false",
+                :on-success="handlePictureSuccessAdd" ,
+                :before-upload="beforePictureUpload")
+                img( v-if="addForm.picture", :src="addForm.picture", class="avatar")
+                i( v-else class="el-icon-plus  avatar-uploader-icon")
+
+            el-form-item(label='Tags', props='tags')
+              viewtags(:dynamicTags='addForm.tags',  ref='addTagList')
+            el-form-item(label='Publish at', prop='published_at')
+              el-date-picker(v-model='addForm.published_at',type="datetime",placeholder="If empty - live now")
+            el-col( :span="5")
+              el-form-item(label='Push', prop='push_on_publish')
+                el-checkbox( v-model='addForm.push_on_publish')
+            el-col( :span="5")
+              el-form-item(label='To Site', prop='site_on_publish')
+                el-checkbox( v-model='addForm.site_on_publish', disabled)
+            el-col( :span="5")
+              el-form-item(label='To FB', prop='fb_on_publish')
+                el-checkbox( v-model='addForm.fb_on_publish', disabled)
+          el-col( :span="7", :offset="2")
+            el-form-item(label='Full text', prop='full_text')
+              el-input(type="textarea" , v-model='addForm.full_text', auto-complete='off', rows=29)
+
       .dialog-footer(slot='footer')
         el-button(@click.native='addFormVisible = false') Cancel
         el-button(type='primary', @click.native='addSubmit', :loading='addLoading') Create
@@ -159,17 +194,40 @@
     full_text: '',
     source: '',
     source_name: '',
+    publish_at: '',
     tags: [],
+    push_on_publish: '',
+    site_on_publish: '',
+    fb_on_publish: '',
     iuu: image_upload_url2
   };
 
   export default {
-    props: ["che_id"],
+    props: ["che_id","pre"],
     components:
       {
         viewtags: dtags,
         comments: commentsList
       },
+    watch: {
+      '$route' (toto, from) {
+        //console.log("to from", toto, from);
+        if (toto.name == "Articles") {
+          this.pre = false
+          this.getArticles()
+        }
+        if (toto.name == "Pre Articles") {
+          this.pre = true
+          this.getArticles()
+        }
+
+//        if (this.$route.params.category) {
+//          this.loadArticles(category);
+//        } else {
+//          this.loadArticles();
+//        }
+      }
+    },
   data() {
       return {
         upload_url: image_upload_url2,
@@ -258,6 +316,7 @@
         if (this.che_id == undefined) {
           para2 = {
             page: this.page,
+            pre: this.pre,
             per_page: this.per_page_const,
             name: this.filters.name,
             token: this.$router.token
@@ -441,7 +500,8 @@
       }
     },
     mounted() {
-//      console.log("my-props=", this.che_id);
+      //console.log("Art my-props=", this.che_id, this.pre);
+
       if (this.che_id != null){
         this.per_page_const = 5;
       }

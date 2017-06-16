@@ -3,6 +3,8 @@ var routes;
 
 import Login from './views/Login.vue';
 
+import Forgot from './views/Forgot.vue';
+
 import NotFound from './views/404.vue';
 
 import Home from './views/Home.vue';
@@ -14,6 +16,8 @@ import UsersList from './views/nav1/UsersList.vue';
 import ChannelsList from './views/nav1/Channels.vue';
 
 import ArticlesList from './components/Articles.vue';
+
+import PreArticlesList from './components/Articles.vue';
 
 import CommentsList from './components/Comments.vue';
 
@@ -35,6 +39,11 @@ routes = [
   {
     path: '/login',
     component: Login,
+    name: '',
+    hidden: true
+  }, {
+    path: '/forgot',
+    component: Forgot,
     name: '',
     hidden: true
   }, {
@@ -64,7 +73,17 @@ routes = [
       }, {
         path: '/articles',
         component: ArticlesList,
-        name: 'Articles'
+        name: 'Articles',
+        props: {
+          pre: false
+        }
+      }, {
+        path: '/prearticles',
+        component: PreArticlesList,
+        name: 'Pre Articles',
+        props: {
+          pre: true
+        }
       }, {
         path: '/comments',
         component: CommentsList,
@@ -89,19 +108,6 @@ routes = [
         path: '/page5',
         component: Page5,
         name: 'page5'
-      }
-    ]
-  }, {
-    path: '/',
-    component: Home,
-    name: '',
-    iconCls: 'fa fa-address-card',
-    leaf: true,
-    children: [
-      {
-        path: '/page6',
-        component: Page6,
-        name: 'Page6'
       }
     ]
   }, {

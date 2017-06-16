@@ -29,12 +29,24 @@
       el-form(:model='editForm', label-width='80px', :rules='editFormRules', ref='editForm')
         el-form-item(label='Name', prop='user_name')
           el-input(v-model='editForm.user_name', auto-complete='off')
+        el-form-item(label='Email', prop='email')
+          el-input(v-model='editForm.email', auto-complete='off')
         el-form-item(label='Gender')
           el-radio-group(v-model='editForm.sex')
             el-radio.radio(:label='1' value=1) men
             el-radio.radio(:label='0' value=0) women
         el-form-item(label='Birth Year')
-          el-date-picker(type='year', placeholder='year', v-model='editForm.birth_year')
+          el-date-picker(type='year', placeholder='birth year', v-model='editForm.birth_year')
+        el-form-item(label='Avatar')
+          el-upload(class="avatar-uploader",label='Avatar',
+          :action="upload_url",
+          :show-file-list="false",
+          :on-success="handleAvatarSuccess" ,
+          :before-upload="beforeAvatarUpload")
+            img( v-if="editForm.avatar", :src="editForm.avatar", class="avatar")
+            i( v-else class="el-icon-plus  avatar-uploader-icon")
+
+
       .dialog-footer(slot='footer')
         el-button(@click.native='editFormVisible = false') Cancel
         el-button(type='primary', @click.native='editSubmit', :loading='editLoading') Submit
@@ -58,11 +70,12 @@
 <script>
 	import util from '../../common/js/util'
 	//import NProgress from 'nprogress'
-	import { getUserListPage, removeUser, batchRemoveUser, editUser, addUser } from '../../api/api';
+	import { getUserListPage, removeUser, batchRemoveUser, editUser, addUser,image_upload_url2 } from '../../api/api';
 
 	export default {
 		data() {
 			return {
+        upload_url: image_upload_url2,
 				filters: {
 					name: ''
 				},
@@ -81,12 +94,13 @@
 				},
 				// Edit
 				editForm: {
-					id: 0,
-					name: '',
+
+					user_name: '',
+					birth_year: '',
 					sex: -1,
-					age: 0,
-					birth: '',
-					addr: ''
+					email: '',
+          admin: false,
+					avatar: ''
 				},
 
 				addFormVisible: false,
@@ -107,7 +121,18 @@
 			}
 		},
 		methods: {
-			//Gender display conversion
+      handleAvatarSuccess(file, fileList) {
+//        console.log(' Success pic!!');
+        this.editForm.avatar = api_domen + file.result
+      },
+      handleAvatarSuccessAdd(file, fileList) {
+//        console.log(' Success pic!!');
+        this.addForm.avatar = api_domen + file.result
+      },
+      beforeAvatarUpload(file) {
+      },
+
+      //Gender display conversion
 			formatSex: function (row, column) {
 				return row.sex == 1 ? 'man' : row.sex == 0 ? 'women' : 'unknown';
 			},
@@ -123,10 +148,10 @@
 				};
 				this.listLoading = true;
 				//NProgress.start();
-				console.log("GGG getUsers...before req");
+				//console.log("GGG getUsers...before req");
 				getUserListPage(para).then((res) => {
 
-					console.log("GGG getUsers...,,,", res.data.result.length, res.data.result);
+					//console.log("GGG getUsers...,,,", res.data.result.length, res.data.result);
 					this.total = res.data.result.length;
 					this.users = res.data.result;
 					this.listLoading = false;
@@ -140,11 +165,11 @@
 				}).then(() => {
 					this.listLoading = true;
 					//NProgress.start();
-				    console.log("in DELETE:", this.$router.token, row._id, row);
+          //console.log("in DELETE:", this.$router.token, row._id, row);
 					let para = { _id: row._id};
 					removeUser(para, this.$router.token ).then((res) => {
 						let meta = res.data.meta;
-						console.log("meta and res",meta, res)
+						//console.log("meta and res",meta, res)
 				        if (meta.code != 200) {
 							this.listLoading = false;
 							this.$message({
