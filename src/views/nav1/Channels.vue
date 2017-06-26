@@ -3,12 +3,12 @@
     el-col.toolbar(:span='24', style='padding-bottom: 0px;')
       el-form(:inline='true', :model='filters')
         el-form-item
-          el-input(v-model='filters.name', placeholder='channel name')
+          el-input(v-model='filters.name', placeholder='topic name')
         el-form-item
           el-button(type='primary', v-on:click='getChannels') Search
         el-form-item
-          el-button(type='primary', @click='handleAdd') Add new Channel
-    el-table(:data='channels', highlight-current-row='', v-loading='listLoading', @selection-change='selsChange', style='width: 100%;')
+          el-button(type='primary', @click='handleAdd') Add new Topic
+    el-table(:data='channels', highlight-current-row='',:default-sort='desort', v-loading='listLoading', @selection-change='selsChange', style='width: 100%;')
       el-table-column(type='expand', width='55')
         template( scope="props")
           p
@@ -29,12 +29,22 @@
               filter-placement="bottom-end")
         template( scope="scope")
           el-tag(:type="scope.row.language === 'de' ? 'primary' : 'success' ", close-transition ) {{scope.row.language}}
+      el-table-column(prop='position', label='Pos', width='100', sortable='')
       el-table-column(prop='updated_at', label='Updated at', width='200', sortable='', :formatter='formatDate')
       el-table-column(prop='created_at', label='Created at', width='200', sortable='', :formatter='formatDate')
-      el-table-column(label='Edit', width='150')
+      el-table-column(label='Edit', width='250')
         template(scope='scope')
-          el-button(size='small', @click='handleEdit(scope.$index, scope.row)') Edit
-          el-button(type='danger', size='small', @click='handleDel(scope.$index, scope.row)') delete
+          el-row(:span="24",align="middle", type="flex")
+
+            el-col( :span="3")
+              el-row()
+                el-button(size='mini', @click='handleUp(scope.$index, scope.row)') ⇑
+              el-row()
+                el-button(size='mini', @click='handleDown(scope.$index, scope.row)') ⇓
+            el-col( :span="20")
+              el-row(align="bottom")
+                el-button(size='small', @click='handleEdit(scope.$index, scope.row)') Edit
+                el-button(type='danger', size='small', @click='handleDel(scope.$index, scope.row)') delete
     el-col.toolbar(:span='24')
       el-pagination(layout='prev, pager, next', @current-change='handleCurrentChange', :page-size='per_page_const', :total='total', style='float:right;')
     // Edit
@@ -53,16 +63,20 @@
           :show-file-list="false",
           :on-success="handlePictureSuccess" ,
           :before-upload="beforePictureUpload")
-            img( v-if="editForm.picture", :src="editForm.picture", class="avatar")
-            i( v-else class="el-icon-plus avatar-uploader-icon")
+            span.ggg
+              img( v-if="editForm.picture", :src="editForm.picture", class="avatar")
+              i( v-else class="el-icon-plus avatar-uploader-icon")
         el-form-item(label='Wide Picture')
           el-upload(class="avatar-uploader",label='Wide Picture',
           :action="upload_url",
           :show-file-list="false",
           :on-success="handleWPictureSuccess" ,
           :before-upload="beforePictureUpload")
-            img( v-if="editForm.wide_picture", :src="editForm.wide_picture", class="avatar")
-            i( v-else class="el-icon-plus avatar-uploader-icon")
+            span.ggg
+              img( v-if="editForm.wide_picture", :src="editForm.wide_picture", class="avatar")
+              i( v-else class="el-icon-plus avatar-uploader-icon")
+        el-form-item(label='Position', prop='position')
+          el-inputNumber(type="textarea" , v-model='editForm.position', auto-complete='off')
 
       .dialog-footer(slot='footer')
         el-button(@click.native='editFormVisible = false') Cancel
@@ -84,16 +98,21 @@
           :show-file-list="false",
           :on-success="handlePictureSuccessAdd" ,
           :before-upload="beforePictureUpload")
-            img( v-if="addForm.picture", :src="addForm.picture", class="avatar")
-            i( v-else class="el-icon-plus avatar-uploader-icon")
+            span.ggg
+              img( v-if="addForm.picture", :src="addForm.picture", class="avatar")
+              i( v-else class="el-icon-plus avatar-uploader-icon")
         el-form-item(label='Wide Picture')
           el-upload(class="avatar-uploader",label='Wide Picture',
           :action="upload_url",
           :show-file-list="false",
           :on-success="handleWPictureSuccessAdd" ,
           :before-upload="beforePictureUpload")
-            img( v-if="addForm.wide_picture", :src="addForm.wide_picture", class="avatar")
-            i( v-else class="el-icon-plus avatar-uploader-icon")
+            span.ggg
+              img( v-if="addForm.wide_picture", :src="addForm.wide_picture", class="avatar")
+              i( v-else class="el-icon-plus avatar-uploader-icon")
+        el-form-item(label='Position', prop='position')
+          el-inputNumber(type="textarea" , v-model='addForm.position', auto-complete='off')
+
       .dialog-footer(slot='footer')
         el-button(@click.native='addFormVisible = false') Cancel
         el-button(type='primary', @click.native='addSubmit', :loading='addLoading') Create
@@ -113,6 +132,9 @@
     data() {
       return {
         upload_url: image_upload_url2,
+        desort: {
+          prop: "position" ,
+          order: "ascending" },
         langs:  [
           {
           value: 'de',
@@ -149,6 +171,7 @@
           picture: '',
           wide_picture: '',
           language: '',
+          position: '',
           iuu: image_upload_url2,
         },
 
@@ -165,6 +188,7 @@
           description: '',
           picture: '',
           wide_picture: '',
+          position: '',
           language: '',
           iuu: image_upload_url2,
 
@@ -267,6 +291,31 @@
         this.editFormVisible = true;
         this.editForm = Object.assign({}, row);
       },
+      // Move Up
+      handleUp: function (index, row) {
+        console.log("row=", row)
+        if (index == 0) {return}
+        this.editLoading = true;
+        let para = Object.assign({}, row);
+        para.position -= 1;
+        editChannel(para, this.$router.token).then((res) => {
+          this.editLoading = false;
+          this.getChannels();
+        });
+
+      },
+      // Move Down
+      handleDown: function (index, row) {
+        if (index == 0) {return}
+        this.editLoading = true;
+        let para = Object.assign({}, row);
+        para.position += 1;
+        editChannel(para, this.$router.token).then((res) => {
+          this.editLoading = false;
+          this.getChannels();
+        });
+
+      },
       // Create
       handleAdd: function () {
         this.addFormVisible = true;
@@ -276,6 +325,7 @@
           picture: '',
           wide_picture: '',
           language: '',
+          position: '',
           wide_picture: ''
         };
       },
@@ -383,5 +433,21 @@
   height: 178px;
   display: block;
 }
-
+.ggg {
+  display: inline-block;
+  width: 164px;
+  height: 164px;
+  border: 1px solid #888;
+  position: relative;
+}
+.ggg img {
+  max-width:164px;
+  max-height:164px;
+  width:auto;
+  height:auto;
+  border: 0;
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  margin: auto;
+}
 </style>

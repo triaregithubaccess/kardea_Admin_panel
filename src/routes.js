@@ -21,6 +21,8 @@ import PreArticlesList from './components/Articles.vue';
 
 import CommentsList from './components/Comments.vue';
 
+import Dashboard from './components/Dashboard.vue';
+
 import SmallTables from './components/SmallTables.vue';
 
 import Form from './views/nav1/Form.vue';
@@ -54,6 +56,19 @@ routes = [
   }, {
     path: '/',
     component: Home,
+    hidden: true,
+    name: 'Dashboard',
+    iconCls: 'el-icon-message',
+    children: [
+      {
+        path: '/dashboard',
+        component: Dashboard,
+        name: 'Dashboard'
+      }
+    ]
+  }, {
+    path: '/',
+    component: Home,
     name: 'Main',
     iconCls: 'el-icon-message',
     children: [
@@ -69,7 +84,7 @@ routes = [
       }, {
         path: '/channels',
         component: ChannelsList,
-        name: 'Channels'
+        name: 'Topics'
       }, {
         path: '/articles',
         component: ArticlesList,
@@ -92,34 +107,6 @@ routes = [
         path: '/smalls',
         component: SmallTables,
         name: 'Small Tables'
-      }
-    ]
-  }, {
-    path: '/',
-    component: Home,
-    name: 'Analitics',
-    iconCls: 'fa fa-id-card-o',
-    children: [
-      {
-        path: '/page4',
-        component: Page4,
-        name: 'page4'
-      }, {
-        path: '/page5',
-        component: Page5,
-        name: 'page5'
-      }
-    ]
-  }, {
-    path: '/',
-    component: Home,
-    name: 'Charts',
-    iconCls: 'fa fa-bar-chart',
-    children: [
-      {
-        path: '/echarts',
-        component: echarts,
-        name: 'echarts'
       }
     ]
   }, {
