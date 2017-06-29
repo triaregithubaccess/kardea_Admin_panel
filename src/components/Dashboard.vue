@@ -18,6 +18,9 @@
           .text.item Bookmarks {{total.bookmarks}}
           .text.item Likes {{total.likes}}
           .text.item Read Articles {{total.read_news}}
+    el-row(:span="24")
+      el-col( :span="11")
+        daly()
 
 </template>
 
@@ -25,12 +28,14 @@
   import util from '../common/js/util'
   import _ from 'lodash'
   import echarts from '../views/charts/echarts.vue'
+  import daly from '../components/Daly.vue'
   //import NProgress from 'nprogress'
   import { getDashboardInfo } from '../api/api';
   export default {
     components:
       {
-        echarts
+        echarts,
+        daly
       },
     data() {
       return {
