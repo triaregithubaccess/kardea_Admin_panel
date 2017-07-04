@@ -1,7 +1,7 @@
 <template>
     <section class="chart-container" float="right">
         <el-row>
-            <el-col :span="22" sty-le="width:200px; height:100px;">
+            <el-col :span="22" sty-le="width:200px; height:120px;">
 
                 <div id="chartLine" style="width:100%; height:100%;"></div>
 
@@ -15,6 +15,13 @@
     import echarts from 'echarts'
 
     export default {
+        props: ['gdata', 'gname'],
+//        props: {
+//          gdata: {
+//            default() {  return []; }
+//          }
+//        },
+
         data() {
             return {
                 chartColumn: null,
@@ -22,6 +29,20 @@
                 chartLine: null,
                 chartPie: null
             }
+        },
+        watch: {
+          'gdata': function () {
+            this.chartLine.setOption({
+              series: [
+                {
+                  name: this.gname,
+                  type: 'line',
+                  stack: 'sta1',
+                  data: this.gdata,
+                }
+              ]
+            })
+          }
         },
         mounted: function () {
             var _this = this;
@@ -93,22 +114,23 @@
 //                    text: 'Line Chart'
                 },
                 tooltip: {
-                    trigger: 'axis'
+                    trigger: 'axis',
+                  position: [-20, 10]
                 },
                 legend: {
                     data: ['one', 'two', 'three']
                 },
                 grid: {
-                    top: 0,
+                    top: 5,
 //                    left: '3%',
 //                    right: '4%',
 //                    bottom: '3%',
-                    containLabel: true
+                    containLabel: false
                 },
                 xAxis: {
                     type: 'category',
                     boundaryGap: false,
-                    data: ['10d', '7d', '6d', '4d', '2d', 'today']
+                    data: ['1y', '6m', '1m', '1w', '2d', 'today']
                 },
                 yAxis: {
                   show: false,
@@ -119,7 +141,7 @@
                         name: 'name1',
                         type: 'line',
                         stack: 'sta1',
-                        data: [120, 132, 101, 134, 90, 230, 210]
+                        data: _this.gdata, //[120, 132, 101, 134, 90, 230, 210]
                     }
                 ]
             });
@@ -225,6 +247,6 @@
     }*/
 
     .el-col {
-        padding: 0px -50px;
+        padding: 0px 0px;
     }
 </style>

@@ -50,8 +50,8 @@ routes = [
     {
         path: '/'
         component: Home
-        name: 'Main'
-        iconCls: 'el-icon-message'
+        name: 'Tables'
+        iconCls: 'el-icon-menu'
         children: [
             { path: '/main', component: Main, name: 'Main-1', hidden: true }
             { path: '/users', component: UsersList, name: 'Users' }

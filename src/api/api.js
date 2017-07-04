@@ -35,6 +35,8 @@ export const removeComment = (params, token) => {return axios.delete(`${base}/co
 export const getAllTags = (params, token) => {return axios.get(`${base}/tags?select=name&as_array=true&sort=name&token=${token}`, { params: params }); };
 
 export const getDashboardInfo = (params, token) => {return axios.get(`${base}/dashboard?token=${token}`, { params: params }); };
+export const getDashboardGraphInfo = (params, token) => {return axios.get(`${base}/dashboard/graph/${params.who}?token=${token}`, { params: params }); };
+export const getDashboardDalyInfo = (params, token) => {return axios.get(`${base}/dashboard/daly?token=${token}`, { params: params }); };
 
 export const getBWListPage = params => {return axios.get(`${base}/badwords`, { params: params }); };
 export const editBW = (params, token) => {return axios.post(`${base}/badwords/${params._id}?token=${token}`, params); };

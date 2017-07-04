@@ -69,8 +69,8 @@ routes = [
   }, {
     path: '/',
     component: Home,
-    name: 'Main',
-    iconCls: 'el-icon-message',
+    name: 'Tables',
+    iconCls: 'el-icon-menu',
     children: [
       {
         path: '/main',
