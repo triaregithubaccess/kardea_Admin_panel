@@ -7,9 +7,9 @@
           div( slot="header" class="clearfix")
             el-row(:span="24" )
               el-col( :span="7")
-                span( ) Total Info {{kind}}
+                span( style="line-hei-ght: 6px;") Total Info {{kind}}
               el-col( :span="15" , style="height:45px;" )
-                echarts(:gdata="g_data", :gname="kind", gtype="line")
+                echarts(:gdata="g_data", :gname="kind")
           el-row(:span="24")
             el-col( :span="11")
               .text.item(@click="hc('users')") Users
@@ -29,35 +29,19 @@
                 span.mag {{total.likes}}
               .text.item(@click="hc('read')") Read Articles
                 span.mag {{total.read_news}}
-      el-col( :span="10")
-        el-card( class="box-card")
-
-          el-col(  )
-            echarts.pie_ch.hhhh(:pdata="p_data", gtype="pie")
-          el-row()
-            el-col()
-              label() Inactive - who don't use app last
-                input.days(v-model="ina", @change="handle_inactive()")
-                | days
-              .oo
-              label() New user - who sign in app last
-                input.days(v-model="new_u", @change="handle_inactive()")
-                | days
-          el-row()
-
     el-row( )
       el-col( :span="9")
         el-card( class="box-card")
-          el-row(:span="24" )
-            el-col( :span="10", :offset="5")
+          el-row( )
+            el-col( :span="12", :offset="6")
               el-date-picker( v-model="daly_period" ,
                 type="daterange" ,
                 align="right",
                 placeholder="Pick a range",
                 :picker-options="daly_picker_options")
-            el-col(:span="24" )
+            el-col( )
               daly(:d_data="daly_data")
-    el-row()
+          el-row( )
 
 
 </template>
@@ -69,7 +53,7 @@
   import echarts from '../views/charts/echarts.vue'
   import daly from '../components/Daly.vue'
   //import NProgress from 'nprogress'
-  import { getDashboardInfo, getDashboardGraphInfo, getDashboardDalyInfo, getDashboardPieInfo } from '../api/api';
+  import { getDashboardInfo, getDashboardGraphInfo, getDashboardDalyInfo } from '../api/api';
   export default {
     components:
       {
@@ -87,9 +71,6 @@
     data() {
       return {
         g_data: [] ,
-        p_data: [] ,
-        ina: 7,
-        new_u:7,
         daly_data: [] ,
         kind: 'users',
         daly_period:{},
@@ -130,22 +111,10 @@
                 start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
                 picker.$emit('pick', [start, end]);
               }
-            }, {
-              text: 'From Start',
-              onClick(picker) {
-                const end = new Date();
-                const start = new Date('2017-04-01');
-                //start.setTime(start.getTime() - 3600 * 1000 * 24 * 2222);
-                picker.$emit('pick', [start, end]);
-              }
             }]   }
       }
     },
     methods: {
-      handle_inactive: function () {
-        console.log('upd inactive')
-        this.getPieData();
-      },
       hc : function (x) {
         console.log("x=",x)
         this.kind = x
@@ -165,13 +134,6 @@
 
         }).catch((err) => {console.log("in catch get Dashboard Data", err);} );
       },
-      getPieData: function() {
-        getDashboardPieInfo({not_active_days: this.ina, new_user_days: this.new_u}, this.$router.token).then((res) => {
-          console.log("for Graph=", res, res.data.result)
-          this.p_data = res.data.result;
-
-        }).catch((err) => {console.log("in catch get Dashboard Pie Data", err);} );
-      },
       getDalyData: function() {
         getDashboardDalyInfo({start: this.daly_begin, stop: this.daly_end}, this.$router.token).then((res) => {
           console.log("for daly=",  res, res.data.result)
@@ -184,7 +146,6 @@
     mounted() {
       this.getData();
       this.getGrData();
-      this.getPieData();
       this.getDalyData();
     }
   }
@@ -214,11 +175,8 @@
     margin: 0 0 0 7px;
     color: #087421 ;
   }
-  .days{
-    width:20px;
-    text-align:center;
-    margin: 3px;
-  }
-
+  /*.box-card {*/
+    /*width: 480px;*/
+  /*}*/
 
 </style>

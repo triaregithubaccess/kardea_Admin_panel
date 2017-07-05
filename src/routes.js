@@ -23,6 +23,8 @@ import CommentsList from './components/Comments.vue';
 
 import Dashboard from './components/Dashboard.vue';
 
+import Analytics from './components/Analytics.vue';
+
 import SmallTables from './components/SmallTables.vue';
 
 import Form from './views/nav1/Form.vue';
@@ -64,6 +66,19 @@ routes = [
         path: '/dashboard',
         component: Dashboard,
         name: 'Dashboard'
+      }
+    ]
+  }, {
+    path: '/',
+    component: Home,
+    hidden: true,
+    name: 'Analytics',
+    iconCls: 'el-icon-message',
+    children: [
+      {
+        path: '/analytics',
+        component: Analytics,
+        name: 'Analytics'
       }
     ]
   }, {

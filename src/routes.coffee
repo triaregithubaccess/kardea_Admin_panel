@@ -9,6 +9,7 @@ import ArticlesList from './components/Articles.vue'
 import PreArticlesList from './components/Articles.vue'
 import CommentsList from './components/Comments.vue'
 import Dashboard from './components/Dashboard.vue'
+import Analytics from './components/Analytics.vue'
 import SmallTables from './components/SmallTables.vue'
 import Form from './views/nav1/Form.vue'
 import user from './views/nav1/user.vue'
@@ -45,6 +46,16 @@ routes = [
         iconCls: 'el-icon-message'
         children: [
           { path: '/dashboard', component: Dashboard, name: 'Dashboard'}
+          ]
+    }
+    {
+        path: '/'
+        component: Home
+        hidden: true
+        name: 'Analytics'
+        iconCls: 'el-icon-message'
+        children: [
+          { path: '/analytics', component: Analytics, name: 'Analytics'}
           ]
     }
     {

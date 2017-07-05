@@ -83,29 +83,28 @@
   .sl {
     height: 10px;
     margin: 2px;
+    margin-top: 0;
     text-align: right;
     font-size: 10px;
   }
   .he {
     height: 10px;
-    margin: 2px;
+    margin: 1px;
     text-align: center;
     font-size: 10px;
   }
   .slc {
     height: 10px;
-    background: #d3dce6;
-    margin: 2px;
+    background: #f0f0f5;
+    margin: 1px;
     text-align: center;
   }
   .color_m0 {
 
   }
-  .color_m1 {
-    background: #ffb457;
-  }
-  .color_m2 {
-    background: #ff653a;
-  }
+  .color_m1 { background: #d9f2e6; }
+  .color_m2 { background: #8cd9b3; }
+  .color_m3 { background: #40bf80; }
+  .color_m4 { background: #339966; }
 
 </style>

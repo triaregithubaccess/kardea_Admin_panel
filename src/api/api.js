@@ -36,6 +36,7 @@ export const getAllTags = (params, token) => {return axios.get(`${base}/tags?sel
 
 export const getDashboardInfo = (params, token) => {return axios.get(`${base}/dashboard?token=${token}`, { params: params }); };
 export const getDashboardGraphInfo = (params, token) => {return axios.get(`${base}/dashboard/graph/${params.who}?token=${token}`, { params: params }); };
+export const getDashboardPieInfo = (params, token) => {return axios.get(`${base}/dashboard/user_activity?token=${token}`, { params: params }); };
 export const getDashboardDalyInfo = (params, token) => {return axios.get(`${base}/dashboard/daly?token=${token}`, { params: params }); };
 
 export const getBWListPage = params => {return axios.get(`${base}/badwords`, { params: params }); };
