@@ -12,15 +12,23 @@
                 echarts(:gdata="g_data", :gname="kind")
           el-row(:span="24")
             el-col( :span="11")
-              .text.item(@click="hc('users')") Users {{total.users}}
-              .text.item(@click="hc('users_push')") Users allowed pushes {{total.allowed_pushes}}
-              .text.item(@click="hc('topics')") Topics {{total.channels}}
-              .text.item(@click="hc('news')") Articles {{total.articles}}
+              .text.item(@click="hc('users')") Users
+                span.mag {{total.users}}
+              .text.item(@click="hc('users_push')") Users allowed pushes
+                span.mag {{total.allowed_pushes}}
+              .text.item(@click="hc('topics')") Topics
+                span.mag {{total.channels}}
+              .text.item(@click="hc('news')") Articles
+                span.mag {{total.articles}}
             el-col( :span="11")
-              .text.item(@click="hc('comments')") Comments {{total.comments}}
-              .text.item(@click="hc('bookmarks')") Bookmarks {{total.bookmarks}}
-              .text.item(@click="hc('likes')") Likes {{total.likes}}
-              .text.item(@click="hc('read')") Read Articles {{total.read_news}}
+              .text.item(@click="hc('comments')") Comments
+                span.mag {{total.comments}}
+              .text.item(@click="hc('bookmarks')") Bookmarks
+                span.mag {{total.bookmarks}}
+              .text.item(@click="hc('likes')") Likes
+                span.mag {{total.likes}}
+              .text.item(@click="hc('read')") Read Articles
+                span.mag {{total.read_news}}
     el-row( )
       el-col( :span="9")
         el-card( class="box-card")
@@ -162,6 +170,11 @@
     clear: both
   }
 
+  .mag{
+    display: inline-block;
+    margin: 0 0 0 7px;
+    color: #087421 ;
+  }
   /*.box-card {*/
     /*width: 480px;*/
   /*}*/
