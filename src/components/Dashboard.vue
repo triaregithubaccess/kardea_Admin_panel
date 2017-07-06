@@ -8,7 +8,7 @@
             el-row(:span="24" )
               el-col( :span="7")
                 span( ) Total Info {{kind}}
-              el-col( :span="15" , style="height:45px;" )
+              el-col( :span="15" , style="height:115px;" )
                 echarts(:gdata="g_data", :gname="kind", gtype="line")
           el-row(:span="24")
             el-col( :span="11")
@@ -29,11 +29,13 @@
                 span.mag {{total.likes}}
               .text.item(@click="hc('read')") Read Articles
                 span.mag {{total.read_news}}
+          el-row(:span="24")
+          el-row(:span="24")
       el-col( :span="10")
         el-card( class="box-card")
 
           el-col(  )
-            echarts.pie_ch.hhhh(:pdata="p_data", gtype="pie")
+            echarts(:pdata="p_data", gtype="pie")
           el-row()
             el-col()
               label() Inactive - who don't use app last

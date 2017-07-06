@@ -56,7 +56,7 @@
               },
               tooltip: {
                 trigger: 'axis',
-                position: [-20, 10]
+                position: [-20, 40]
               },
               legend: {
                 data: ['one', 'two', 'three']
@@ -146,6 +146,9 @@
     }
     .col-pie {
       height:207px;
+    }
+    .col-line {
+      height:150px;
     }
 
     /*.chart div {

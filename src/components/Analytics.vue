@@ -4,44 +4,10 @@
     el-row( )
       el-col( :span="9")
         el-card( class="box-card")
-          div( slot="header" class="clearfix")
-            el-row(:span="24" )
-              el-col( :span="7")
-                span( style="line-hei-ght: 6px;") Total Info {{kind}}
-              el-col( :span="15" , style="height:45px;" )
-                echarts(:gdata="g_data", :gname="kind")
-          el-row(:span="24")
-            el-col( :span="11")
-              .text.item(@click="hc('users')") Users
-                span.mag {{total.users}}
-              .text.item(@click="hc('users_push')") Users allowed pushes
-                span.mag {{total.allowed_pushes}}
-              .text.item(@click="hc('topics')") Topics
-                span.mag {{total.channels}}
-              .text.item(@click="hc('news')") Articles
-                span.mag {{total.articles}}
-            el-col( :span="11")
-              .text.item(@click="hc('comments')") Comments
-                span.mag {{total.comments}}
-              .text.item(@click="hc('bookmarks')") Bookmarks
-                span.mag {{total.bookmarks}}
-              .text.item(@click="hc('likes')") Likes
-                span.mag {{total.likes}}
-              .text.item(@click="hc('read')") Read Articles
-                span.mag {{total.read_news}}
+
     el-row( )
       el-col( :span="9")
-        el-card( class="box-card")
-          el-row( )
-            el-col( :span="12", :offset="6")
-              el-date-picker( v-model="daly_period" ,
-                type="daterange" ,
-                align="right",
-                placeholder="Pick a range",
-                :picker-options="daly_picker_options")
-            el-col( )
-              daly(:d_data="daly_data")
-          el-row( )
+
 
 
 </template>
@@ -51,22 +17,21 @@
   import _ from 'lodash'
   import Vue from 'vue'
   import echarts from '../views/charts/echarts.vue'
-  import daly from '../components/Daly.vue'
+
   //import NProgress from 'nprogress'
   import { getDashboardInfo, getDashboardGraphInfo, getDashboardDalyInfo } from '../api/api';
   export default {
     components:
       {
-        echarts,
-        daly
+        echarts
       },
     watch: {
-      'daly_period': function () {
-        console.log("watch daly period", this.daly_period[0])
-        this.daly_begin = this.daly_period[0]
-        this.daly_end = this.daly_period[1]
-        this.getDalyData();
-      }
+//      'daly_period': function () {
+//        console.log("watch daly period", this.daly_period[0])
+//        this.daly_begin = this.daly_period[0]
+//        this.daly_end = this.daly_period[1]
+//        this.getDalyData();
+//      }
     },
     data() {
       return {
@@ -145,8 +110,7 @@
     },
     mounted() {
       this.getData();
-      this.getGrData();
-      this.getDalyData();
+
     }
   }
 
