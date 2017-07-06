@@ -71,7 +71,7 @@
               xAxis: {
                 type: 'category',
                 boundaryGap: false,
-                data: ['1y', '6m', '1m', '1w', '2d', 'today']
+                data: ['6m', '3m', '1m', '1w', '3d', 'today']
               },
               yAxis: {
                 show: false,
@@ -79,7 +79,7 @@
               },
               series: [
                 {
-                  name: 'name1',
+                  name: 'users',
                   type: 'line',
                   stack: 'sta1',
                   data: _this.gdata,

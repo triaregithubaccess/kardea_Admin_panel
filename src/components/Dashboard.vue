@@ -18,6 +18,7 @@
                 span.mag {{total.allowed_pushes}}
               .text.item(@click="hc('topics')") Topics
                 span.mag {{total.channels}}
+              .span
               .text.item(@click="hc('news')") Articles
                 span.mag {{total.articles}}
             el-col( :span="11")
@@ -25,8 +26,10 @@
                 span.mag {{total.comments}}
               .text.item(@click="hc('bookmarks')") Bookmarks
                 span.mag {{total.bookmarks}}
+              .span
               .text.item(@click="hc('likes')") Likes
                 span.mag {{total.likes}}
+              .span
               .text.item(@click="hc('read')") Read Articles
                 span.mag {{total.read_news}}
           el-row(:span="24")
@@ -38,11 +41,11 @@
             echarts(:pdata="p_data", gtype="pie")
           el-row()
             el-col()
-              label() Inactive - who don't use app last
+              label() Inactive - users, that didn't use app for last
                 input.days(v-model="ina", @change="handle_inactive()")
                 | days
               .oo
-              label() New user - who sign in app last
+              label() New - users, that have been registered for last
                 input.days(v-model="new_u", @change="handle_inactive()")
                 | days
           el-row()
@@ -257,7 +260,9 @@
 
 <style scoped>
   .text {
+    display: inline-block;
     font-size: 14px;
+    cursor: pointer;
   }
 
   .item {
