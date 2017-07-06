@@ -38,6 +38,7 @@ export const getDashboardInfo = (params, token) => {return axios.get(`${base}/da
 export const getDashboardGraphInfo = (params, token) => {return axios.get(`${base}/dashboard/graph/${params.who}?token=${token}`, { params: params }); };
 export const getDashboardPieInfo = (params, token) => {return axios.get(`${base}/dashboard/user_activity?token=${token}`, { params: params }); };
 export const getDashboardDalyInfo = (params, token) => {return axios.get(`${base}/dashboard/daly?token=${token}`, { params: params }); };
+export const getDashboardDemographInfo = (params, token) => {return axios.get(`${base}/dashboard/demograph?token=${token}`, { params: params }); };
 
 export const getBWListPage = params => {return axios.get(`${base}/badwords`, { params: params }); };
 export const editBW = (params, token) => {return axios.post(`${base}/badwords/${params._id}?token=${token}`, params); };

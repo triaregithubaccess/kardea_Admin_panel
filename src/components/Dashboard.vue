@@ -48,17 +48,39 @@
           el-row()
 
     el-row( )
-      el-col( :span="9")
+      el-col( :span="19")
         el-card( class="box-card")
-          el-row(:span="24" )
-            el-col( :span="10", :offset="5")
+
+          el-row
+            el-col( :span="10", :offset="8")
               el-date-picker( v-model="daly_period" ,
                 type="daterange" ,
                 align="right",
                 placeholder="Pick a range",
                 :picker-options="daly_picker_options")
-            el-col(:span="24" )
-              daly(:d_data="daly_data")
+          el-row(:span="18")
+            el-col( :span="9", :offset="1")
+              daly(:d_data="daly_data", :d_max="daly_max")
+            el-col( :span="12", :offset="2")
+              el-row
+                el-col
+                  el-card.pad5( class="box-card")
+                    el-table(:data="os_data",border,style="width: 100%", :default-sort="def_sort", :highlight-current-row="false")
+                      el-table-column(label="OS name")
+                        template( scope="scope")
+                          el-icon( name="os_name")
+                          span( style="margin-left: 10px") {{ scope.row.os_name }}
+                      el-table-column(label="Users", prop="value", align="center")
+                      el-table-column(label="%", prop="proc", align="center", :formatter="proc_formatter")
+              el-row
+                el-col
+                  el-card.pad5( class="box-card")
+                    el-table(:data="countries_data",border,style="width: 100%", :default-sort="def_sort", :highlight-current-row="false")
+                      el-table-column(label="Country", prop="country")
+                      el-table-column(label="Users", prop="value", align="center")
+                      el-table-column(label="%", prop="proc", align="center", :formatter="proc_formatter")
+
+
     el-row()
 
 
@@ -71,7 +93,7 @@
   import echarts from '../views/charts/echarts.vue'
   import daly from '../components/Daly.vue'
   //import NProgress from 'nprogress'
-  import { getDashboardInfo, getDashboardGraphInfo, getDashboardDalyInfo, getDashboardPieInfo } from '../api/api';
+  import { getDashboardInfo, getDashboardGraphInfo, getDashboardDalyInfo, getDashboardPieInfo, getDashboardDemographInfo } from '../api/api';
   export default {
     components:
       {
@@ -84,15 +106,38 @@
         this.daly_begin = this.daly_period[0]
         this.daly_end = this.daly_period[1]
         this.getDalyData();
+        this.getDemoGraphData();
       }
     },
     data() {
       return {
         g_data: [] ,
         p_data: [] ,
+        def_sort: {prop:"proc", order: "descending"},
+        countries_data:[
+          {
+            "country": "UKRAINE",
+            "proc": 83.33333333333333
+          },
+          {
+            "country": "GERMANY",
+            "proc": 16.666666666666668
+          }
+        ],
+        os_data: [
+        {
+          "os_name": "Android",
+          "proc": 50
+        },
+        {
+          "os_name": "iOS",
+          "proc": 50
+        }
+      ],
         ina: 7,
         new_u:7,
         daly_data: [] ,
+        daly_max: 0,
         kind: 'users',
         daly_period:{},
         daly_begin: new Date(0),
@@ -144,6 +189,13 @@
       }
     },
     methods: {
+      proc_formatter: function (row, col) {
+        var str = ""+row.proc+""
+        var i = str.indexOf('.')
+        if (i<0) {i = str.length}
+        str = str.substr(0,i+3)
+        return str
+      },
       handle_inactive: function () {
         console.log('upd inactive')
         this.getPieData();
@@ -177,9 +229,18 @@
       getDalyData: function() {
         getDashboardDalyInfo({start: this.daly_begin, stop: this.daly_end}, this.$router.token).then((res) => {
           console.log("for daly=",  res, res.data.result)
-          this.daly_data = res.data.result;
+          this.daly_data = res.data.result.data;
+          this.daly_max = res.data.result.max;
 
         }).catch((err) => {console.log("in catch get Dashboard Daly Data", err);} );
+      },
+      getDemoGraphData: function() {
+        getDashboardDemographInfo({start: this.daly_begin, stop: this.daly_end}, this.$router.token).then((res) => {
+          console.log("for daly=",  res, res.data.result)
+          this.countries_data = res.data.result.countries;
+          this.os_data = res.data.result.os_names;
+
+        }).catch((err) => {console.log("in catch get Dashboard Demograph Data", err);} );
       }
 
     },
@@ -188,6 +249,7 @@
       this.getGrData();
       this.getPieData();
       this.getDalyData();
+      this.getDemoGraphData();
     }
   }
 
@@ -221,6 +283,9 @@
     text-align:center;
     margin: 3px;
   }
+  .pad5{
 
+    margin-top: 10px;
+  }
 
 </style>

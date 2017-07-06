@@ -93,9 +93,9 @@
             this.chartLine.setOption({
 
                  color: [
-                   '#259567',
-                   '#e51333',
-                   '#ece42d',
+                   '#43A486',
+                   '#EE4A6B',
+                   '#F5A623',
                    '#91c7ae','#749f83',  '#ca8622', '#bda29a','#6e7074', '#546570', '#c4ccd3'],
 
                 title: {

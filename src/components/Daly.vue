@@ -21,6 +21,16 @@
               el-col.slc( :span="3" v-else v-bind:class="'color_m'+one_day")
                 span
 
+      el-row(:span="24", style=" margin-top: 10px;margin-left: 20px;")
+        el-col.slc.color_m4.legendd( :span="6", :offset="1")
+        el-col.slc.color_m3.legendd( :span="6" )
+        el-col.slc.color_m2.legendd( :span="6" )
+        el-col.slc.color_m1.legendd( :span="6" )
+      el-row(:span="24", style="margin-left: 20px;")
+        el-col.sll.legendd( :span="6", :offset="1") 0
+        el-col.sll.legendd( :span="6" )
+        el-col.sll.legendd( :span="6" )
+        el-col.sllr.legendd( :span="6" ) {{d_max}}
 
 
 </template>
@@ -36,7 +46,7 @@
       {
         echarts
       },
-    props: ['d_data'],
+    props: ['d_data','d_max'],
     data() {
       return {
         kind: '',
@@ -84,6 +94,8 @@
     height: 10px;
     margin: 2px;
     margin-top: 0;
+    margin-bottom: 2px;
+    margin-right: 6px;
     text-align: right;
     font-size: 10px;
   }
@@ -93,18 +105,33 @@
     text-align: center;
     font-size: 10px;
   }
+  .legendd{
+   width: 71px;
+  }
   .slc {
     height: 10px;
-    background: #f0f0f5;
+    background: #F0F0F5;
     margin: 1px;
     text-align: center;
   }
-  .color_m0 {
-
+  .sll {
+    height: 10px;
+    background: white;
+    margin: 1px;
+    text-align: left;
+    font-size: 10px;
   }
-  .color_m1 { background: #d9f2e6; }
-  .color_m2 { background: #8cd9b3; }
-  .color_m3 { background: #40bf80; }
-  .color_m4 { background: #339966; }
+  .sllr {
+    height: 10px;
+    background: white;
+    margin: 1px;
+    text-align: right;
+    font-size: 10px;
+  }
+
+  .color_m1 { background: #43A486; }
+  .color_m2 { background: #72BBA5; }
+  .color_m3 { background: #9FD1C1; }
+  .color_m4 { background: #D0E8E1; }
 
 </style>
