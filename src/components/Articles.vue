@@ -64,7 +64,7 @@
       el-pagination(layout='prev, pager, next', @current-change='handleCurrentChange', :page-size='per_page_const', :total='total', style='float:right;')
     // Edit
     el-dialog(title='Edit', v-model='editFormVisible', :close-on-click-modal='false', size="large")
-      el-form(:model='editForm', label-width='80px', :rules='editFormRules', ref='editForm')
+      el-form(:model='editForm', label-width='80px', :rules='formRules', ref='editForm')
         el-row(:span="23")
 
           el-col( :span="11")
@@ -80,14 +80,14 @@
               el-input(v-model='editForm.source', auto-complete='off', placeholder='http://site.com')
             el-row(:span="23")
               el-col( :span="11")
-                el-form-item(label='Topic')
+                el-form-item(label='Topic', prop='channel_id')
                   el-select(type='year', placeholder='topic', v-model='editForm.channel_id')
                     el-option(v-for="che in  channels", :key="che._id", :label="che.title", :value="che._id")
               el-col( :span="11")
-                el-form-item(label='Language')
+                el-form-item(label='Language', prop='language')
                   el-select(type='year', placeholder='language', v-model='editForm.language')
                     el-option(v-for="lang in langs", :key="lang.value", :label="lang.label", :value="lang.value")
-            el-form-item(label='Picture')
+            el-form-item(label='Picture', prop='picture')
               el-upload(class="avatar-uploader",label='Picture',
                 :action="upload_url",
                 :show-file-list="false",
@@ -113,14 +113,14 @@
 
           el-col( :span="7", :offset="2")
             el-form-item(label='Full text', prop='full_text')
-              el-input(type="textarea" , v-model='editForm.full_text', auto-complete='off', rows=29)
+              el-input(type="textarea" , v-model='editForm.full_text', auto-complete='off', :rows="29")
 
       .dialog-footer(slot='footer')
         el-button(@click.native='editFormVisible = false') Cancel
         el-button(type='primary', @click.native='editSubmit', :loading='editLoading') Submit
     // Create Interface
     el-dialog(title='New', v-model='addFormVisible', :close-on-click-modal='false', size="large")
-      el-form(:model='addForm', label-width='80px', :rules='addFormRules', ref='addForm')
+      el-form(:model='addForm', label-width='80px', :rules='formRules', ref='addForm')
         el-row(:span="23")
 
           el-col( :span="11")
@@ -138,14 +138,14 @@
 
             el-row(:span="23")
               el-col( :span="11")
-                el-form-item(label='Topic')
+                el-form-item(label='Topic', prop='channel_id')
                   el-select(type='year', placeholder='topic', v-model='addForm.channel_id')
                     el-option(v-for="che in channels", :key="che._id", :label="che.title", :value="che._id")
               el-col( :span="11")
-                el-form-item(label='Language')
+                el-form-item(label='Language', prop='language')
                   el-select(type='year', placeholder='language', v-model='addForm.language')
                     el-option(v-for="lang in langs", :key="lang.value", :label="lang.label", :value="lang.value")
-            el-form-item(label='Picture')
+            el-form-item(label='Picture', prop='picture')
               el-upload(class="avatar-uploader",label='Picture',
                 :action="upload_url",
                 :show-file-list="false",
@@ -163,13 +163,13 @@
                 el-checkbox( v-model='addForm.push_on_publish')
             el-col( :span="5")
               el-form-item(label='To Site', prop='site_on_publish')
-                el-checkbox( v-model='addForm.site_on_publish', disabled)
+                el-checkbox( v-model='addForm.site_on_publish')
             el-col( :span="5")
               el-form-item(label='To FB', prop='fb_on_publish')
                 el-checkbox( v-model='addForm.fb_on_publish', disabled)
           el-col( :span="7", :offset="2")
             el-form-item(label='Full text', prop='full_text')
-              el-input(type="textarea" , v-model='addForm.full_text', auto-complete='off', rows=29)
+              el-input(type="textarea" , v-model='addForm.full_text', auto-complete='off', :rows="29")
 
       .dialog-footer(slot='footer')
         el-button(@click.native='addFormVisible = false') Cancel
@@ -187,10 +187,11 @@
 
   let init_state = {
     headline: '',
+    subtitle: '',
     abstract: '',
     picture: '',
     channel_id: '',
-    language: '',
+    language: 'DE',
     full_text: '',
     source: '',
     source_name: '',
@@ -229,11 +230,19 @@
       }
     },
   data() {
+    var nonEmptyAndRequired = (rule, value, callback) => {
+      if (value.trim() === '' || value == undefined) {
+        callback(new Error('Empty not allowed!'));
+      } else {
+        callback();
+      }
+    };
+
       return {
         upload_url: image_upload_url2,
         sort_obj: null,
         //tmpcom: [{name: "total 48 comments"}],
-        tmpcom: [{name: 'ggg', cou: "33 comments"}],
+        tmpcom: [{name: 'ggg', cou: " comments"}],
         cur_news: '',
         langs:  [
           {
@@ -258,10 +267,15 @@
 
         editFormVisible: false,
         editLoading: false,
-        editFormRules: {
-          title: [
-            { required: true, message: 'Please type title', trigger: 'blur' }
-          ]
+
+        formRules: {
+          headline: [ { validator: nonEmptyAndRequired, message: 'Please input Headline', trigger: 'blur' } ] ,
+          subtitle: [ { validator: nonEmptyAndRequired, message: 'Please input Subtitle', trigger: 'blur' } ] ,
+          abstract: [ { validator: nonEmptyAndRequired, message: 'Please input Abstract', trigger: 'blur' } ] ,
+          full_text: [ { validator: nonEmptyAndRequired, message: 'Please input Text', trigger: 'blur' } ] ,
+          channel_id: [ { required: true, message: 'Please choose Topic', trigger: 'blur' } ] ,
+          language: [ { required: true, message: 'Please input Language', trigger: 'blur' } ],
+          picture: [ { required: true, message: 'Please upload Picture', trigger: 'blur' } ],
         },
         // Edit
         editForm: init_state,

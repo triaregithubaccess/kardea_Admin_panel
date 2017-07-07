@@ -17,12 +17,12 @@
           article_list(:che_id='props.row._id')
       //el-table-column(prop='_id', label='ID', width='200', sortable='')
       el-table-column(prop='title', label='Title', width='200', sortable='')
-      el-table-column(label='Picture')
+      el-table-column(label='Picture', width='150')
         template( scope="scope")
           img(:src="scope.row.picture   + '?width=100&height=100'")
-      el-table-column(label='Wide Pic')
-        template( scope="scope")
-          img(:src="scope.row.wide_picture   + '?width=150&height=150'")
+      <!--el-table-column(label='Wide Pic')-->
+        <!--template( scope="scope")-->
+          <!--img(:src="scope.row.wide_picture   + '?width=150&height=150'")-->
       el-table-column(prop='language', label='Lang', width='100',
               :filters="langs",
               :filter-method="filterLang",
@@ -49,15 +49,15 @@
       el-pagination(layout='prev, pager, next', @current-change='handleCurrentChange', :page-size='per_page_const', :total='total', style='float:right;')
     // Edit
     el-dialog(title='Edit', v-model='editFormVisible', :close-on-click-modal='false')
-      el-form(:model='editForm', label-width='80px', :rules='editFormRules', ref='editForm')
+      el-form(:model='editForm', label-width='80px', :rules='formRules', ref='editForm')
         el-form-item(label='Title', prop='title')
           el-input(v-model='editForm.title', auto-complete='off')
         el-form-item(label='Description', prop='description')
           el-input(type="textarea" , v-model='editForm.description', auto-complete='off')
-        el-form-item(label='Language')
+        el-form-item(label='Language', prop='language')
           el-select(type='year', placeholder='language', v-model='editForm.language')
             el-option(v-for="lang in langs", :key="lang.value", :label="lang.label", :value="lang.value")
-        el-form-item(label='Picture')
+        el-form-item(label='Picture', prop='picture')
           el-upload(class="avatar-uploader",label='Picture',
           :action="upload_url",
           :show-file-list="false",
@@ -66,15 +66,15 @@
             span.ggg
               img( v-if="editForm.picture", :src="editForm.picture", class="avatar")
               i( v-else class="el-icon-plus avatar-uploader-icon")
-        el-form-item(label='Wide Picture')
-          el-upload(class="avatar-uploader",label='Wide Picture',
-          :action="upload_url",
-          :show-file-list="false",
-          :on-success="handleWPictureSuccess" ,
-          :before-upload="beforePictureUpload")
-            span.ggg
-              img( v-if="editForm.wide_picture", :src="editForm.wide_picture", class="avatar")
-              i( v-else class="el-icon-plus avatar-uploader-icon")
+        <!--el-form-item(label='Wide Picture')-->
+          <!--el-upload(class="avatar-uploader",label='Wide Picture',-->
+          <!--:action="upload_url",-->
+          <!--:show-file-list="false",-->
+          <!--:on-success="handleWPictureSuccess" ,-->
+          <!--:before-upload="beforePictureUpload")-->
+            <!--span.ggg-->
+              <!--img( v-if="editForm.wide_picture", :src="editForm.wide_picture", class="avatar")-->
+              <!--i( v-else class="el-icon-plus avatar-uploader-icon")-->
         el-form-item(label='Position', prop='position')
           el-inputNumber(type="textarea" , v-model='editForm.position', auto-complete='off')
 
@@ -83,16 +83,16 @@
         el-button(type='primary', @click.native='editSubmit', :loading='editLoading') Submit
     // Create Interface
     el-dialog(title='New', v-model='addFormVisible', :close-on-click-modal='false')
-      el-form(:model='addForm', label-width='80px', :rules='addFormRules', ref='addForm')
+      el-form(:model='addForm', label-width='80px', :rules='formRules', ref='addForm')
         el-form-item(label='Title', prop='title')
           el-input(v-model='addForm.title', auto-complete='off')
         el-form-item(label='Description', prop='description')
           el-input(type="textarea" , v-model='addForm.description', auto-complete='off')
-        el-form-item(label='Language')
+        el-form-item(label='Language', prop='language')
           el-select(type='year', placeholder='language', v-model='addForm.language')
             el-option(v-for="lang in langs", :key="lang.value", :label="lang.label", :value="lang.value")
 
-        el-form-item(label='Picture')
+        el-form-item(label='Picture', prop='picture')
           el-upload(class="avatar-uploader",label='Picture',
           :action="upload_url",
           :show-file-list="false",
@@ -101,15 +101,15 @@
             span.ggg
               img( v-if="addForm.picture", :src="addForm.picture", class="avatar")
               i( v-else class="el-icon-plus avatar-uploader-icon")
-        el-form-item(label='Wide Picture')
-          el-upload(class="avatar-uploader",label='Wide Picture',
-          :action="upload_url",
-          :show-file-list="false",
-          :on-success="handleWPictureSuccessAdd" ,
-          :before-upload="beforePictureUpload")
-            span.ggg
-              img( v-if="addForm.wide_picture", :src="addForm.wide_picture", class="avatar")
-              i( v-else class="el-icon-plus avatar-uploader-icon")
+        <!--el-form-item(label='Wide Picture')-->
+          <!--el-upload(class="avatar-uploader",label='Wide Picture',-->
+          <!--:action="upload_url",-->
+          <!--:show-file-list="false",-->
+          <!--:on-success="handleWPictureSuccessAdd" ,-->
+          <!--:before-upload="beforePictureUpload")-->
+            <!--span.ggg-->
+              <!--img( v-if="addForm.wide_picture", :src="addForm.wide_picture", class="avatar")-->
+              <!--i( v-else class="el-icon-plus avatar-uploader-icon")-->
         el-form-item(label='Position', prop='position')
           el-inputNumber(type="textarea" , v-model='addForm.position', auto-complete='off')
 
@@ -130,6 +130,14 @@
       'article_list': articles
     },
     data() {
+      var nonEmptyAndRequired = (rule, value, callback) => {
+        if (value.trim() === '' || value == undefined) {
+          callback(new Error('Empty not allowed!'));
+        } else {
+          callback();
+        }
+      };
+
       return {
         upload_url: image_upload_url2,
         desort: {
@@ -159,17 +167,19 @@
 
         editFormVisible: false,
         editLoading: false,
-        editFormRules: {
-          title: [
-            { required: true, message: 'Please type title', trigger: 'blur' }
-          ]
+
+        formRules: {
+          title: [ { validator: nonEmptyAndRequired, message: 'Please input Title', trigger: 'blur' } ] ,
+          description: [ { validator: nonEmptyAndRequired, message: 'Please input Description', trigger: 'blur' } ],
+          language: [ { required: true, message: 'Please input Language', trigger: 'blur' } ],
+          picture: [ { required: true, message: 'Please upload Picture', trigger: 'blur' } ],
         },
         // Edit
         editForm: {
           title: '',
           description: '',
           picture: '',
-          wide_picture: '',
+//          wide_picture: '',
           language: '',
           position: '',
           iuu: image_upload_url2,
@@ -177,19 +187,15 @@
 
         addFormVisible: false,
         addLoading: false,
-        addFormRules: {
-          name: [
-            { required: true, message: 'Title is required!', trigger: 'blur' }
-          ]
-        },
+
 
         addForm: {
           title: '',
           description: '',
           picture: '',
-          wide_picture: '',
+//          wide_picture: '',
           position: '',
-          language: '',
+          language: 'DE',
           iuu: image_upload_url2,
 
         }
@@ -205,14 +211,14 @@
 //        console.log(' Success picA!!');
         this.addForm.picture = api_domen + file.result
       },
-      handleWPictureSuccess(file, fileList) {
+//      handleWPictureSuccess(file, fileList) {
 //        console.log(' Success picWE!!');
-        this.editForm.wide_picture = api_domen + file.result
-      },
-      handleWPictureSuccessAdd(file, fileList) {
+//        this.editForm.wide_picture = api_domen + file.result
+//      },
+//      handleWPictureSuccessAdd(file, fileList) {
 //        console.log(' Success picWA!!');
-        this.addForm.wide_picture = api_domen + file.result
-      },
+//        this.addForm.wide_picture = api_domen + file.result
+//      },
       beforePictureUpload(file) {
 //        console.log(file);
       },
@@ -323,10 +329,9 @@
           title: '',
           description: '',
           picture: '',
-          wide_picture: '',
-          language: '',
+          language: 'DE',
           position: '',
-          wide_picture: ''
+//          wide_picture: ''
         };
       },
       // Edit save

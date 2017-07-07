@@ -22,10 +22,10 @@
                 span
 
       el-row(:span="24", style=" margin-top: 10px;margin-left: 20px;")
-        el-col.slc.color_m4.legendd( :span="6", :offset="1")
-        el-col.slc.color_m3.legendd( :span="6" )
+        el-col.slc.color_m1.legendd( :span="6", :offset="1")
         el-col.slc.color_m2.legendd( :span="6" )
-        el-col.slc.color_m1.legendd( :span="6" )
+        el-col.slc.color_m3.legendd( :span="6" )
+        el-col.slc.color_m4.legendd( :span="6" )
       el-row(:span="24", style="margin-left: 20px;")
         el-col.sll.legendd( :span="6", :offset="1") 0
         el-col.sll.legendd( :span="6" )
@@ -129,9 +129,9 @@
     font-size: 10px;
   }
 
-  .color_m1 { background: #43A486; }
-  .color_m2 { background: #72BBA5; }
-  .color_m3 { background: #9FD1C1; }
-  .color_m4 { background: #D0E8E1; }
+  .color_m4 { background: #43A486; }
+  .color_m3 { background: #72BBA5; }
+  .color_m2 { background: #9FD1C1; }
+  .color_m1 { background: #D0E8E1; }
 
 </style>

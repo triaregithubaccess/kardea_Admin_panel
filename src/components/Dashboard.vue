@@ -61,25 +61,25 @@
                 align="right",
                 placeholder="Pick a range",
                 :picker-options="daly_picker_options")
-          el-row(:span="18")
+          el-row(:span="18",style="margin-top:10px;")
             el-col( :span="9", :offset="1")
               daly(:d_data="daly_data", :d_max="daly_max")
             el-col( :span="12", :offset="2")
               el-row
                 el-col
                   el-card.pad5( class="box-card")
-                    el-table(:data="os_data",border,style="width: 100%", :default-sort="def_sort", :highlight-current-row="false")
+                    el-table(:data="os_data",border, :default-sort="def_sort", :highlight-current-row="false")
                       el-table-column(label="OS name")
                         template( scope="scope")
                           el-icon( name="os_name")
-                          span( style="margin-left: 10px") {{ scope.row.os_name }}
+                          span {{ scope.row.os_name }}
                       el-table-column(label="Users", prop="value", align="center")
                       el-table-column(label="%", prop="proc", align="center", :formatter="proc_formatter")
               el-row
                 el-col
                   el-card.pad5( class="box-card")
-                    el-table(:data="countries_data",border,style="width: 100%", :default-sort="def_sort", :highlight-current-row="false")
-                      el-table-column(label="Country", prop="country")
+                    el-table(:data="countries_data",border, :default-sort="def_sort", :highlight-current-row="false")
+                      el-table-column(label="Country", prop="country", width="200")
                       el-table-column(label="Users", prop="value", align="center")
                       el-table-column(label="%", prop="proc", align="center", :formatter="proc_formatter")
 
@@ -105,9 +105,12 @@
       },
     watch: {
       'daly_period': function () {
-        console.log("watch daly period", this.daly_period[0])
+
         this.daly_begin = this.daly_period[0]
-        this.daly_end = this.daly_period[1]
+        var tmp_daly_end = new Date(this.daly_period[1]);
+        tmp_daly_end.setTime(tmp_daly_end.getTime() + 3600 * 1000 * 24 );
+        this.daly_end = tmp_daly_end
+        console.log("watch daly period", this.daly_begin, this.daly_end)
         this.getDalyData();
         this.getDemoGraphData();
       }
@@ -117,26 +120,8 @@
         g_data: [] ,
         p_data: [] ,
         def_sort: {prop:"proc", order: "descending"},
-        countries_data:[
-          {
-            "country": "UKRAINE",
-            "proc": 83.33333333333333
-          },
-          {
-            "country": "GERMANY",
-            "proc": 16.666666666666668
-          }
-        ],
-        os_data: [
-        {
-          "os_name": "Android",
-          "proc": 50
-        },
-        {
-          "os_name": "iOS",
-          "proc": 50
-        }
-      ],
+        countries_data:[ ],
+        os_data: [ ],
         ina: 7,
         new_u:7,
         daly_data: [] ,
