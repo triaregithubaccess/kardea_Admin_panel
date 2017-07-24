@@ -146,6 +146,7 @@
                   el-select(type='year', placeholder='language', v-model='addForm.language')
                     el-option(v-for="lang in langs", :key="lang.value", :label="lang.label", :value="lang.value")
             el-form-item(label='Picture', prop='picture')
+              .grey Optimal size: under 5 Mb
               el-upload(class="avatar-uploader",label='Picture',
                 :action="upload_url",
                 :show-file-list="false",
@@ -191,7 +192,7 @@
     abstract: '',
     picture: '',
     channel_id: '',
-    language: 'DE',
+    language: 'de',
     full_text: '',
     source: '',
     source_name: '',
@@ -269,10 +270,10 @@
         editLoading: false,
 
         formRules: {
-          headline: [ { validator: nonEmptyAndRequired, message: 'Please input Headline', trigger: 'blur' } ] ,
-          subtitle: [ { validator: nonEmptyAndRequired, message: 'Please input Subtitle', trigger: 'blur' } ] ,
-          abstract: [ { validator: nonEmptyAndRequired, message: 'Please input Abstract', trigger: 'blur' } ] ,
-          full_text: [ { validator: nonEmptyAndRequired, message: 'Please input Text', trigger: 'blur' } ] ,
+          headline: [ { required: true,validator: nonEmptyAndRequired, message: 'Please input Headline', trigger: 'blur' } ] ,
+          subtitle: [ { required: true,validator: nonEmptyAndRequired, message: 'Please input Subtitle', trigger: 'blur' } ] ,
+          abstract: [ { required: true,validator: nonEmptyAndRequired, message: 'Please input Abstract', trigger: 'blur' } ] ,
+          full_text: [ { required: true,validator: nonEmptyAndRequired, message: 'Please input Text', trigger: 'blur' } ] ,
           channel_id: [ { required: true, message: 'Please choose Topic', trigger: 'blur' } ] ,
           language: [ { required: true, message: 'Please input Language', trigger: 'blur' } ],
           picture: [ { required: true, message: 'Please upload Picture', trigger: 'blur' } ],
@@ -310,7 +311,6 @@
         return g
       },
       exp(a,b){
-//        console.log("in exp----2-------",a,b);
         this.cur_news = a._id
       },
 
@@ -486,7 +486,6 @@
         this.sels = sels;
       },
       sortChange: function (obj) {
-//        console.log("sort change(c,p,o)=",obj.column, obj.prop, obj.order)
         this.sort_obj = obj
         this.getArticles();
       },
@@ -543,6 +542,9 @@
   height: 178px;
   line-height: 178px;
   text-align: center;
+}
+.grey{
+  color: #bfd9d0;
 }
 .avatar {
   width: 178px;

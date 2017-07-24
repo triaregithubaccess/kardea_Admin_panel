@@ -4,10 +4,10 @@
 		//el-row
 
 		el-col(:span="9")
-			onetable( :myp='tagApiService', name_t='TAGs')
+			onetable( :myp='tagApiService', name_t='TAGs', name_t_ph='tag name')
 
 		el-col(:span="9")
-			onetable( :myp='badwordApiService', name_t='Bad Words')
+			onetable( :myp='badwordApiService', name_t='Bad Words', name_t_ph='bad word')
 
 		el-col.toolbar(:span='24')
 			// el-pagination(layout='prev, pager, next', @current-change='handleCurrentChange', :page-size='per_page_const', :total='total', style='float:right;')

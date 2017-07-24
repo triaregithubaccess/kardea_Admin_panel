@@ -110,7 +110,7 @@
         var tmp_daly_end = new Date(this.daly_period[1]);
         tmp_daly_end.setTime(tmp_daly_end.getTime() + 3600 * 1000 * 24 );
         this.daly_end = tmp_daly_end
-        console.log("watch daly period", this.daly_begin, this.daly_end)
+//        console.log("watch daly period", this.daly_begin, this.daly_end)
         this.getDalyData();
         this.getDemoGraphData();
       }

@@ -93,6 +93,7 @@
             el-option(v-for="lang in langs", :key="lang.value", :label="lang.label", :value="lang.value")
 
         el-form-item(label='Picture', prop='picture')
+          .grey Optimal size: under 5 Mb
           el-upload(class="avatar-uploader",label='Picture',
           :action="upload_url",
           :show-file-list="false",
@@ -169,8 +170,8 @@
         editLoading: false,
 
         formRules: {
-          title: [ { validator: nonEmptyAndRequired, message: 'Please input Title', trigger: 'blur' } ] ,
-          description: [ { validator: nonEmptyAndRequired, message: 'Please input Description', trigger: 'blur' } ],
+          title: [ { required: true,validator: nonEmptyAndRequired, message: 'Please input Title', trigger: 'blur' } ] ,
+          description: [ { required: true,validator: nonEmptyAndRequired, message: 'Please input Description', trigger: 'blur' } ],
           language: [ { required: true, message: 'Please input Language', trigger: 'blur' } ],
           picture: [ { required: true, message: 'Please upload Picture', trigger: 'blur' } ],
         },
@@ -195,7 +196,7 @@
           picture: '',
 //          wide_picture: '',
           position: '',
-          language: 'DE',
+          language: 'de',
           iuu: image_upload_url2,
 
         }
@@ -231,7 +232,6 @@
       },
 
       filterLang(value, row) {
-//        console.log("in Filter Langs", value, row);
         return row.language === value;
       },
 
@@ -299,11 +299,14 @@
       },
       // Move Up
       handleUp: function (index, row) {
-        console.log("row=", row)
         if (index == 0) {return}
         this.editLoading = true;
         let para = Object.assign({}, row);
-        para.position -= 1;
+        var new_pos = this.channels[index-1].position - 1;
+        if  (new_pos < 1){
+           new_pos = 1;
+        }
+        para.position = new_pos;
         editChannel(para, this.$router.token).then((res) => {
           this.editLoading = false;
           this.getChannels();
@@ -312,10 +315,10 @@
       },
       // Move Down
       handleDown: function (index, row) {
-        if (index == 0) {return}
+        if (index == this.channels.length-1) {return}
         this.editLoading = true;
         let para = Object.assign({}, row);
-        para.position += 1;
+        para.position = this.channels[index+1].position + 1;
         editChannel(para, this.$router.token).then((res) => {
           this.editLoading = false;
           this.getChannels();
@@ -329,7 +332,7 @@
           title: '',
           description: '',
           picture: '',
-          language: 'DE',
+          language: 'de',
           position: '',
 //          wide_picture: ''
         };
@@ -455,4 +458,8 @@
   top: 0; right: 0; bottom: 0; left: 0;
   margin: auto;
 }
+.grey{
+  color: #bfd9d0;
+}
+
 </style>

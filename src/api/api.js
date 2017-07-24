@@ -15,6 +15,10 @@ export const editChannel = (params, token) => {return axios.post(`${base}/channe
 export const addChannel = (params, token) => {return axios.put(`${base}/channels?token=${token}`, params); };
 export const removeChannel = (params, token) => {return axios.delete(`${base}/channels/${params._id}?token=${token}`, params); };
 
+export const getArticleForAnalyticsListPage = (params, token) => {return axios.get(`${base}/articles/for_analytics?token=${token}`, { params: params }); };
+export const getChannelForAnalyticsListPage = (params, token) => {return axios.get(`${base}/channels/for_analytics?token=${token}`, { params: params }); };
+export const getTagForAnalyticsListPage = (params, token) => {return axios.get(`${base}/tags/for_analytics?token=${token}`, { params: params }); };
+
 export const getArticleListPage = params => {return axios.get(`${base}/articles`, { params: params }); };
 export const getArticleListPageByChe = params => {return axios.get(`${base}/channels/${params.che_id}/articles`, { params: params }); };
 export const editArticle = (params, token) => {return axios.post(`${base}/articles/${params._id}?token=${token}`, params); };
@@ -50,9 +54,9 @@ export const requestForgot = (params) => { return axios.post(`${base}/user/forgo
 
 export const batchRemoveUser = params => { return axios.get(`${base}/user/batchremove`, { params: params }); };
 
-export const editUser = params => { return axios.get(`${base}/user/edit`, { params: params }); };
+export const editUser = (params, token) => { return axios.put(`${base}/user?admin_mode=yes&token=${token}`, params); };
 
-export const addUser = params => { return axios.get(`${base}/user/add`, { params: params }); };
+export const addUser = (params, token) => { return axios.post(`${base}/users/login_with_email?token=${token}`,  params ); };
 
 export const api_domen =  `${base}`
 export const image_upload_url2 =  `${base}/user/upload?width=103&height=103`

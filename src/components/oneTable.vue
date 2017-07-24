@@ -3,11 +3,11 @@
 		el-col.toolbar(:span='21', style='padding-bottom: 0px;')
 				el-form(:inline='true', :model='filters')
 					el-form-item
-						el-input(v-model='filters.name', placeholder='tag name')
+						el-input(v-model='filters.name', :placeholder='name_t_ph')
 					el-form-item
 						el-button(type='primary', v-on:click='getItems' ) Search
 					el-form-item
-						el-button(type='primary', @click='handleAdd') Addnew{{name_t}}--
+						el-button(type='primary', @click='handleAdd') Add new
 
 		el-col(:span="21")
 			h3 {{name_t}}
@@ -52,7 +52,7 @@
 	import _ from 'lodash'
 
 	export default {
-		props: ['myp','name_t'],
+		props: ['myp','name_t','name_t_ph'],
 
 
 

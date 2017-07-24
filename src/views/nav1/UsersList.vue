@@ -45,7 +45,8 @@
           :before-upload="beforeAvatarUpload")
             img( v-if="editForm.avatar", :src="editForm.avatar", class="avatar")
             i( v-else class="el-icon-plus  avatar-uploader-icon")
-
+        el-form-item(label='Is admin')
+          el-checkbox(v-model='editForm.admin')
 
       .dialog-footer(slot='footer')
         el-button(@click.native='editFormVisible = false') Cancel
@@ -53,14 +54,30 @@
     // Create Interface
     el-dialog(title='New', v-model='addFormVisible', :close-on-click-modal='false')
       el-form(:model='addForm', label-width='80px', :rules='addFormRules', ref='addForm')
-        el-form-item(label='Name', prop='name')
-          el-input(v-model='addForm.name', auto-complete='off')
+        el-form-item(label='Name', prop='user_name')
+          el-input(v-model='addForm.user_name', auto-complete='off')
+        el-form-item(label='Email', prop='email')
+          el-input(v-model='addForm.email', auto-complete='off')
         el-form-item(label='Gender')
           el-radio-group(v-model='addForm.sex')
-            el-radio.radio(:label='1') man
-            el-radio.radio(:label='0') women
-        el-form-item(label='Year of Birth')
-          el-date-picker(type='date', placeholder='Year of Birth', v-model='addForm.birth')
+            el-radio.radio(:label='1' value=1) men
+            el-radio.radio(:label='0' value=0) women
+        el-form-item(label='Birth Year')
+          el-date-picker(type='year', placeholder='birth year', v-model='addForm.birth_year')
+        el-form-item(label='Avatar')
+          el-upload(class="avatar-uploader",label='Avatar',
+          :action="upload_url",
+          :show-file-list="false",
+          :on-success="handleAvatarSuccess" ,
+          :before-upload="beforeAvatarUpload")
+            img( v-if="addForm.avatar", :src="addForm.avatar", class="avatar")
+            i( v-else class="el-icon-plus  avatar-uploader-icon")
+        el-form-item(label='Is admin')
+          el-checkbox(v-model='addForm.admin')
+        el-form-item(label='Password', v-if="addForm.admin")
+          el-input(type="password", v-model='addForm.password')
+        el-form-item(label='Repeat password', v-if="addForm.admin")
+          el-input(type="password", v-model='addForm.password2')
       .dialog-footer(slot='footer')
         el-button(@click.native='addFormVisible = false') Cancel
         el-button(type='primary', @click.native='addSubmit', :loading='addLoading') Submit
@@ -99,7 +116,7 @@
 					birth_year: '',
 					sex: -1,
 					email: '',
-          admin: false,
+          admin: '',
 					avatar: ''
 				},
 
@@ -111,11 +128,14 @@
 					]
 				},
 				addForm: {
-					name: '',
-					sex: -1,
-					age: 0,
-					birth: '',
-					addr: ''
+          user_name: '',
+          birth_year: '',
+          sex: -1,
+          email: '',
+          admin: false,
+          avatar: '',
+          password: '',
+          password2: ''
 				}
 
 			}
@@ -199,11 +219,12 @@
 			handleAdd: function () {
 				this.addFormVisible = true;
 				this.addForm = {
-					name: '',
-					sex: -1,
-					age: 0,
-					birth: '',
-					addr: ''
+          user_name: '',
+          birth_year: '',
+          sex: -1,
+          email: '',
+          admin: false,
+          avatar: ''
 				};
 			},
 			// Edit save
@@ -215,7 +236,7 @@
 							//NProgress.start();
 							let para = Object.assign({}, this.editForm);
 							para.birth = (!para.birth || para.birth == '') ? '' : util.formatDate.format(new Date(para.birth), 'yyyy-MM-dd');
-							editUser(para).then((res) => {
+							editUser(para, this.$router.token).then((res) => {
 								this.editLoading = false;
 								//NProgress.done();
 								this.$message({
@@ -230,7 +251,7 @@
 					}
 				});
 			},
-			//新增
+
 			addSubmit: function () {
 				this.$refs.addForm.validate((valid) => {
 					if (valid) {
@@ -238,8 +259,10 @@
 							this.addLoading = true;
 							//NProgress.start();
 							let para = Object.assign({}, this.addForm);
-							para.birth = (!para.birth || para.birth == '') ? '' : util.formatDate.format(new Date(para.birth), 'yyyy-MM-dd');
-							addUser(para).then((res) => {
+							para.birth_year = util.formatDate.format(new Date(para.birth_year), 'yyyy');
+							console.log("para=", para)
+							addUser(para, this.$router.token).then((res) => {
+							  console.log("res=", res)
 								this.addLoading = false;
 								//NProgress.done();
 								this.$message({
