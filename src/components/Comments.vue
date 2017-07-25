@@ -1,5 +1,6 @@
 <template lang="pug">
   section
+    | {{show_id}}
     el-col.toolbar(:span='24', style='padding-bottom: 0px;')
       el-form(:inline='true', :model='filters')
         el-form-item
@@ -32,7 +33,7 @@
           el-button(size='small', @click='handleEdit(scope.$index, scope.row)') Edit
           el-button(type='danger', size='small', @click='handleDel(scope.$index, scope.row)') delete
     el-col.toolbar(:span='24')
-      el-pagination(layout='prev, pager, next', @current-change='handleCurrentChange', :page-size='per_page_const', :total='total', style='float:right;')
+      el-pagination(layout='prev, pager, next', @current-change='handleCurrentChange', :page-size='per_page_const', :current-page='page',:total='total', style='float:right;')
     // Edit
     el-dialog(:title="'Edit '+cur_user+'s comment'", v-model='editFormVisible', :close-on-click-modal='false')
       el-form(:model='editForm', label-width='80px',  ref='editForm')
@@ -42,7 +43,7 @@
 
 
       .dialog-footer(slot='footer')
-        el-button(@click.native='editFormVisible = false') Cancel
+        el-button(@click.native='cancelEdit') Cancel
         el-button(type='primary', @click.native='editSubmit', :loading='editLoading') Submit
     // Create Interface
     el-dialog(title='New', v-model='addFormVisible', :close-on-click-modal='false')
@@ -63,7 +64,7 @@
   //import NProgress from 'nprogress'
   import { getCommentListPage,getChannelListPage, getArticlesCommentListPage, removeComment, editComment, addComment } from '../api/api';
   export default {
-    props: ['news_id'],
+    props: ['news_id','show_id'],
     components:
       {
 
@@ -79,7 +80,7 @@
         cur_user : '',
         comments: [],
         total: 0,
-        page: 1,
+        page: 2,
         per_page_const: 4,
         listLoading: false,
         sels: [],//selected rows
@@ -114,7 +115,7 @@
       },
 
       //Get the comments list
-      getComments() {
+      getComments(id) {
         let get_func;
         let para = {};
 //        console.log('news-id=', this.news_id);
@@ -123,6 +124,7 @@
             page: this.page,
             per_page: this.per_page_const,
             name: this.filters.name,
+            comment_id: id,
             token: this.$router.token
           };
           get_func = getCommentListPage;
@@ -156,6 +158,17 @@
           this.total = res.data.count;
           this.comments = res.data.result;
           this.listLoading = false;
+
+          this.$nextTick(_ => {
+            if (this.$route.params.id != undefined) {
+              console.log("ne ravno")
+//              this.handleEdit(1, 1)
+              this.editFormVisible = true;
+              this.editForm = Object.assign({}, res.data.result[0]);
+//              this.cur_user = row.user_name
+            }
+          })
+
           //NProgress.done();
         }).catch((err) => {console.log("in catch ggg", err);} );
       },
@@ -194,7 +207,6 @@
       // Edit
       handleEdit: function (index, row) {
         this.editFormVisible = true;
-//        this.getComments();
         this.editForm = Object.assign({}, row);
         this.cur_user = row.user_name
       },
@@ -207,6 +219,14 @@
           text: ''
         };
 
+      },
+      cancelEdit: function () {
+        this.editFormVisible = false;
+//        this.getComments();
+
+        if (this.$route.params.id != undefined) {
+          this.$router.push("/comments")
+        }
       },
       // Edit save
       editSubmit: function () {
@@ -228,8 +248,12 @@
                 this.$refs['editForm'].resetFields();
                 this.editFormVisible = false;
                 this.getComments();
-              });
-            });
+
+                });
+              if (this.$route.params.id != undefined) {
+                this.$router.push("/comments")
+              }
+            })
           }
         });
       },
@@ -269,6 +293,7 @@
         this.sels = sels;
       },
       sortChange: function (obj) {
+        console.log("comm Router=", this.$route.params);
 //        console.log("sort change(c,p,o)=",obj.column, obj.prop, obj.order)
         this.sort_obj = obj
         this.getComments();
@@ -276,8 +301,8 @@
 
     },
     mounted() {
-//      console.log("comm my-props=", this.news_id);
-      this.getComments();
+//      console.log("comm my-props=", this.news_id,  this.$route, this.$route.params);
+      this.getComments(this.$route.params.id);
     }
   }
 

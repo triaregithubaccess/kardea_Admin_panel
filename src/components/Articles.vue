@@ -54,6 +54,9 @@
       el-table-column(label='Picture', width='110')
         template( scope="scope")
           img(:src="scope.row.picture   + '?width=100&height=100'")
+      el-table-column(label='WordPress', width='200', sortable='')
+        template( scope="scope")
+          a(:href="scope.row.wp_link", target="_blank") {{scope.row.wp_link}}
       el-table-column(v-if='che_id == undefined', prop='updated_at', label='Updated at', width='200', sortable='', :formatter='formatDate')
       el-table-column(v-if='che_id == undefined', prop='created_at', label='Created at', width='200', sortable='', :formatter='formatDate')
       el-table-column(label='Edit', width='150')
@@ -78,6 +81,8 @@
               el-input(v-model='editForm.source_name', auto-complete='off')
             el-form-item(label='Source', prop='source')
               el-input(v-model='editForm.source', auto-complete='off', placeholder='http://site.com')
+            el-form-item(label='WordPress', prop='source')
+              el-input(v-model='editForm.wp_link', auto-complete='off', placeholder='http://site.com')
             el-row(:span="23")
               el-col( :span="11")
                 el-form-item(label='Topic', prop='channel_id')
@@ -201,6 +206,7 @@
     push_on_publish: '',
     site_on_publish: '',
     fb_on_publish: '',
+    wp_link: '',
     iuu: image_upload_url2
   };
 

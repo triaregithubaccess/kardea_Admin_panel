@@ -119,6 +119,11 @@ routes = [
         component: CommentsList,
         name: 'Comments'
       }, {
+        path: '/comments/:id',
+        component: CommentsList,
+        name: 'Comments',
+        hidden: true
+      }, {
         path: '/smalls',
         component: SmallTables,
         name: 'Small Tables'

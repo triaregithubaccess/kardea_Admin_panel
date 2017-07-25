@@ -70,6 +70,7 @@ routes = [
             { path: '/articles', component: ArticlesList, name: 'Articles' , props: { pre: false }}
             { path: '/prearticles', component: PreArticlesList, name: 'Pre Articles', props: { pre: true } }
             { path: '/comments', component: CommentsList, name: 'Comments' }
+            { path: '/comments/:id', component: CommentsList, name: 'Comments', hidden:true }
             { path: '/smalls', component: SmallTables, name: 'Small Tables' }
 #            { path: '/form', component: Form, name: 'Form' }
 #            { path: '/user', component: user, name: 'User' }

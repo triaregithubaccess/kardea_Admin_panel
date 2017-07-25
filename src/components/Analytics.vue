@@ -51,7 +51,7 @@
       el-table-column( prop='duration', label='Duration',  sortable='', align='center')
       el-table-column( prop='is_read', label='Read Count',  sortable='', align='center')
       el-table-column( prop='likes', label='Likes',  sortable='', align='center')
-      el-table-column( prop='bookmark', label='bookmark',  sortable='', align='center')
+      el-table-column( prop='bookmarks', label='bookmark',  sortable='', align='center')
       el-table-column( prop='comments', label='comments',  sortable='', align='center')
 
     el-table(v-model="channelsVisible",v-show="channelsVisible", :data='channels', highlight-current-row='',
