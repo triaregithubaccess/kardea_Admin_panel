@@ -36,6 +36,8 @@ router = new VueRouter { routes }
 
 router.beforeEach (to, from, next) =>
 #  //NProgress.start();
+  if to.fullPath isnt '/login'
+    sessionStorage.setItem('toto', JSON.stringify(to.fullPath));
   sessionStorage.removeItem 'user' if to.path is '/login'
   user = JSON.parse sessionStorage.getItem('user')
   if user?.token?

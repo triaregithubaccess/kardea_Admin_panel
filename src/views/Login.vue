@@ -69,7 +69,12 @@
                 user.token = token
                 sessionStorage.setItem('user', JSON.stringify(user));
                 this.$router.token = token
-                this.$router.push({ path: '/users' });
+                let toto = JSON.parse( sessionStorage.getItem('toto'))
+                if (toto != undefined) {
+                  this.$router.push({ path: toto     });
+                } else {
+                  this.$router.push({ path: '/users' });
+                }
               }
             });
           } else {

@@ -34,6 +34,9 @@ router = new VueRouter({
 router.beforeEach((function(_this) {
   return function(to, from, next) {
     var user;
+    if (to.fullPath !== '/login') {
+      sessionStorage.setItem('toto', JSON.stringify(to.fullPath));
+    }
     if (to.path === '/login') {
       sessionStorage.removeItem('user');
     }

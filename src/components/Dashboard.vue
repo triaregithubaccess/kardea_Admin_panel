@@ -1,9 +1,9 @@
 <template lang="pug">
-  section
+  section(style="wi--dth:1118px;")
     .toolbar
     el-row( )
       el-col( :span="9")
-        el-card( class="box-card")
+        el-card( class="box-card" , style="width:390px;")
           div( slot="header" class="clearfix")
             el-row(:span="24" )
               el-col( :span="7")
@@ -34,8 +34,8 @@
                 span.mag {{total.read_news}}
           el-row(:span="24")
           el-row(:span="24")
-      el-col( :span="10")
-        el-card( class="box-card")
+      el-col( :span="10", :xs="10", :sm="16", :md="16", :lg="4")
+        el-card( class="box-card" , style="width:450px;")
 
           el-col(  )
             echarts(:pdata="p_data", gtype="pie")
@@ -63,8 +63,8 @@
                 :picker-options="daly_picker_options")
           el-row(:span="18",style="margin-top:10px;")
             el-col( :span="9", :offset="1")
-              daly(:d_data="daly_data", :d_max="daly_max")
-            el-col( :span="12", :offset="2")
+              daly(:d_data="daly_data", :d_max="daly_max", style="width:317px;")
+            el-col( :span="12", :offset="2",  :xs="12", :sm="20", :md="20", :lg="10")
               el-row
                 el-col
                   el-card.pad5( class="box-card")

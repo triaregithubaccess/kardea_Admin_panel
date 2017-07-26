@@ -49,6 +49,11 @@ export const editBW = (params, token) => {return axios.post(`${base}/badwords/${
 export const addBW = (params, token) => {return axios.put(`${base}/badwords?token=${token}`, params); };
 export const removeBW = (params, token) => {return axios.delete(`${base}/badwords/${params._id}?token=${token}`, params); };
 
+export const getDefinitionListPage = params => {return axios.get(`${base}/definitions`, { params: params }); };
+export const editDefinition = (params, token) => {return axios.post(`${base}/definitions/${params._id}?token=${token}`, params); };
+export const addDefinition = (params, token) => {return axios.put(`${base}/definitions?token=${token}`, params); };
+export const removeDefinition = (params, token) => {return axios.delete(`${base}/definitions/${params._id}?token=${token}`, params); };
+
 export const removeUser = (params, token) => { return axios.delete(`${base}/users/${params._id}?token=${token}`, { params: params }); };
 export const requestForgot = (params) => { return axios.post(`${base}/user/forgot_password?`, params); };
 

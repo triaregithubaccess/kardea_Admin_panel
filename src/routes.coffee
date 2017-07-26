@@ -8,6 +8,7 @@ import ChannelsList from './views/nav1/Channels.vue'
 import ArticlesList from './components/Articles.vue'
 import PreArticlesList from './components/Articles.vue'
 import CommentsList from './components/Comments.vue'
+import DefinitionsList from './components/Definitions.vue'
 import Dashboard from './components/Dashboard.vue'
 import Analytics from './components/Analytics.vue'
 import SmallTables from './components/SmallTables.vue'
@@ -71,6 +72,7 @@ routes = [
             { path: '/prearticles', component: PreArticlesList, name: 'Pre Articles', props: { pre: true } }
             { path: '/comments', component: CommentsList, name: 'Comments' }
             { path: '/comments/:id', component: CommentsList, name: 'Comments', hidden:true }
+            { path: '/definitions', component: DefinitionsList, name: 'Definitions' }
             { path: '/smalls', component: SmallTables, name: 'Small Tables' }
 #            { path: '/form', component: Form, name: 'Form' }
 #            { path: '/user', component: user, name: 'User' }

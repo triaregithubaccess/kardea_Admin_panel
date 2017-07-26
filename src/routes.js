@@ -21,6 +21,8 @@ import PreArticlesList from './components/Articles.vue';
 
 import CommentsList from './components/Comments.vue';
 
+import DefinitionsList from './components/Definitions.vue';
+
 import Dashboard from './components/Dashboard.vue';
 
 import Analytics from './components/Analytics.vue';
@@ -123,6 +125,10 @@ routes = [
         component: CommentsList,
         name: 'Comments',
         hidden: true
+      }, {
+        path: '/definitions',
+        component: DefinitionsList,
+        name: 'Definitions'
       }, {
         path: '/smalls',
         component: SmallTables,
