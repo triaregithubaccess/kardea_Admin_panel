@@ -7,6 +7,8 @@
           el-input(v-model='filters.text', placeholder='words')
         el-form-item
           el-button(type='primary', v-on:click='getDefinitions') Search
+        el-form-item
+          el-button(type='primary',  @click='handleAdd') Add new Definition
 
     el-table(:data='definitions', highlight-current-row='',
         v-loading='listLoading',
@@ -195,7 +197,9 @@
       handleAdd: function () {
         this.addFormVisible = true;
         this.addForm = {
-          text: ''
+          term: '',
+          explanation: '',
+          category: ''
         };
 
       },

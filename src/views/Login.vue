@@ -70,10 +70,12 @@
                 sessionStorage.setItem('user', JSON.stringify(user));
                 this.$router.token = token
                 let toto = JSON.parse( sessionStorage.getItem('toto'))
-                if (toto != undefined) {
+                if (toto != undefined && toto != '/') {
+                  console.log("TO toto", toto)
                   this.$router.push({ path: toto     });
                 } else {
-                  this.$router.push({ path: '/users' });
+                  console.log("TO Dash")
+                  this.$router.push({ path: '/dashboard' });
                 }
               }
             });

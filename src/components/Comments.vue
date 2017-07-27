@@ -38,6 +38,8 @@
     el-dialog(:title="'Edit '+cur_user+'s comment'", v-model='editFormVisible', :close-on-click-modal='false')
       el-form(:model='editForm', label-width='80px',  ref='editForm')
 
+        el-form-item(label='ID', prop='_id', hidden="true")
+          el-input(v-model='editForm.text', auto-complete='off', hidden="true")
         el-form-item(label='Comment', prop='text')
           el-input(v-model='editForm.text', auto-complete='off')
 
@@ -45,6 +47,7 @@
       .dialog-footer(slot='footer')
         el-button(@click.native='cancelEdit') Cancel
         el-button(type='primary', @click.native='editSubmit', :loading='editLoading') Submit
+        el-button(v-if="$route.params.id", type='danger',  @click.native='editSubmitDel' , :loading='editLoading') Delete
     // Create Interface
     el-dialog(title='New', v-model='addFormVisible', :close-on-click-modal='false')
       el-form(:model='addForm', label-width='80px',  ref='addForm')
@@ -90,6 +93,7 @@
 
         // Edit
         editForm: {
+          _id: '',
           text: ''
         },
 
@@ -124,7 +128,7 @@
             page: this.page,
             per_page: this.per_page_const,
             name: this.filters.name,
-            comment_id: id,
+            comment_id: this.$route.params.id,
             token: this.$router.token
           };
           get_func = getCommentListPage;
@@ -160,12 +164,9 @@
           this.listLoading = false;
 
           this.$nextTick(_ => {
-            if (this.$route.params.id != undefined) {
-              console.log("ne ravno")
-//              this.handleEdit(1, 1)
+            if (this.$route.params.id != undefined && res.data.result.length == 1) {
               this.editFormVisible = true;
               this.editForm = Object.assign({}, res.data.result[0]);
-//              this.cur_user = row.user_name
             }
           })
 
@@ -239,6 +240,34 @@
               // find channel by id and get title
 
               editComment(para, this.$router.token).then((res) => {
+                this.editLoading = false;
+                //NProgress.done();
+                this.$message({
+                  message: 'Submitted successfully',
+                  type: 'success'
+                });
+                this.$refs['editForm'].resetFields();
+                this.editFormVisible = false;
+                this.getComments();
+
+                });
+              if (this.$route.params.id != undefined) {
+                this.$router.push("/comments")
+              }
+            })
+          }
+        });
+      },
+      editSubmitDel: function () {
+        this.$refs.editForm.validate((valid) => {
+          if (valid) {
+            this.$confirm('Are you sure ', 'warning', {}).then(() => {
+              this.editLoading = true;
+              //NProgress.start();
+              let para = Object.assign({}, this.editForm);
+              // find channel by id and get title
+
+              removeComment(para, this.$router.token).then((res) => {
                 this.editLoading = false;
                 //NProgress.done();
                 this.$message({
