@@ -3,14 +3,14 @@
 		el-col.toolbar(:span='21', style='padding-bottom: 0px;')
 				el-form(:inline='true', :model='filters')
 					el-form-item
-						el-input(v-model='filters.name', :placeholder='name_t_ph')
+						el-input(v-model='filters.name', :placeholder='myp.name_t_ph')
 					el-form-item
 						el-button(type='primary', v-on:click='getItems' ) Search
 					el-form-item
 						el-button(type='primary', @click='handleAdd') Add new
 
 		el-col(:span="21")
-			h3 {{name_t}}
+			h3 {{myp.name_t}}
 			el-table(:data='items', highlight-current-row='',
 					v-loading='listLoading',
 					@selection-change='selsChange',
@@ -28,17 +28,17 @@
 			el-pagination(layout='prev, pager, next', @current-change='handleCurrentChange', :page-size='per_page_const', :total='total', style='float:left;')
 			// Edit
 			el-dialog(title='Edit', v-model='editFormVisible', :close-on-click-modal='false')
-				el-form(:model='editForm', label-width='80px',  ref='editForm')
-					el-form-item(label='Name',width='250', prop='name')
-						el-input(v-model='editForm.name', auto-complete='off')
+				el-form(:model='editForm', label-width='80px', :rules='formRules',  ref='editForm')
+					el-form-item(:label='myp.f1_caps',width='250', :prop='myp.f1')
+						el-input(v-model='editForm[myp.f1]', auto-complete='off')
 
 				.dialog-footer(slot='footer')
 					el-button(@click.native='editFormVisible = false') Cancel
 					el-button(type='primary', @click.native='editSubmit', :loading='editLoading') Submit
 			// Create Interface
 			el-dialog(title='New',size='tiny', v-model='addFormVisible', :close-on-click-modal='false')
-				el-form(:model='addForm', label-width='80px',  ref='addForm')
-					el-form-item(:label='myp.f1', prop='name')
+				el-form(:model='addForm', label-width='80px', :rules='formRules',  ref='addForm')
+					el-form-item(:label='myp.f1_caps', :prop='myp.f1')
 						el-input(v-model='addForm[myp.f1]', auto-complete='off')
 
 				.dialog-footer(slot='footer')
@@ -52,15 +52,25 @@
 	import _ from 'lodash'
 
 	export default {
-		props: ['myp','name_t','name_t_ph'],
-
-
-
+		props: ['myp'],
 		data() {
-			return {
-				filters: {
-					name: ''
-				},
+      var nonEmptyAndRequired = (rule, value, callback) => {
+        if (value == undefined || value.trim() === '' ) {
+          callback(new Error('Empty not allowed!'));
+        } else {
+          callback();
+        }
+      };
+
+      let form_obj = {};
+      form_obj[this.myp.f1] = '';
+      let formRules = {};
+      formRules[this.myp.f1]  = [ { required: true, validator: nonEmptyAndRequired, message: 'Please input '+ this.myp.f1, trigger: 'blur' } ]
+      let filters = {};
+      filters[this.myp.f1] = '';
+
+      return {
+				filters: filters,
 				sort_obj: null,
 	      items: [],
 				total: 0,
@@ -72,17 +82,12 @@
 				editFormVisible: false,
 				editLoading: false,
 
-				editForm: {
-					name: ''
-				},
+        addForm: form_obj,
+				editForm: form_obj,
+        formRules: formRules,
 
 				addFormVisible: false,
-				addLoading: false,
-
-				addForm: {
-					name: ''
-				}
-
+				addLoading: false
 			}
 		},
 		methods: {
@@ -110,15 +115,12 @@
 					para2["sort"] = sort_str
 				}
 
-//				console.log("para2=", para2)
 				this.listLoading = true;
-				//NProgress.start();
 
-					this.myp.getList(para2).then((res) => {
-					this.total = res.data.count;
-					this.items = res.data.result;
-					this.listLoading = false;
-					//NProgress.done();
+        this.myp.getList(para2).then((res) => {
+          this.total = res.data.count;
+          this.items = res.data.result;
+          this.listLoading = false;
 				}).catch((err) => {console.log("in catch ggg", err);} );
 			},
 			//  delete
@@ -127,13 +129,10 @@
 					type: 'warning'
 				}).then(() => {
 					this.listLoading = true;
-					//NProgress.start();
-//				    console.log("in DELETE:", this.$router.token, row._id, row);
 					let para = { _id: row._id};
           this.myp.removeItem(para, this.$router.token).then((res) => {
 						let meta = res.data.meta;
-//						console.log("meta and res",meta, res)
-				        if (meta.code != 200) {
+            if (meta.code != 200) {
 							this.listLoading = false;
 							this.$message({
 								message: 'something wrong!',
@@ -141,7 +140,6 @@
 							});
 						}else {
 							this.listLoading = false;
-							//NProgress.done();
 							this.$message({
 								message: 'successfully  deleted',
 								type: 'success'
@@ -161,12 +159,11 @@
 			},
 			// Create
 			handleAdd: function () {
-//				console.log("add clicked")
 				this.addFormVisible = true;
         this.getItems();
 
-				this.addForm = {}
-				this.addForm[this.myp.f1] = ''
+				this.addForm = {};
+				this.addForm[this.myp.f1] = '';
 
 			},
 			// Edit save
@@ -175,25 +172,23 @@
 					if (valid) {
 						this.$confirm('Are you sure ', 'warning', {}).then(() => {
 							this.editLoading = true;
-							//NProgress.start();
 							let para = Object.assign({}, this.editForm);
-
+							// trim text!!!
+              para[this.myp.f1] = para[this.myp.f1].trim();
               this.myp.editItem(para, this.$router.token).then((res) => {
 								this.editLoading = false;
-								//NProgress.done();
 								this.$message({
 									message: 'Submitted successfully',
 									type: 'success'
 								});
 								this.$refs['editForm'].resetFields();
 								this.editFormVisible = false;
-								this.getArticles();
+                this.getItems();
 							});
 						});
 					}
 				});
 			},
-
 
 			//
 			addSubmit: function () {
@@ -201,12 +196,12 @@
 					if (valid) {
 						this.$confirm('Are you sure？', 'warning', {}).then(() => {
 							this.addLoading = true;
-							//NProgress.start();
 							let para = Object.assign({}, this.addForm);
-//				      console.log("add papa=", para, this.addForm);
+              // trim text!!!
+              para[this.myp.f1] = para[this.myp.f1].trim();
+
 							this.myp.addItem(para, this.$router.token).then((res) => {
 								this.addLoading = false;
-								//NProgress.done() ;
 								this.$message({
 									message: 'success',
 									type: 'success'
@@ -223,13 +218,11 @@
 				this.sels = sels;
 			},
 			sortChange: function (obj) {
-//				console.log("sort change(c,p,o)=",obj.column, obj.prop, obj.order)
 				this.sort_obj = obj
 				this.getItems();
 			}
 		},
 		mounted() {
-//      console.log("one table props=", this.myp, this.name_t);
 			this.getItems();
 
 		}
