@@ -110,7 +110,7 @@
                 el-checkbox( v-model='editForm.push_on_publish')
             el-col( :span="5")
               el-form-item(label='To Site', prop='site_on_publish')
-                el-checkbox( v-model='editForm.site_on_publish', disabled)
+                el-checkbox( v-model='editForm.site_on_publish', :disabled='editForm.desss')
             el-col( :span="5")
               el-form-item(label='To FB', prop='fb_on_publish')
                 el-checkbox( v-model='editForm.fb_on_publish', disabled)
@@ -207,6 +207,7 @@
     site_on_publish: '',
     fb_on_publish: '',
     wp_link: '',
+    desss: false,
     iuu: image_upload_url2
   };
 
@@ -411,6 +412,7 @@
         this.editFormVisible = true;
         this.getChannels();
         this.editForm = Object.assign({}, row);
+        this.editForm.desss = this.editForm.site_on_publish
       },
       // Create
       handleAdd: function () {

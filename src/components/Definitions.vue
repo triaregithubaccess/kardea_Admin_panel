@@ -30,12 +30,12 @@
       el-pagination(layout='prev, pager, next', @current-change='handleCurrentChange', :page-size='per_page_const', :current-page='page',:total='total', style='float:right;')
     // Edit
     el-dialog(:title="Edit", v-model='editFormVisible', :close-on-click-modal='false')
-      el-form(:model='editForm', label-width='80px',  ref='editForm')
+      el-form(:model='editForm', label-width='100px',:rules='formRules',  ref='editForm')
 
         el-form-item(label='Term', prop='term')
           el-input(v-model='editForm.term', auto-complete='off')
         el-form-item(label='Explanation', prop='explanation')
-          el-input(v-model='editForm.explanation', auto-complete='off')
+          el-input(type="textarea" ,v-model='editForm.explanation', auto-complete='off')
         el-form-item(label='Category', prop='category')
           el-input(v-model='editForm.category', auto-complete='off')
 
@@ -45,12 +45,12 @@
         el-button(type='primary', @click.native='editSubmit', :loading='editLoading') Submit
     // Create Interface
     el-dialog(title='New', v-model='addFormVisible', :close-on-click-modal='false')
-      el-form(:model='addForm', label-width='80px',  ref='addForm')
+      el-form(:model='addForm', label-width='100px', :rules='formRules', ref='addForm')
 
         el-form-item(label='Term', prop='term')
           el-input(v-model='addForm.term', auto-complete='off')
         el-form-item(label='Explanation', prop='explanation')
-          el-input(v-model='addForm.explanation', auto-complete='off')
+          el-input(ype="textarea" ,v-model='addForm.explanation', auto-complete='off')
         el-form-item(label='Category', prop='category')
           el-input(v-model='addForm.category', auto-complete='off')
 
@@ -71,6 +71,14 @@
 
       },
     data() {
+      var nonEmptyAndRequired = (rule, value, callback) => {
+        if (value.trim() === '' || value == undefined) {
+          callback(new Error('Empty not allowed!'));
+        } else {
+          callback();
+        }
+      };
+
       return {
 
         sort_obj: null,
@@ -104,7 +112,12 @@
           term: '',
           explanation: '',
           category: ''
-        }
+        } ,
+        formRules: {
+          term: [ { required: true,validator: nonEmptyAndRequired, message: 'Please input Term', trigger: 'blur' } ] ,
+          explanation: [ { required: true,validator: nonEmptyAndRequired, message: 'Please input Explanation', trigger: 'blur' } ] ,
+
+        },
 
       }
     },
