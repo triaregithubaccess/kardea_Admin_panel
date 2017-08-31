@@ -8,12 +8,16 @@
           el-button(type='primary', v-on:click='getUsers') Search
         el-form-item
           el-button(type='primary', @click='handleAdd') Add new user
-    el-table(:data='users', highlight-current-row='', v-loading='listLoading', @selection-change='selsChange', style='width: 100%;')
-      el-table-column(prop='user_name', label='Name', width='100', sortable='')
-      el-table-column(prop='email', label='Email', width='200', sortable='')
+    el-table(:data='users', highlight-current-row='',
+        v-loading='listLoading',
+        @sort-change='sortChange',
+        @selection-change='selsChange',
+        style='width: 100%;')
+      el-table-column(prop='user_name', label='Name', width='250', sortable='')
+      el-table-column(prop='email', label='Email', width='250', sortable='')
       el-table-column(label='Avatar', width='150')
         template( scope="scope")
-          img(:src="scope.row.avatar + '?width=100&height=100'")
+          img(:src="scope.row.avatar", class="avatar_small")
 
       el-table-column(prop='sex', label='Sex', width='100', :formatter='formatSex', sortable='')
       el-table-column(prop='birth_year', label='Birth', width='120', sortable='')
@@ -23,9 +27,9 @@
           el-button(type='danger', size='small', @click='handleDel(scope.$index, scope.row)') delete
     el-col.toolbar(:span='24')
       el-button(type='danger', @click='batchRemove', :disabled='this.sels.length===0') Batch delete
-      el-pagination(layout='prev, pager, next', @current-change='handleCurrentChange', :page-size='20', :total='total', style='float:right;')
+      el-pagination(layout='prev, pager, next', @current-change='handleCurrentChange', :page-size='per_page_const', :total='total', style='float:right;')
     // Edit
-    el-dialog(title='Edit', v-model='editFormVisible', :close-on-click-modal='false')
+    el-dialog(title='Edit', v-model='editFormVisible', :close-on-click-modal='false', @close="editCancel")
       el-form(:model='editForm', label-width='80px', :rules='editFormRules', ref='editForm')
         el-form-item(label='Name', prop='user_name')
           el-input(v-model='editForm.user_name', auto-complete='off')
@@ -49,7 +53,7 @@
           el-checkbox(v-model='editForm.admin')
 
       .dialog-footer(slot='footer')
-        el-button(@click.native='editFormVisible = false') Cancel
+        el-button(@click.native='editCancel') Cancel
         el-button(type='primary', @click.native='editSubmit', :loading='editLoading') Submit
     // Create Interface
     el-dialog(title='New', v-model='addFormVisible', :close-on-click-modal='false')
@@ -68,7 +72,7 @@
           el-upload(class="avatar-uploader",label='Avatar',
           :action="upload_url",
           :show-file-list="false",
-          :on-success="handleAvatarSuccess" ,
+          :on-success="handleAvatarSuccessAdd" ,
           :before-upload="beforeAvatarUpload")
             img( v-if="addForm.avatar", :src="addForm.avatar", class="avatar")
             i( v-else class="el-icon-plus  avatar-uploader-icon")
@@ -87,7 +91,7 @@
 <script>
 	import util from '../../common/js/util'
 	//import NProgress from 'nprogress'
-	import { getUserListPage, removeUser, batchRemoveUser, editUser, addUser,image_upload_url2 } from '../../api/api';
+	import { getUserListPage, removeUser, batchRemoveUser, editUser, api_domen,addUser,image_upload_url2 } from '../../api/api';
 
 	export default {
 		data() {
@@ -97,8 +101,10 @@
 					name: ''
 				},
 				users: [],
+        sort_obj: null,
 				total: 0,
 				page: 1,
+        per_page_const: 10,
 				listLoading: false,
 				sels: [],//selected rows
 
@@ -141,12 +147,14 @@
 			}
 		},
 		methods: {
+      sortChange: function (obj) {
+        this.sort_obj = obj
+        this.getUsers();
+      },
       handleAvatarSuccess(file, fileList) {
-//        console.log(' Success pic!!');
         this.editForm.avatar = api_domen + file.result
       },
       handleAvatarSuccessAdd(file, fileList) {
-//        console.log(' Success pic!!');
         this.addForm.avatar = api_domen + file.result
       },
       beforeAvatarUpload(file) {
@@ -163,16 +171,25 @@
 			//Get the user list
 			getUsers() {
 				let para = {
-					page: this.page,
+          page: this.page,
+          per_page: this.per_page_const,
 					name: this.filters.name
 				};
 				this.listLoading = true;
-				//NProgress.start();
-				//console.log("GGG getUsers...before req");
+        let sort_str = '_id';
+        if (this.sort_obj != null){
+          sort_str = this.sort_obj.prop;
+          if (this.sort_obj.order != 'ascending'){
+            sort_str = '-'+ sort_str;
+          }
+          para["sort"] = sort_str
+        }
+
+        //console.log("GGG getUsers...before req");
 				getUserListPage(para).then((res) => {
 
 					//console.log("GGG getUsers...,,,", res.data.result.length, res.data.result);
-					this.total = res.data.result.length;
+					this.total = res.data.count;
 					this.users = res.data.result;
 					this.listLoading = false;
 					//NProgress.done();
@@ -251,7 +268,11 @@
 					}
 				});
 			},
-
+      // Edit cancel
+      editCancel: function () {
+        this.editFormVisible = false;
+        this.$refs['editForm'].resetFields();
+      },
 			addSubmit: function () {
 				this.$refs.addForm.validate((valid) => {
 					if (valid) {
@@ -260,9 +281,7 @@
 							//NProgress.start();
 							let para = Object.assign({}, this.addForm);
 							para.birth_year = util.formatDate.format(new Date(para.birth_year), 'yyyy');
-							console.log("para=", para)
 							addUser(para, this.$router.token).then((res) => {
-							  console.log("res=", res)
 								this.addLoading = false;
 								//NProgress.done();
 								this.$message({
@@ -311,5 +330,15 @@
 </script>
 
 <style scoped>
-
+.avatar {
+  max-width: 177px;
+  max-height: 177px;
+  display: block;
+}
+.avatar_small {
+  max-width: 77px;
+  max-height: 77px;
+  /*height: 178px;*/
+  /*display: block;*/
+}
 </style>
