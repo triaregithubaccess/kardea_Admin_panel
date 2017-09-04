@@ -5,6 +5,8 @@ import Login from './views/Login.vue';
 
 import Forgot from './views/Forgot.vue';
 
+import Reset from './views/Reset.vue';
+
 import NotFound from './views/404.vue';
 
 import Home from './views/Home.vue';
@@ -50,6 +52,11 @@ routes = [
   }, {
     path: '/forgot',
     component: Forgot,
+    name: '',
+    hidden: true
+  }, {
+    path: '/reset',
+    component: Reset,
     name: '',
     hidden: true
   }, {

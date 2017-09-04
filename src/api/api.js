@@ -5,6 +5,7 @@ let base = 'http://localhost:5505';
 //let base = 'http://138.201.108.157:5505';
 
 export const requestLogin = params => { return axios.post(`${base}/users/login_with_email`, params).then(res => res.data); };
+export const requestResetPassword = (params, token) => { return axios.post(`${base}/user/new_password?token=${token}`, params).then(res => res.data); };
 
 export const getUserList = params => { return axios.get(`${base}/user/list`, { params: params }); };
 

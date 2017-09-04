@@ -1,5 +1,6 @@
 import Login from './views/Login.vue'
 import Forgot from './views/Forgot.vue'
+import Reset from './views/Reset.vue'
 import NotFound from './views/404.vue'
 import Home from './views/Home.vue'
 import Main from './views/Main.vue'
@@ -17,9 +18,10 @@ import user from './views/nav1/user.vue'
 import Page4 from './views/nav2/Page4.vue'
 import Page5 from './views/nav2/Page5.vue'
 import Page6 from './views/nav3/Page6.vue'
-import echarts from './views/charts/echarts.vue'
+import echarts from  './views/charts/echarts.vue'
 
 routes = [
+  # when will add more routes - check line 27 in Home.vue ("$router.options.routes[4].children[0].path" )
     {
         path: '/login'
         component: Login
@@ -27,8 +29,14 @@ routes = [
         hidden: true
     }
     {
-        path: '/forgot'
-        component: Forgot
+      path: '/forgot'
+      component: Forgot
+      name: ''
+      hidden: true
+    }
+    {
+        path: '/reset'
+        component: Reset
         name: ''
         hidden: true
     }
@@ -38,7 +46,6 @@ routes = [
         name: ''
         hidden: true
     }
-#    //{ path: '/main', component: Main },
     {
         path: '/'
         component: Home

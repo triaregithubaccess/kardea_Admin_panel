@@ -13,8 +13,7 @@
 				<el-dropdown trigger="hover">
 					<span class="el-dropdown-link userinfo-inner"><img :src="this.sysUserAvatar" /> {{sysUserName}}</span>
 					<el-dropdown-menu slot="dropdown">
-						<el-dropdown-item>My message</el-dropdown-item>
-						<el-dropdown-item>Profile</el-dropdown-item>
+            <el-dropdown-item  @click.native="reset">Change password</el-dropdown-item>
 						<el-dropdown-item divided @click.native="logout">Log out</el-dropdown-item>
 					</el-dropdown-menu>
 				</el-dropdown>
@@ -25,8 +24,8 @@
 				<!-- Navigation -->
 				<el-menu :default-active="$route.path" class="el-menu-vertical-demo" @open="handleopen" @close="handleclose" @select="handleselect"
 					 unique-opened router v-show="!collapsed">
-          <el-menu-item  :index="$router.options.routes[3].children[0].path" >Dashboard</el-menu-item>
-          <el-menu-item  :index="$router.options.routes[4].children[0].path" >Analytics</el-menu-item>
+          <el-menu-item  :index="$router.options.routes[4].children[0].path" >Dashboard</el-menu-item>
+          <el-menu-item  :index="$router.options.routes[5].children[0].path" >Analytics</el-menu-item>
 					<template v-for="(item,index) in $router.options.routes" v-if="!item.hidden">
 						<el-submenu :index="index+''" v-if="!item.leaf">
 							<template slot="title"><i :class="item.iconCls"></i>{{item.name}}</template>
@@ -117,6 +116,10 @@
 
 				});
 
+
+			},
+			reset: function () {
+					this.$router.push('/reset');
 
 			},
 			// Fold the navigation bar

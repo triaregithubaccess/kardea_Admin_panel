@@ -2,7 +2,7 @@
   <el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-position="left" label-width="0px" class="demo-ruleForm login-container">
     <h3 class="title">Login</h3>
     <el-form-item prop="account">
-      <el-input type="text" v-model="ruleForm2.account" auto-complete="off" placeholder="username"></el-input>
+      <el-input type="text" v-model="ruleForm2.account" auto-complete="off" placeholder="email"></el-input>
     </el-form-item>
     <el-form-item prop="checkPass">
       <el-input type="password" v-model="ruleForm2.checkPass" auto-complete="off" placeholder="password"></el-input>
@@ -26,8 +26,8 @@
       return {
         logining: false,
         ruleForm2: {
-          account: 'eee@eee.com',
-          checkPass: 'pass'
+          account: '', //'eee@eee.com',
+          checkPass: '' // pass
         },
         rules2: {
           account: [

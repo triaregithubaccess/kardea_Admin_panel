@@ -1,24 +1,30 @@
 <template>
   <el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-position="left" label-width="0px" class="demo-ruleForm login-container">
     <h3 class="title">Set new Password</h3>
-    <el-form-item prop="checkPass">
-      <el-input type="text" v-model="ruleForm2.checkPass" auto-complete="off" placeholder="password"></el-input>
+    <el-form-item prop="old_pass">
+      <el-input type="text" v-model="ruleForm2.old_pass" auto-complete="off" placeholder="old password"></el-input>
     </el-form-item>
-    <el-form-item prop="checkPass2">
-      <el-input type="password" v-model="ruleForm2.checkPass2" auto-complete="off" placeholder="repeat password"></el-input>
+    <el-form-item prop="new_pass">
+      <el-input type="text" v-model="ruleForm2.new_pass" auto-complete="off" placeholder="new password"></el-input>
+    </el-form-item>
+    <el-form-item prop="new_pass2">
+      <el-input type="password" v-model="ruleForm2.new_pass2" auto-complete="off" placeholder="repeat password"></el-input>
     </el-form-item>
 
     <el-form-item style="width:100%;">
-      <el-button type="primary" style="width:100%;" @click.native.prevent="handleSubmit2" :loading="logining">log in</el-button>
+      <el-button type="primary" style="width:100%;" @click.native.prevent="handleSubmit2" :loading="logining">Change password</el-button>
 
     </el-form-item>
-    <a href="#/login">Forgot password</a>
+    <el-form-item style="width:100%;">
+      <el-button  style="width:100%;" @click.native.prevent="handleCancel2" :loading="logining">Cancel</el-button>
+
+    </el-form-item>
   </el-form>
 
 </template>
 
 <script>
-  import { requestLogin, cur_axios } from '../api/api';
+  import { requestResetPassword, cur_axios } from '../api/api';
   import axios from 'axios';
   //import NProgress from 'nprogress'
   export default {
@@ -26,17 +32,18 @@
       return {
         logining: false,
         ruleForm2: {
-          checkPass: '',
-          checkPass2: ''
+          old_pass: '',
+          new_pass: '',
+          new_pass2: ''
         },
         rules2: {
-          checkPass2: [
+          new_pass2: [
             { required: true, message: 'Please password twice', trigger: 'blur' },
-            { validator: validaePass }
+//            { validator: this.validaePass }
           ],
-          checkPass: [
+          old_pass: [
             { required: true, message: 'Please enter your password', trigger: 'blur' },
-            { validator: validaePass }
+//            { validator: validaePass }
           ]
         },
         checked: true
@@ -49,38 +56,52 @@
       handleReset2() {
         this.$refs.ruleForm2.resetFields();
       },
+      handleCancel2() {
+        this.$router.push({path: window.history.back()});
+      }
+      ,
       handleSubmit2(ev) {
-        var _this = this;
-        console.log("GGG in login submit");
         this.$refs.ruleForm2.validate((valid) => {
           if (valid) {
-            //_this.$router.replace('/table');
             this.logining = true;
-            //NProgress.start();
-            var loginParams = { login: true, email: this.ruleForm2.account, password: this.ruleForm2.checkPass };
-            console.log("GGG before req login -", loginParams);
-            requestLogin(loginParams).then(data => {
-              console.log("login data=",data);
+            var loginParams = { old_password: this.ruleForm2.old_pass, new_password: this.ruleForm2.new_pass };
+            if (this.ruleForm2.new_pass != this.ruleForm2.new_pass2) {
+              this.$message({
+                message: "New passwords don't match!",
+                type: 'error'
+              });
               this.logining = false;
-              //NProgress.done();
-              let { meta,  result , token} = data;
-              let user = result
-              user.token = token
-              // set token
-              axios.defaults.headers.common["token"] = token
-              if (meta.code !== 200) {
+              return false
+            }
+            requestResetPassword(loginParams, this.$router.token).then(data => {
+              let meta = data.meta;
+              let result = data.result;
+              this.logining = false;
+              if (meta.code == 200) {
+                if (result == "OK") {
+                  this.$message({
+                    message: "Password was changed!",
+                    type: 'info'
+                  });
+                  this.$router.push({path: '/dashboard'});
+                }else {
+                  this.$message({
+                    message: result,
+                    type: 'info' //'error'
+                  });
+
+                }
+              }else {
                 this.$message({
-                  message: meta.message,
+                  message: 'something wrong!',
                   type: 'error'
                 });
-              } else {
-                console.log("routed to the users list", user);
-                sessionStorage.setItem('user', JSON.stringify(user));
-                this.$router.push({ path: '/users' });
+
+
+
               }
-            });
+            } )
           } else {
-            console.log('error submit!!');
             return false;
           }
         });
