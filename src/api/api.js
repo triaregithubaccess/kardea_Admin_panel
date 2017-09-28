@@ -1,15 +1,17 @@
 import axios from 'axios';
 
-let base = 'http://localhost:5505';
+axios.defaults.headers.common['platform'] = 'admin'
+
+//let base = 'http://localhost:5505';
 //let base = 'https://api.kardea.de';
-//let base = 'http://138.201.108.157:5505';
+let base = 'http://138.201.108.157:5505';
 
 export const requestLogin = params => { return axios.post(`${base}/users/login_with_email`, params).then(res => res.data); };
 export const requestResetPassword = (params, token) => { return axios.post(`${base}/user/new_password?token=${token}`, params).then(res => res.data); };
 
-export const getUserList = params => { return axios.get(`${base}/user/list`, { params: params }); };
+// export const getUserList = params => { return axios.get(`${base}/user/list`, { params: params }); };
 
-export const getUserListPage = params => { return axios.get(`${base}/users`, { params: params }); };
+export const getUserListPage = (params, token) => { return axios.get(`${base}/users?token=${token}`, {params: params}); };
 
 export const getChannelListPage = params => {return axios.get(`${base}/channels`, { params: params }); };
 export const getChannelShortListPage = params => {return axios.get(`${base}/channels?select=_id,title`, { params: params }); };
@@ -27,7 +29,7 @@ export const editArticle = (params, token) => {return axios.post(`${base}/articl
 export const removeArticle = (params, token) => {return axios.delete(`${base}/articles/${params._id}?token=${token}`, params); };
 export const addArticle = (params, token) => {return axios.put(`${base}/articles?token=${token}`, params); };
 
-export const getTagListPage = params => {return axios.get(`${base}/tags?select=_id,name`, { params: params }); };
+export const getTagListPage = params => {return axios.get(`${base}/tags?select=_id,name,language`, { params: params }); };
 export const editTag = (params, token) => {return axios.post(`${base}/tags/${params._id}?token=${token}`, params); };
 export const addTag = (params, token) => {return axios.put(`${base}/tags?token=${token}`, params); };
 export const removeTag = (params, token) => {return axios.delete(`${base}/tags/${params._id}?token=${token}`, params); };
@@ -59,7 +61,7 @@ export const removeDefinition = (params, token) => {return axios.delete(`${base}
 export const removeUser = (params, token) => { return axios.delete(`${base}/users/${params._id}?token=${token}`, { params: params }); };
 export const requestForgot = (params) => { return axios.post(`${base}/user/forgot_password?`, params); };
 
-export const batchRemoveUser = params => { return axios.get(`${base}/user/batchremove`, { params: params }); };
+export const batchRemoveUser = (params, token) => { return axios.get(`${base}/user/batchremove?token=${token}`, { params: params }); };
 
 export const editUser = (params, token) => { return axios.put(`${base}/user?admin_mode=yes&token=${token}`, params); };
 

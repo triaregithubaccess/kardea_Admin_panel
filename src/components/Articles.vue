@@ -8,6 +8,12 @@
           el-button(type='primary', v-on:click='getArticles') Search
         el-form-item
           el-button(type='primary',  @click='handleAdd') Add new Article
+        el-select.left5( v-model="languages", v-show="che_id == undefined")
+          el-option(v-for="item in a_options",
+          :key="item.value" ,
+          :label="item.label" ,
+          :value="item.value")
+
     el-table(:data='articles', highlight-current-row='',
         v-loading='listLoading',
         @selection-change='selsChange',
@@ -89,7 +95,7 @@
                   el-select(type='year', placeholder='topic', v-model='editForm.channel_id')
                     el-option(v-for="che in  channels", :key="che._id", :label="che.title", :value="che._id")
               el-col( :span="11")
-                el-form-item(label='Language', prop='language')
+                el-form-item(label='Language', prop='language', v-show="che_id == undefined")
                   el-select(type='year', placeholder='language', v-model='editForm.language')
                     el-option(v-for="lang in langs", :key="lang.value", :label="lang.label", :value="lang.value")
             el-form-item(label='Picture', prop='picture')
@@ -144,10 +150,10 @@
             el-row(:span="23")
               el-col( :span="11")
                 el-form-item(label='Topic', prop='channel_id')
-                  el-select(type='year', placeholder='topic', v-model='addForm.channel_id')
+                  el-select(type='year', placeholder='topic', v-model='addForm.channel_id', :disabled='languages == "de,en" ? true: false')
                     el-option(v-for="che in channels", :key="che._id", :label="che.title", :value="che._id")
               el-col( :span="11")
-                el-form-item(label='Language', prop='language')
+                el-form-item(label='Language', prop='language', v-show="che_id == undefined")
                   el-select(type='year', placeholder='language', v-model='addForm.language')
                     el-option(v-for="lang in langs", :key="lang.value", :label="lang.label", :value="lang.value")
             el-form-item(label='Picture', prop='picture')
@@ -197,7 +203,7 @@
     abstract: '',
     picture: '',
     channel_id: '',
-    language: 'de',
+    language: '',
     full_text: '',
     source: '',
     source_name: '',
@@ -219,6 +225,23 @@
         comments: commentsList
       },
     watch: {
+      'editForm.language': function (a,b) {
+        console.log("a b", a,b, "---", a == '', b == '')
+        this.languages = this.addForm.language
+
+        if (b != '') {
+          this.editForm.channel_id = '';
+        }
+        this.getChannels();
+      },
+      'addForm.language': function () {
+        this.languages = this.addForm.language
+        this.addForm.channel_id = '';
+        this.getChannels();
+      },
+      'languages': function () {
+        this.getArticles();
+      },
       '$route' (toto, from) {
         //console.log("to from", toto, from);
         if (toto.name == "Articles") {
@@ -252,6 +275,20 @@
         //tmpcom: [{name: "total 48 comments"}],
         tmpcom: [{name: 'ggg', cou: " comments"}],
         cur_news: '',
+
+        languages: 'de,en',
+        a_options: [{
+          value: 'de,en',
+          label: 'Data for All'
+        }, {
+          value: 'de',
+          label: 'Data for DE'
+        }, {
+          value: 'en',
+          label: 'Data for EN'
+        } ],
+
+
         langs:  [
           {
           value: 'de',
@@ -301,6 +338,10 @@
       }
     },
     methods: {
+      get_lang() {
+        if (this.languages == 'de,en') { return ''
+        }else{ return this.languages }
+      },
       handlePictureSuccess(file, fileList) {
 //        console.log(' Success pic!!');
         this.editForm.picture = api_domen + file.result
@@ -340,6 +381,7 @@
             pre: this.pre,
             per_page: this.per_page_const,
             name: this.filters.name,
+            language: this.languages,
             token: this.$router.token
           };
           get_func = getArticleListPage;
@@ -420,7 +462,7 @@
         this.addFormVisible = true;
 
         this.addForm = init_state;
-//        this.addForm['language'] = '';
+        this.addForm['language'] =  this.get_lang();
         if (this.che_id != null) {
               this.addForm.channel_id = this.che_id;
             }
@@ -455,7 +497,11 @@
         });
       },
       getChannels: function () {
-        let para = { };
+        let para = {
+          page: 1,
+          per_page: 999,
+          language: this.languages
+        };
 //        console.log("in get  Che");
         getChannelShortListPage(para, this.$router.token).then((res) => {
           this.channels = res.data.result;
@@ -521,8 +567,7 @@
       }
     },
     mounted() {
-      //console.log("Art my-props=", this.che_id, this.pre);
-
+      console.log("Art my-props=", this.che_id, this.pre);
       if (this.che_id != null){
         this.per_page_const = 5;
       }

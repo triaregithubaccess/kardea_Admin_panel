@@ -9,6 +9,11 @@
           el-button(type='primary', v-on:click='getDefinitions') Search
         el-form-item
           el-button(type='primary',  @click='handleAdd') Add new Definition
+        el-select.left5( v-model="languages" )
+          el-option(v-for="item in a_options",
+          :key="item.value" ,
+          :label="item.label" ,
+          :value="item.value")
 
     el-table(:data='definitions', highlight-current-row='',
         v-loading='listLoading',
@@ -22,6 +27,8 @@
       el-table-column(prop='category', label='Category',  sortable='')
 
       el-table-column(prop='created_at', label='Created at', width='200', sortable='', :formatter='formatDate')
+      el-table-column(prop='language', label='Lang', width='80')
+
       el-table-column(label='Edit', width='150')
         template(scope='scope')
           el-button(size='small', @click='handleEdit(scope.$index, scope.row)') Edit
@@ -38,6 +45,9 @@
           el-input(type="textarea" ,v-model='editForm.explanation', auto-complete='off')
         el-form-item(label='Category', prop='category')
           el-input(v-model='editForm.category', auto-complete='off')
+        el-form-item(label='Language', prop='language')
+          el-select(type='year', placeholder='language', v-model='editForm.language')
+            el-option(v-for="lang in langs", :key="lang.value", :label="lang.label", :value="lang.value")
 
 
       .dialog-footer(slot='footer')
@@ -53,6 +63,10 @@
           el-input(ype="textarea" ,v-model='addForm.explanation', auto-complete='off')
         el-form-item(label='Category', prop='category')
           el-input(v-model='addForm.category', auto-complete='off')
+        el-form-item(label='Language', prop='language')
+          el-select(type='year', placeholder='language', v-model='addForm.language')
+            el-option(v-for="lang in langs", :key="lang.value", :label="lang.label", :value="lang.value")
+
 
       .dialog-footer(slot='footer')
         el-button(@click.native='addFormVisible = false') Cancel
@@ -66,10 +80,12 @@
   //import NProgress from 'nprogress'
   import { getDefinitionListPage, removeDefinition, editDefinition, addDefinition } from '../api/api';
   export default {
-    components:
-      {
+    watch: {
+      'languages': function () {
+        this.getDefinitions();
+      }
+    },
 
-      },
     data() {
       var nonEmptyAndRequired = (rule, value, callback) => {
         if (value.trim() === '' || value == undefined) {
@@ -94,6 +110,29 @@
         listLoading: false,
         sels: [],//selected rows
 
+        languages: 'de,en',
+        a_options: [{
+          value: 'de,en',
+          label: 'Data for All'
+        }, {
+          value: 'de',
+          label: 'Data for DE'
+        }, {
+          value: 'en',
+          label: 'Data for EN'
+        } ],
+        langs:  [
+          {
+            value: 'de',
+            label: 'DE'
+          },
+          {
+            value: 'en',
+            label: 'EN'
+          },
+        ],
+
+
         editFormVisible: false,
         editLoading: false,
 
@@ -101,7 +140,8 @@
         editForm: {
           term: '',
           explanation: '',
-          category: ''
+          category: '',
+          language:''
         },
 
         addFormVisible: false,
@@ -111,6 +151,7 @@
         addForm: {
           term: '',
           explanation: '',
+          language:'',
           category: ''
         } ,
         formRules: {
@@ -131,6 +172,10 @@
         let cur = new Date(row[column.property]);
         return util.formatDate.format(cur, 'yyyy-MM-dd hh:mm:ss');
       },
+      get_lang() {
+        if (this.languages == 'de,en') { return ''
+        }else{ return this.languages }
+      },
 
       //Get the definitions list
       getDefinitions(id) {
@@ -139,6 +184,7 @@
           page: this.page,
           per_page: this.per_page_const,
           name: this.filters.name,
+          language: this.languages,
           token: this.$router.token
         };
 
@@ -212,6 +258,7 @@
         this.addForm = {
           term: '',
           explanation: '',
+          language: this.get_lang(),
           category: ''
         };
 

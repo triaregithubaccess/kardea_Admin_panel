@@ -1,49 +1,58 @@
 <template lang="pug">
-	section
-		el-col.toolbar(:span='21', style='padding-bottom: 0px;')
-				el-form(:inline='true', :model='filters')
-					el-form-item
-						el-input(v-model='filters.name', :placeholder='myp.name_t_ph')
-					el-form-item
-						el-button(type='primary', v-on:click='getItems' ) Search
-					el-form-item
-						el-button(type='primary', @click='handleAdd') Add new
+  section
+    el-col.toolbar(:span='21', style='padding-bottom: 10px;')
+      el-form(:inline='true', :model='filters')
+        el-form-item
+          el-input(v-model='filters.name', :placeholder='myp.name_t_ph')
+        el-form-item
+          el-button(type='primary', v-on:click='getItems' ) Search
+        el-form-item
+          el-button(type='primary', @click='handleAdd') Add new
+        el-select.left5( v-model="languages", v-if="myp.need_lang" )
+          el-option(v-for="item in a_options", :key="item.value" , :label="item.label" , :value="item.value")
 
-		el-col(:span="21")
-			h3 {{myp.name_t}}
-			el-table(:data='items', highlight-current-row='',
-					v-loading='listLoading',
-					@selection-change='selsChange',
-					@sort-change='sortChange',
+    el-col(:span="21")
+      h3 {{myp.name_t}}
+      el-table(:data='items', highlight-current-row='',
+      v-loading='listLoading',
+      @selection-change='selsChange',
+      @sort-change='sortChange',
 
-					style='width: 100%;')
+      style='width: 100%;')
 
-				el-table-column(:prop='myp.f1', :label='myp.f1', width='250', sortable='')
-				el-table-column(label='Edit', width='150')
-					template(scope='scope')
-						el-button(size='small', @click='handleEdit(scope.$index, scope.row)') Edit
-						el-button(type='danger', size='small', @click='handleDel(scope.$index, scope.row)') delete
+        el-table-column(:prop='myp.f1', :label='myp.f1', wid-th='250', sortable='')
+        el-table-column(prop='language', label='Lang', width='80', v-if="myp.need_lang")
+        el-table-column(label='Edit', width='150')
+          template(scope='scope')
+            el-button(size='small', @click='handleEdit(scope.$index, scope.row)') Edit
+            el-button(type='danger', size='small', @click='handleDel(scope.$index, scope.row)') delete
 
-		el-col.toolbar(:span='21')
-			el-pagination(layout='prev, pager, next', @current-change='handleCurrentChange', :page-size='per_page_const', :total='total', style='float:left;')
-			// Edit
-			el-dialog(title='Edit', v-model='editFormVisible', :close-on-click-modal='false')
-				el-form(:model='editForm', label-width='80px', :rules='formRules',  ref='editForm')
-					el-form-item(:label='myp.f1_caps',width='250', :prop='myp.f1')
-						el-input(v-model='editForm[myp.f1]', auto-complete='off')
+    el-col.toolbar(:span='21')
+      el-pagination(layout='prev, pager, next', @current-change='handleCurrentChange', :page-size='per_page_const', :total='total', style='float:left;')
+      // Edit
+      el-dialog(title='Edit', v-model='editFormVisible', :close-on-click-modal='false')
+        el-form(:model='editForm', label-width='80px', :rules='formRules',  ref='editForm')
+          el-form-item(:label='myp.f1_caps',width='250', :prop='myp.f1')
+            el-input(v-model='editForm[myp.f1]', auto-complete='off')
+          el-form-item(label='Language', prop='language', v-if="myp.need_lang")
+            el-select(type='year', placeholder='language', v-model='editForm.language')
+              el-option(v-for="lang in langs", :key="lang.value", :label="lang.label", :value="lang.value")
 
-				.dialog-footer(slot='footer')
-					el-button(@click.native='editFormVisible = false') Cancel
-					el-button(type='primary', @click.native='editSubmit', :loading='editLoading') Submit
-			// Create Interface
-			el-dialog(title='New',size='tiny', v-model='addFormVisible', :close-on-click-modal='false')
-				el-form(:model='addForm', label-width='80px', :rules='formRules',  ref='addForm')
-					el-form-item(:label='myp.f1_caps', :prop='myp.f1')
-						el-input(v-model='addForm[myp.f1]', auto-complete='off')
+        .dialog-footer(slot='footer')
+          el-button(@click.native='editFormVisible = false') Cancel
+          el-button(type='primary', @click.native='editSubmit', :loading='editLoading') Submit
+      // Create Interface
+      el-dialog(title='New',size='tiny', v-model='addFormVisible', :close-on-click-modal='false')
+        el-form(:model='addForm', label-width='80px', :rules='formRules',  ref='addForm')
+          el-form-item(:label='myp.f1_caps', :prop='myp.f1')
+            el-input(v-model='addForm[myp.f1]', auto-complete='off')
+          el-form-item(label='Language', prop='language', v-if="myp.need_lang")
+            el-select(type='year', placeholder='language', v-model='addForm.language')
+              el-option(v-for="lang in langs", :key="lang.value", :label="lang.label", :value="lang.value")
 
-				.dialog-footer(slot='footer')
-					el-button(@click.native='addFormVisible = false') Cancel
-					el-button(type='primary', @click.native='addSubmit', :loading='addLoading') Create
+        .dialog-footer(slot='footer')
+          el-button(@click.native='addFormVisible = false') Cancel
+          el-button(type='primary', @click.native='addSubmit', :loading='addLoading') Create
 
 </template>
 
@@ -53,7 +62,13 @@
 
 	export default {
 		props: ['myp'],
-		data() {
+    watch: {
+      'languages': function () {
+        this.getItems();
+      }
+    },
+
+    data() {
       var nonEmptyAndRequired = (rule, value, callback) => {
         if (value == undefined || value.trim() === '' ) {
           callback(new Error('Empty not allowed!'));
@@ -62,8 +77,11 @@
         }
       };
 
-      let form_obj = {};
+      let form_obj = {
+        language: ''
+      };
       form_obj[this.myp.f1] = '';
+
       let formRules = {};
       formRules[this.myp.f1]  = [ { required: true, validator: nonEmptyAndRequired, message: 'Please input '+ this.myp.f1, trigger: 'blur' } ]
       let filters = {};
@@ -74,7 +92,30 @@
 				sort_obj: null,
 	      items: [],
 				total: 0,
-				page: 1,
+
+        languages: 'de,en',
+        a_options: [{
+          value: 'de,en',
+          label: 'Data for All'
+        }, {
+          value: 'de',
+          label: 'Data for DE'
+        }, {
+          value: 'en',
+          label: 'Data for EN'
+        } ],
+        langs:  [
+          {
+            value: 'de',
+            label: 'DE'
+          },
+          {
+            value: 'en',
+            label: 'EN'
+          },
+        ],
+
+        page: 1,
 				per_page_const: 14,
 				listLoading: false,
 				sels: [],
@@ -96,13 +137,18 @@
 				this.page = val;
 				this.getItems();
 			},
+      get_lang() {
+        if (this.languages == 'de,en') { return ''
+        }else{ return this.languages }
+      },
 
-			//Get the Tag list
+      //Get the Tag list
       getItems() {
 				let para2 = {
 						page: this.page,
 						per_page: this.per_page_const,
 						search: this.filters.name,
+            language: this.languages,
 						token: this.$router.token
 				};
 
@@ -159,12 +205,15 @@
 			},
 			// Create
 			handleAdd: function () {
+			  console.log("in add handle");
 				this.addFormVisible = true;
         this.getItems();
 
-				this.addForm = {};
+				//this.addForm = {};
 				this.addForm[this.myp.f1] = '';
-
+        //if (this.myp.need_lang) {
+        this.addForm.language = this.get_lang();
+        //}
 			},
 			// Edit save
 			editSubmit: function () {

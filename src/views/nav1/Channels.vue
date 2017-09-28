@@ -8,6 +8,12 @@
           el-button(type='primary', v-on:click='getChannels') Search
         el-form-item
           el-button(type='primary', @click='handleAdd') Add new Topic
+        el-select.left5( v-model="languages" )
+          el-option(v-for="item in a_options",
+          :key="item.value" ,
+          :label="item.label" ,
+          :value="item.value")
+
     el-table(:data='channels', highlight-current-row='',:default-sort='desort', v-loading='listLoading', @selection-change='selsChange', style='width: 100%;')
       el-table-column(type='expand', width='55')
         template( scope="props")
@@ -23,15 +29,11 @@
       <!--el-table-column(label='Wide Pic')-->
         <!--template( scope="scope")-->
           <!--img(:src="scope.row.wide_picture   + '?width=150&height=150'")-->
-      el-table-column(prop='language', label='Lang', width='100',
-              :filters="langs",
-              :filter-method="filterLang",
-              filter-placement="bottom-end")
-        template( scope="scope")
-          el-tag(:type="scope.row.language === 'de' ? 'primary' : 'success' ", close-transition ) {{scope.row.language}}
+
       el-table-column(prop='position', label='Pos', width='100', sortable='')
       el-table-column(prop='updated_at', label='Updated at', width='200', sortable='', :formatter='formatDate')
       el-table-column(prop='created_at', label='Created at', width='200', sortable='', :formatter='formatDate')
+      el-table-column(prop='language', label='Lang', width='80')
       el-table-column(label='Edit', width='250')
         template(scope='scope')
           el-row(:span="24",align="middle", type="flex")
@@ -130,6 +132,12 @@
     components: {
       'article_list': articles
     },
+    watch: {
+      'languages': function () {
+        this.getChannels();
+      }
+    },
+
     data() {
       var nonEmptyAndRequired = (rule, value, callback) => {
         if (value.trim() === '' || value == undefined) {
@@ -144,6 +152,21 @@
         desort: {
           prop: "position" ,
           order: "ascending" },
+
+
+        languages: 'de,en',
+        a_options: [{
+          value: 'de,en',
+          label: 'Data for All'
+        }, {
+          value: 'de',
+          label: 'Data for DE'
+        }, {
+          value: 'en',
+          label: 'Data for EN'
+        } ],
+
+
         langs:  [
           {
           value: 'de',
@@ -196,7 +219,7 @@
           picture: '',
 //          wide_picture: '',
           position: '',
-          language: 'de',
+          language: '',
           iuu: image_upload_url2,
 
         }
@@ -204,6 +227,10 @@
       }
     },
     methods: {
+      get_lang() {
+        if (this.languages == 'de,en') { return ''
+        }else{ return this.languages }
+      },
       handlePictureSuccess(file, fileList) {
 //        console.log(' Success picE!!');
         this.editForm.picture = api_domen + file.result
@@ -249,6 +276,7 @@
         let para = {
           page: this.page,
           per_page: this.per_page_const,
+          language: this.languages,
           name: this.filters.name
         };
         this.listLoading = true;
@@ -328,14 +356,17 @@
       // Create
       handleAdd: function () {
         this.addFormVisible = true;
+
         this.addForm = {
           title: '',
           description: '',
           picture: '',
-          language: 'de',
+          language: this.get_lang(),
           position: '',
 //          wide_picture: ''
         };
+        //this.addForm.language = this.get_lang();
+        //console.log(this.addForm)
       },
       // Edit save
       editSubmit: function () {

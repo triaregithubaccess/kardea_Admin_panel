@@ -8,6 +8,12 @@
           el-button(type='primary', v-on:click='getUsers') Search
         el-form-item
           el-button(type='primary', @click='handleAdd') Add new user
+        el-select.left5( v-model="languages" )
+          el-option(v-for="item in a_options",
+          :key="item.value" ,
+          :label="item.label" ,
+          :value="item.value")
+
     el-table(:data='users', highlight-current-row='',
         v-loading='listLoading',
         @sort-change='sortChange',
@@ -21,6 +27,8 @@
 
       el-table-column(prop='sex', label='Sex', width='100', :formatter='formatSex', sortable='')
       el-table-column(prop='birth_year', label='Birth', width='120', sortable='')
+      el-table-column(prop='reads', label='Read articles', width='100', :render-header="rere")
+      el-table-column(prop='duration', label='Total time spent', width='110')
       el-table-column(label='Edit', width='150')
         template(scope='scope')
           el-button(size='small', @click='handleEdit(scope.$index, scope.row)') Edit
@@ -94,12 +102,31 @@
 	import { getUserListPage, removeUser, batchRemoveUser, editUser, api_domen,addUser,image_upload_url2 } from '../../api/api';
 
 	export default {
-		data() {
+    watch: {
+      'languages': function () {
+        this.getUsers();
+      }
+    },
+
+    data() {
 			return {
         upload_url: image_upload_url2,
 				filters: {
 					name: ''
 				},
+
+        languages: 'de,en',
+        a_options: [{
+          value: 'de,en',
+          label: 'Data for All'
+        }, {
+          value: 'de',
+          label: 'Data for DE'
+        }, {
+          value: 'en',
+          label: 'Data for EN'
+        } ],
+
 				users: [],
         sort_obj: null,
 				total: 0,
@@ -147,6 +174,17 @@
 			}
 		},
 		methods: {
+      get_lang() {
+        if (this.languages == 'de,en') { return ''
+        }else{ return this.languages }
+      },
+
+      rere: function (h,b) {
+//        console.log(h)
+//        console.log(b)
+//        console.log("lab=", b.column.label)
+        return h('div', {}, ["Read",h('br'),"articles"])
+      },
       sortChange: function (obj) {
         this.sort_obj = obj
         this.getUsers();
@@ -173,6 +211,7 @@
 				let para = {
           page: this.page,
           per_page: this.per_page_const,
+          language: this.languages,
 					name: this.filters.name
 				};
 				this.listLoading = true;
@@ -185,8 +224,8 @@
           para["sort"] = sort_str
         }
 
-        //console.log("GGG getUsers...before req");
-				getUserListPage(para).then((res) => {
+        // console.log("GGG getUsers...before req");
+				getUserListPage(para, this.$router.token).then((res) => {
 
 					//console.log("GGG getUsers...,,,", res.data.result.length, res.data.result);
 					this.total = res.data.count;
@@ -308,7 +347,7 @@
 					this.listLoading = true;
 					//NProgress.start();
 					let para = { ids: ids };
-					batchRemoveUser(para).then((res) => {
+					batchRemoveUser(para, this.$router.token).then((res) => {
 						this.listLoading = false;
 						//NProgress.done();
 						this.$message({

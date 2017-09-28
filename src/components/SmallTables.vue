@@ -3,7 +3,7 @@
 
 		//el-row
 
-		el-col(:span="9")
+		el-col(:span="14")
 			onetable( :myp='tagApiService' )
 
 		el-col(:span="9")
@@ -30,6 +30,7 @@
 		removeItem: removeTag,
 		f1: 'name',
     f1_caps: 'Name',
+    need_lang: true,
     name_t_ph:'tag name',
     name_t: 'TAGs'
 	};
@@ -41,6 +42,7 @@
     removeItem: removeBW,
 		f1: 'word',
     f1_caps: 'Word',
+    need_lang: false,
     name_t_ph: 'bad word',
     name_t: 'Bad Words'
 	};

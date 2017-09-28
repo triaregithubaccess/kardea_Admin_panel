@@ -1,6 +1,11 @@
 <template lang="pug">
   section(style="wi--dth:1118px;")
     .toolbar
+      el-select.left5( v-model="languages" )
+        el-option(v-for="item in a_options",
+        :key="item.value" ,
+        :label="item.label" ,
+        :value="item.value")
     el-row( )
       el-col( :span="9")
         el-card( class="box-card" , style="width:390px;")
@@ -68,6 +73,16 @@
               el-row
                 el-col
                   el-card.pad5( class="box-card")
+                    el-table(:data="genders",border, :default-sort="def_sort", :highlight-current-row="false")
+                      el-table-column(label="Gender")
+                        template( scope="scope")
+                          el-icon( name="gender")
+                          span {{ scope.row.gender }}
+                      el-table-column(label="Users", prop="value", align="center")
+                      el-table-column(label="%", prop="proc", align="center", :formatter="proc_formatter")
+              el-row
+                el-col
+                  el-card.pad5( class="box-card")
                     el-table(:data="os_data",border, :default-sort="def_sort", :highlight-current-row="false")
                       el-table-column(label="OS name")
                         template( scope="scope")
@@ -110,7 +125,13 @@
         var tmp_daly_end = new Date(this.daly_period[1]);
         tmp_daly_end.setTime(tmp_daly_end.getTime() + 3600 * 1000 * 24 );
         this.daly_end = tmp_daly_end
-//        console.log("watch daly period", this.daly_begin, this.daly_end)
+        this.getDalyData();
+        this.getDemoGraphData();
+      } ,
+      'languages': function () {
+        this.getData();
+        this.getGrData();
+        this.getPieData();
         this.getDalyData();
         this.getDemoGraphData();
       }
@@ -122,6 +143,7 @@
         def_sort: {prop:"proc", order: "descending"},
         countries_data:[ ],
         os_data: [ ],
+        genders: [ ],
         ina: 7,
         new_u:7,
         daly_data: [] ,
@@ -130,6 +152,19 @@
         daly_period:{},
         daly_begin: new Date(0),
         daly_end: new Date(),
+
+        languages: 'de,en',
+        a_options: [{
+          value: 'de,en',
+          label: 'Data for All'
+        }, {
+          value: 'de',
+          label: 'Data for DE'
+        }, {
+          value: 'en',
+          label: 'Data for EN'
+        } ],
+
         total:{
           users: 0,
           allowed_pushes: 0,
@@ -185,48 +220,49 @@
         return str
       },
       handle_inactive: function () {
-        console.log('upd inactive')
+        //console.log('upd inactive')
         this.getPieData();
       },
       hc : function (x) {
-        console.log("x=",x)
+        //console.log("x=",x)
         this.kind = x
         this.getGrData();
       },
       getData: function() {
-        getDashboardInfo({}, this.$router.token).then((res) => {
-          console.log(res)
+        getDashboardInfo({language: this.languages}, this.$router.token).then((res) => {
+          //console.log(res)
           this.total = res.data.result.total;
 
         }).catch((err) => {console.log("in catch get Dashboard Data", err);} );
       },
       getGrData: function() {
-        getDashboardGraphInfo({who: this.kind}, this.$router.token).then((res) => {
-          console.log("for Graph=", res, res.data.result)
+        getDashboardGraphInfo({who: this.kind, language: this.languages}, this.$router.token).then((res) => {
+          //console.log("for Graph=", res, res.data.result)
           this.g_data = res.data.result;
 
         }).catch((err) => {console.log("in catch get Dashboard Data", err);} );
       },
       getPieData: function() {
-        getDashboardPieInfo({not_active_days: this.ina, new_user_days: this.new_u}, this.$router.token).then((res) => {
+        getDashboardPieInfo({not_active_days: this.ina, new_user_days: this.new_u, language: this.languages}, this.$router.token).then((res) => {
           console.log("for Graph=", res, res.data.result)
           this.p_data = res.data.result;
 
         }).catch((err) => {console.log("in catch get Dashboard Pie Data", err);} );
       },
       getDalyData: function() {
-        getDashboardDalyInfo({start: this.daly_begin, stop: this.daly_end}, this.$router.token).then((res) => {
-          console.log("for daly=",  res, res.data.result)
+        getDashboardDalyInfo({start: this.daly_begin, stop: this.daly_end, language: this.languages}, this.$router.token).then((res) => {
+          //console.log("for daly=",  res, res.data.result)
           this.daly_data = res.data.result.data;
           this.daly_max = res.data.result.max;
 
         }).catch((err) => {console.log("in catch get Dashboard Daly Data", err);} );
       },
       getDemoGraphData: function() {
-        getDashboardDemographInfo({start: this.daly_begin, stop: this.daly_end}, this.$router.token).then((res) => {
-          console.log("for daly=",  res, res.data.result)
+        getDashboardDemographInfo({start: this.daly_begin, stop: this.daly_end, language: this.languages}, this.$router.token).then((res) => {
+          //console.log("for daly=",  res, res.data.result)
           this.countries_data = res.data.result.countries;
           this.os_data = res.data.result.os_names;
+          this.genders = res.data.result.genders;
 
         }).catch((err) => {console.log("in catch get Dashboard Demograph Data", err);} );
       }

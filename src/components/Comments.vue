@@ -7,6 +7,12 @@
           el-input(v-model='filters.text', placeholder='words')
         el-form-item
           el-button(type='primary', v-on:click='getComments') Search
+        el-select.left5( v-model="languages" )
+          el-option(v-for="item in a_options",
+          :key="item.value" ,
+          :label="item.label" ,
+          :value="item.value")
+
 
     el-table(:data='comments', highlight-current-row='',
         v-loading='listLoading',
@@ -28,6 +34,7 @@
       el-table-column(prop='text', label='Comment',  sortable='')
 
       el-table-column(prop='created_at', label='Created at', width='200', sortable='', :formatter='formatDate')
+      el-table-column(prop='language', label='Lang', width='80')
       el-table-column(label='Edit', width='150')
         template(scope='scope')
           el-button(size='small', @click='handleEdit(scope.$index, scope.row)') Edit
@@ -68,6 +75,12 @@
   import { getCommentListPage,getChannelListPage, getArticlesCommentListPage, removeComment, editComment, addComment } from '../api/api';
   export default {
     props: ['news_id','show_id'],
+    watch: {
+      'languages': function () {
+        this.getComments();
+      }
+    },
+
     components:
       {
 
@@ -84,9 +97,22 @@
         comments: [],
         total: 0,
         page: 2,
-        per_page_const: 4,
+        per_page_const: 10,
         listLoading: false,
         sels: [],//selected rows
+
+        languages: 'de,en',
+        a_options: [{
+          value: 'de,en',
+          label: 'Data for All'
+        }, {
+          value: 'de',
+          label: 'Data for DE'
+        }, {
+          value: 'en',
+          label: 'Data for EN'
+        } ],
+
 
         editFormVisible: false,
         editLoading: false,
@@ -108,6 +134,10 @@
       }
     },
     methods: {
+      get_lang() {
+        if (this.languages == 'de,en') { return ''
+        }else{ return this.languages }
+      },
 
       handleCurrentChange(val) {
         this.page = val;
@@ -129,6 +159,7 @@
             per_page: this.per_page_const,
             name: this.filters.name,
             comment_id: this.$route.params.id,
+            language: this.languages,
             token: this.$router.token
           };
           get_func = getCommentListPage;
@@ -140,6 +171,7 @@
             per_page: this.per_page_const,
             name: this.filters.name,
             article_id: this.news_id,
+            language: this.languages,
             token: this.$router.token
           };
           get_func = getArticlesCommentListPage;
@@ -217,7 +249,8 @@
 //        this.getComments();
 
         this.addForm = {
-          text: ''
+          text: '',
+          language: this.get_lang()
         };
 
       },
