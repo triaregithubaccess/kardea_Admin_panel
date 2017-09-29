@@ -16,6 +16,11 @@
             :key="item.value" ,
             :label="item.label" ,
             :value="item.value")
+        el-select.left5( v-model="languages")
+          el-option(v-for="item in la_options",
+          :key="item.value" ,
+          :label="item.label" ,
+          :value="item.value")
 
     el-table(v-model="articlesVisible", v-show="articlesVisible",:data='articles', highlight-current-row='',
         v-loading='listLoading',
@@ -92,6 +97,9 @@
 
   export default {
     watch: {
+      'languages': function () {
+        this.getData();
+      },
       'period': function () {
 
         this.rep_start = this.period[0]
@@ -132,6 +140,18 @@
         rep_start: new Date(0),
         rep_end: new Date(),
         period: '',
+        languages: 'de,en',
+        la_options: [{
+          value: 'de,en',
+          label: 'Data for All'
+        }, {
+          value: 'de',
+          label: 'Data for DE'
+        }, {
+          value: 'en',
+          label: 'Data for EN'
+        } ],
+
         langs:  [
           {
             value: 'de',
@@ -188,16 +208,15 @@
       },
 
       getData() {
-        console.log("Get Art!");
-        let para2 = {};
-        para2 = {
+        //console.log("Get Art!");
+        let para2 = {
           page: this.page,
           pre: this.pre,
           per_page: this.per_page_const,
           name: this.filters.name,
           start: this.rep_start,
           stop: this.rep_end,
-
+          language: this.languages
         };
 
         let sort_str = '_id';
@@ -216,8 +235,9 @@
         if (this.table2 == 'Article') { get_func = getArticleForAnalyticsListPage }
         if (this.table2 == 'Channel') { get_func = getChannelForAnalyticsListPage }
         if (this.table2 == 'Tag') { get_func = getTagForAnalyticsListPage }
-
+        //console.log(para2)
         get_func(para2, this.$router.token).then((res) => {
+          //console.log("respppppppp")
           this.total = res.data.count;
           if (this.table2 == 'Article') { this.articles = res.data.result }
           if (this.table2 == 'Channel') { this.channels = res.data.result }
@@ -237,7 +257,7 @@
         this.cur_news = a._id
       },
       handleCurrentChange(val) {
-        console.log("HCP");
+        //console.log("HCP");
         this.page = val;
         this.getData();
       },

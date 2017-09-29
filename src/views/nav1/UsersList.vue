@@ -29,6 +29,8 @@
       el-table-column(prop='birth_year', label='Birth', width='120', sortable='')
       el-table-column(prop='reads', label='Read articles', width='100', :render-header="rere")
       el-table-column(prop='duration', label='Total time spent', width='110')
+      el-table-column(prop='language', label='Lang', width='80')
+
       el-table-column(label='Edit', width='150')
         template(scope='scope')
           el-button(size='small', @click='handleEdit(scope.$index, scope.row)') Edit

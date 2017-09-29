@@ -166,8 +166,8 @@
                 img( v-if="addForm.picture", :src="addForm.picture", class="avatar")
                 i( v-else class="el-icon-plus  avatar-uploader-icon")
 
-            el-form-item(label='Tags', props='tags')
-              viewtags(:dynamicTags='addForm.tags',  ref='addTagList')
+            el-form-item(label='Tags21', props='tags')
+              viewtags(:dynamicTags='addForm.tags',  ref='addTagList', :dis='languages == "de,en" ? true: false', :lang="languages")
             el-form-item(label='Publish at', prop='published_at')
               el-date-picker(v-model='addForm.published_at',type="datetime",placeholder="If empty - live now")
             el-col( :span="5")
@@ -226,7 +226,7 @@
       },
     watch: {
       'editForm.language': function (a,b) {
-        console.log("a b", a,b, "---", a == '', b == '')
+        //console.log("a b", a,b, "---", a == '', b == '')
         this.languages = this.addForm.language
 
         if (b != '') {
@@ -237,6 +237,7 @@
       'addForm.language': function () {
         this.languages = this.addForm.language
         this.addForm.channel_id = '';
+        this.addForm.tags = []
         this.getChannels();
       },
       'languages': function () {
@@ -567,7 +568,7 @@
       }
     },
     mounted() {
-      console.log("Art my-props=", this.che_id, this.pre);
+      //console.log("Art my-props=", this.che_id, this.pre);
       if (this.che_id != null){
         this.per_page_const = 5;
       }

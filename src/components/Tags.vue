@@ -3,6 +3,7 @@
     el-tag( :key="tag",
       v-for="tag in dynamicTags",
       type="primary" ,
+      :disabled="dis" ,
       hit=true,
       :closable="true",
       :close-transition="false" ,
@@ -10,7 +11,7 @@
     el-select( class="input-new-tag",
       v-model="inputValue",
       ref="saveTagInput",
-
+      :disabled="dis"
       @keyup.enter.native="handleInputConfirm",
       @blur="handleInputConfirm"
       filterable,
@@ -24,14 +25,20 @@
         :label="item" ,
         :value="item")
 
-    el-button( v-else, class="button-new-tag", size="small", @click="showInput") + New Tag
+    el-button( v-else, class="button-new-tag", size="small", @click="showInput", :disabled="dis") + New Tag
 </template>
 
 <script>
 	import { getAllTags } from '../api/api';
 
   export default {
-  	props: ['dynamicTags'],
+  	props: ['dynamicTags', 'dis', 'lang'],
+    watch: {
+
+      'lang': function () {
+        this.getTags();
+      }
+    },
     data() {
       return {
         inputVisible: false,
@@ -40,6 +47,11 @@
       };
     },
     methods: {
+      get_lang() {
+        return this.lang
+//        if (this.languages == 'de,en') { return ''
+//        }else{ return this.languages }
+      },
       handleClose(tag) {
         this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
       },
@@ -64,8 +76,8 @@
       },
 
       getTags: function () {
-				let para = { };
-//        console.log("in get Tags");
+				let para = {page:1, per_page:99999,language: this.get_lang() };
+        //console.log("in get Tags");
 				getAllTags(para, this.$router.token).then((res) => {
 					this.all_tags = res.data.result;
           //console.log("resp tags=", this.all_tags);
