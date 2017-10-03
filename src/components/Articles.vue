@@ -107,7 +107,7 @@
                 img( v-if="editForm.picture", :src="editForm.picture", class="avatar")
                 i( v-else class="el-icon-plus avatar-uploader-icon")
             el-form-item(label='Tags',  props='tags')
-              viewtags(:dynamicTags='editForm.tags', ref='editTagList')
+              viewtags(:dynamicTags='editForm.tags', ref='editTagList', :lang="languages")
 
             el-form-item(label='Publish at', prop='published_at')
               el-date-picker(v-model='editForm.published_at',type="datetime",placeholder="If empty - live now", :disabled="!pre")
@@ -153,8 +153,8 @@
                   el-select(type='year', placeholder='topic', v-model='addForm.channel_id', :disabled='languages == "de,en" ? true: false')
                     el-option(v-for="che in channels", :key="che._id", :label="che.title", :value="che._id")
               el-col( :span="11")
-                el-form-item(label='Language', prop='language', v-show="che_id == undefined")
-                  el-select(type='year', placeholder='language', v-model='addForm.language')
+                el-form-item(label='Language', prop='language')
+                  el-select(type='year', placeholder='language', v-model='addForm.language' , :disabled="che_id != undefined? true: false")
                     el-option(v-for="lang in langs", :key="lang.value", :label="lang.label", :value="lang.value")
             el-form-item(label='Picture', prop='picture')
               .grey Optimal size: under 5 Mb
@@ -166,8 +166,8 @@
                 img( v-if="addForm.picture", :src="addForm.picture", class="avatar")
                 i( v-else class="el-icon-plus  avatar-uploader-icon")
 
-            el-form-item(label='Tags21', props='tags')
-              viewtags(:dynamicTags='addForm.tags',  ref='addTagList', :dis='languages == "de,en" ? true: false', :lang="languages")
+            el-form-item(label='Tags', props='tags')
+              viewtags(:dynamicTags='addForm.tags',  ref='addTagList', :dis='languages == "de,en" ? (che_id == undefined? true: false): false', :lang="languages")
             el-form-item(label='Publish at', prop='published_at')
               el-date-picker(v-model='addForm.published_at',type="datetime",placeholder="If empty - live now")
             el-col( :span="5")
@@ -218,7 +218,7 @@
   };
 
   export default {
-    props: ["che_id","pre"],
+    props: ["che_id","pre", "lang"],
     components:
       {
         viewtags: dtags,
@@ -226,23 +226,39 @@
       },
     watch: {
       'editForm.language': function (a,b) {
-        //console.log("a b", a,b, "---", a == '', b == '')
-        this.languages = this.addForm.language
+        //console.log("edit Form:a b", a,b, "---", a == '', b == '')
+        if (this.editForm.language != '') {
+          this.languages = this.editForm.language
+        }
+
 
         if (b != '') {
           this.editForm.channel_id = '';
+          this.editForm.tags = [];
         }
         this.getChannels();
       },
       'addForm.language': function () {
         this.languages = this.addForm.language
+
         this.addForm.channel_id = '';
-        this.addForm.tags = []
+        this.addForm.tags.splice(0)
         this.getChannels();
       },
       'languages': function () {
         this.getArticles();
       },
+      'editFormVisible': function (a,b) {
+        //console.log("edit FormVi:a b", a,b)
+        if (a){console.log("set true", a)}else{
+          //console.log("set false", a)
+          this.editForm.language = '';
+        }
+
+      },
+//      'che_id': function () {
+//        this.addForm.channel_id = '';
+//      },
       '$route' (toto, from) {
         //console.log("to from", toto, from);
         if (toto.name == "Articles") {
@@ -374,6 +390,7 @@
 
       //Get the article list
       getArticles() {
+        //console.log("in get A")
         let get_func;
         let para2 = {};
         if (this.che_id == undefined) {
@@ -394,8 +411,10 @@
             per_page: this.per_page_const,
             name: this.filters.name,
             che_id: this.che_id,
+            language: this.lang,
             token: this.$router.token
           };
+          //console.log(para2)
           get_func = getArticleListPageByChe;
         }
         let sort_str = '_id';
@@ -466,7 +485,10 @@
         this.addForm['language'] =  this.get_lang();
         if (this.che_id != null) {
               this.addForm.channel_id = this.che_id;
-            }
+              this.addForm.language = this.lang;
+            }   else {
+          this.addForm.channel_id = ''
+        }
       },
       // Edit save
       editSubmit: function () {
@@ -490,8 +512,8 @@
                 this.$refs['editForm'].resetFields();
                 this.editFormVisible = false;
                 this.getArticles();
-//                console.log('before call tags method');
-                this.$refs['editTagList'].getTags();
+                //console.log('before call tags method', this.$refs);
+                //this.$refs['editTagList'].getTags();
               });
             });
           }
@@ -531,7 +553,7 @@
                 this.$refs['addForm'].resetFields();
                 this.addFormVisible = false;
                 this.getArticles();
-                this.$refs['editTagList'].getTags();
+                this.$refs['addTagList'].getTags();
               });
             });
           }

@@ -280,5 +280,8 @@
 </script>
 
 <style scoped>
+.el-form-item {
+  margin-bottom: 20px;
+}
 
 </style>

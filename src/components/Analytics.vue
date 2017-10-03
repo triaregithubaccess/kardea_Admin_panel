@@ -53,11 +53,11 @@
       el-table-column(label='Picture', width='110')
         template( scope="scope")
           img(:src="scope.row.picture   + '?width=100&height=100'")
-      el-table-column( prop='duration', label='Duration',  sortable='', align='center')
+      el-table-column( prop='duration', label='Average Duration, sec',  sortable='', align='center', width='160')
       el-table-column( prop='is_read', label='Read Count',  sortable='', align='center')
-      el-table-column( prop='likes', label='Likes',  sortable='', align='center')
-      el-table-column( prop='bookmarks', label='bookmark',  sortable='', align='center')
-      el-table-column( prop='comments', label='comments',  sortable='', align='center')
+      //el-table-column( prop='likes', label='Likes',  sortable='', align='center')
+      el-table-column( prop='bookmarks', label='Bookmark',  sortable='', align='center')
+      el-table-column( prop='comments', label='Comments',  sortable='', align='center')
 
     el-table(v-model="channelsVisible",v-show="channelsVisible", :data='channels', highlight-current-row='',
       v-loading='listLoading',

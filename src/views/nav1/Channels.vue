@@ -20,7 +20,7 @@
           p
             b Description :
             |  {{ props.row.description }}
-          article_list(:che_id='props.row._id')
+          article_list(:che_id='props.row._id', :lang='props.row.language')
       //el-table-column(prop='_id', label='ID', width='200', sortable='')
       el-table-column(prop='title', label='Title', width='200', sortable='')
       el-table-column(label='Picture', width='150')

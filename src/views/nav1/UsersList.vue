@@ -7,7 +7,7 @@
         el-form-item
           el-button(type='primary', v-on:click='getUsers') Search
         el-form-item
-          el-button(type='primary', @click='handleAdd') Add new user
+          el-button(type='primary', @click='handleAdd', v-show="false") Add new user
         el-select.left5( v-model="languages" )
           el-option(v-for="item in a_options",
           :key="item.value" ,

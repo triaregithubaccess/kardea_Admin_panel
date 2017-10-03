@@ -6,7 +6,7 @@
         :key="item.value" ,
         :label="item.label" ,
         :value="item.value")
-    el-row( )
+    el-row( style="margin-bottom:20px;" )
       el-col( :span="9")
         el-card( class="box-card" , style="width:390px;")
           div( slot="header" class="clearfix")
@@ -16,7 +16,7 @@
               el-col( :span="15" , style="height:115px;" )
                 echarts(:gdata="g_data", :gname="kind", gtype="line")
           el-row(:span="24")
-            el-col( :span="11")
+            el-col( :span="12")
               .text.item(@click="hc('users')") Users
                 span.mag {{total.users}}
               .text.item(@click="hc('users_push')") Users allowed pushes
