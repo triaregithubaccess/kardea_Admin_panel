@@ -1,5 +1,13 @@
 <template lang="pug">
   el-col( )
+    <!--el-transfer( filterable,-->
+      <!--:filter-method="filterMethod",-->
+      <!--filter-placeholder="State Abbreviations",-->
+      <!--:titles="['Source', 'Target']",-->
+      <!--v-model="dynamicTags",-->
+      <!--:data="dis2")-->
+
+
     el-tag( :key="tag",
       v-for="tag in dynamicTags",
       type="primary" ,
@@ -32,22 +40,46 @@
 	import { getAllTags } from '../api/api';
 
   export default {
-  	props: ['dynamicTags', 'dis', 'lang'],
+  	props: ['dynamicTags', 'dis', 'lang', 'internal'],
     watch: {
 
       'lang': function () {
         this.getTags();
       }
     },
+
+
+
+
     data() {
       return {
+        dis2: this.generateData2(),
         inputVisible: false,
         inputValue: '',
         all_tags: []
       };
     },
     methods: {
-      get_lang() {
+      filterMethod(query, item) {
+        return item.initial.toLowerCase().indexOf(query.toLowerCase()) > -1;
+      },
+      generateData2() {
+        const data = [];
+        const states = ['California', 'Illinois', 'Maryland', 'Texas', 'Florida', 'Colorado', 'Connecticut '];
+        const initials = ['CA', 'IL', 'MD', 'TX', 'FL', 'CO', 'CT'];
+        states.forEach((city, index) => {
+          data.push({
+            label: city,
+            key: index,
+            initial: initials[index]
+          });
+        });
+        return data;
+      },
+
+
+
+  get_lang() {
         return this.lang
 //        if (this.languages == 'de,en') { return ''
 //        }else{ return this.languages }
@@ -76,8 +108,13 @@
       },
 
       getTags: function () {
-				let para = {page:1, per_page:99999,language: this.get_lang() };
-        //console.log("in get Tags");
+        let kind
+        if (this.internal) {
+          kind = 'internal'
+        } else{
+          kind = 'EXTERNAL'
+        }
+				let para = {page:1, per_page:99999,language: this.get_lang(), kind: kind };
 				getAllTags(para, this.$router.token).then((res) => {
 					this.all_tags = res.data.result;
           //console.log("resp tags=", this.all_tags);
@@ -95,6 +132,21 @@
 
 
 <style scoped>
+
+.el-transfer-panel {
+  border: 1px solid #d1dbe5;
+  box-shadow: 0 2px 4px rgba(0,0,0,.12), 0 0 6px rgba(0,0,0,.04);
+  display: inline-block;
+  width: 200px;
+  position: relative;
+}
+
+.el-checkbox-button__inner, .el-transfer-panel {
+  background: #fff;
+  vertical-align: middle;
+  box-sizing: border-box;
+}
+
 .input-new-tag {
   margin-left: 10px; }
 .button-new-tag {

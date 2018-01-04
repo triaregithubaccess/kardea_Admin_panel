@@ -14,7 +14,7 @@
           :label="item.label" ,
           :value="item.value")
 
-    el-table(:data='channels', highlight-current-row='',:default-sort='desort', v-loading='listLoading', @selection-change='selsChange', style='width: 100%;')
+    el-table(:data='channels', highlight-current-row='',:default-sort='desort', v-loading='listLoading', @row-click='handleRowClick', @selection-change='selsChange', style='width: 100%;')
       el-table-column(type='expand', width='55')
         template( scope="props")
           p
@@ -31,6 +31,8 @@
           <!--img(:src="scope.row.wide_picture   + '?width=150&height=150'")-->
 
       el-table-column(prop='position', label='Pos', width='100', sortable='')
+      el-table-column(prop='access_code', label='code', width='100', sortable='')
+      el-table-column(prop='s_on_s', label='Auto subscribed', width='100', sortable='', :formatter='formatBool')
       el-table-column(prop='updated_at', label='Updated at', width='200', sortable='', :formatter='formatDate')
       el-table-column(prop='created_at', label='Created at', width='200', sortable='', :formatter='formatDate')
       el-table-column(prop='language', label='Lang', width='80')
@@ -51,14 +53,18 @@
       el-pagination(layout='prev, pager, next', @current-change='handleCurrentChange', :page-size='per_page_const', :total='total', style='float:right;')
     // Edit
     el-dialog(title='Edit', v-model='editFormVisible', :close-on-click-modal='false')
-      el-form(:model='editForm', label-width='80px', :rules='formRules', ref='editForm')
+      el-form(:model='editForm', label-width='80px', :rules='formRulesEdit', ref='editForm')
         el-form-item(label='Title', prop='title')
           el-input(v-model='editForm.title', auto-complete='off')
         el-form-item(label='Description', prop='description')
           el-input(type="textarea" , v-model='editForm.description', auto-complete='off')
+        el-form-item(label='Access code', prop='access_code')
+          el-input( v-model='editForm.access_code', :disabled="editForm.s_on_s ")
         el-form-item(label='Language', prop='language')
           el-select(type='year', placeholder='language', v-model='editForm.language')
             el-option(v-for="lang in langs", :key="lang.value", :label="lang.label", :value="lang.value")
+        el-form-item(label='Auto subscribed', prop='s_on_s')
+          el-checkbox( v-model='editForm.s_on_s', :disabled="editForm.access_code != undefined && editForm.access_code.length > 0")
         el-form-item(label='Picture', prop='picture')
           el-upload(class="avatar-uploader",label='Picture',
           :action="upload_url",
@@ -85,14 +91,18 @@
         el-button(type='primary', @click.native='editSubmit', :loading='editLoading') Submit
     // Create Interface
     el-dialog(title='New', v-model='addFormVisible', :close-on-click-modal='false')
-      el-form(:model='addForm', label-width='80px', :rules='formRules', ref='addForm')
+      el-form(:model='addForm', label-width='80px', :rules='formRulesAdd', ref='addForm')
         el-form-item(label='Title', prop='title')
           el-input(v-model='addForm.title', auto-complete='off')
         el-form-item(label='Description', prop='description')
           el-input(type="textarea" , v-model='addForm.description', auto-complete='off')
+        el-form-item(label='Access code', prop='access_code')
+          el-input( v-model='addForm.access_code', :disabled="addForm.s_on_s")
         el-form-item(label='Language', prop='language')
           el-select(type='year', placeholder='language', v-model='addForm.language')
             el-option(v-for="lang in langs", :key="lang.value", :label="lang.label", :value="lang.value")
+        el-form-item(label='Auto subscribed', prop='s_on_s')
+          el-checkbox( v-model='addForm.s_on_s' , :disabled="addForm.access_code != undefined && addForm.access_code.length > 0")
 
         el-form-item(label='Picture', prop='picture')
           .grey Optimal size: under 5 Mb
@@ -135,6 +145,12 @@
     watch: {
       'languages': function () {
         this.getChannels();
+      },
+      'access_code': function () {
+        this.getChannels();
+      },
+      'languages': function () {
+        this.getChannels();
       }
     },
 
@@ -144,6 +160,71 @@
           callback(new Error('Empty not allowed!'));
         } else {
           callback();
+        }
+      };
+
+//      var mustNotTwoAdd = (rule, value, callback) => {
+//        if (this.addForm.access_code == undefined  && this.addForm.s_on_s == undefined ) {
+//          callback();
+//        } else {
+//          if ((this.addForm.access_code.trim() != '') && this.addForm.s_on_s ){
+//            callback(new Error('Incorrect set access code and auto-subscribe'));
+//        }else{
+//            callback();
+//          }
+//        }
+//      };
+//
+//      var mustNotTwoEdit = (rule, value, callback) => {
+//        if (this.editForm.access_code == undefined  && this.editForm.s_on_s == undefined ) {
+//          callback();
+//        } else {
+//          if ((this.editForm.access_code.trim() != '') && this.editForm.s_on_s ){
+//            callback(new Error('Incorrect set access code and auto-subscribe'));
+//          }else{
+//            callback();
+//          }
+//        }
+//
+//      };
+
+      var mustUniqEdit = (rule, value, callback) => {
+        if (value == undefined || value.trim() === '' ) {
+          callback();
+        } else {
+          let uniq = true
+          this.channels.forEach((x) =>{
+            if (this.editForm._id != x._id) {
+              if (x.access_code === value) {
+                uniq = false
+              }
+            }
+          })
+          if (uniq) {
+            callback()
+          }else {
+            callback(new Error('Empty not allowed!'));
+          }
+        }
+      };
+
+      var mustUniqAdd = (rule, value, callback) => {
+        if (value == undefined || value.trim() === '' ) {
+          callback();
+        } else {
+          let uniq = true
+          this.channels.forEach((x) =>{
+            if (this.addForm._id != x._id) {
+              if (x.access_code === value) {
+                uniq = false
+              }
+            }
+          })
+          if (uniq) {
+            callback()
+          }else {
+            callback(new Error('Empty not allowed!'));
+          }
         }
       };
 
@@ -179,7 +260,7 @@
           label: 'EN'
           },
             ],
-          filters: {
+        filters: {
           name: ''
         },
         channels: [],
@@ -192,12 +273,21 @@
         editFormVisible: false,
         editLoading: false,
 
-        formRules: {
+        formRulesEdit: {
           title: [ { required: true,validator: nonEmptyAndRequired, message: 'Please input Title', trigger: 'blur' } ] ,
+          access_code: [ { validator: mustUniqEdit, message: 'Not uniq', trigger: 'blur' } ] ,
           description: [ { required: true,validator: nonEmptyAndRequired, message: 'Please input Description', trigger: 'blur' } ],
           language: [ { required: true, message: 'Please input Language', trigger: 'blur' } ],
           picture: [ { required: true, message: 'Please upload Picture', trigger: 'blur' } ],
         },
+        formRulesAdd: {
+          title: [ { required: true,validator: nonEmptyAndRequired, message: 'Please input Title', trigger: 'blur' } ] ,
+          access_code: [ { validator: mustUniqAdd, message: 'Not uniq', trigger: 'blur' } ] ,
+          description: [ { required: true,validator: nonEmptyAndRequired, message: 'Please input Description', trigger: 'blur' } ],
+          language: [ { required: true, message: 'Please input Language', trigger: 'blur' } ],
+          picture: [ { required: true, message: 'Please upload Picture', trigger: 'blur' } ],
+        },
+
         // Edit
         editForm: {
           title: '',
@@ -206,12 +296,13 @@
 //          wide_picture: '',
           language: '',
           position: '',
+          access_code: '',
+          s_on_s: false,
           iuu: image_upload_url2,
         },
 
         addFormVisible: false,
         addLoading: false,
-
 
         addForm: {
           title: '',
@@ -219,6 +310,8 @@
           picture: '',
 //          wide_picture: '',
           position: '',
+          access_code: '',
+          s_on_s: false,
           language: '',
           iuu: image_upload_url2,
 
@@ -269,6 +362,15 @@
       formatDate: function (row, column) {
         let cur = new Date(row[column.property]);
         return util.formatDate.format(cur, 'yyyy-MM-dd hh:mm:ss');
+      },
+
+      formatBool: function (row, column) {
+        if (row[column.property]) {
+          return "Yes"
+        } else{
+          return ""
+        }
+
       },
 
       //Get the channel list
@@ -322,6 +424,12 @@
       },
       // Edit
       handleEdit: function (index, row) {
+        if (row.s_on_s == undefined) {
+          row.s_on_s = false
+        }
+        if (row.access_code == undefined) {
+          row.access_code = ''
+        }
         this.editFormVisible = true;
         this.editForm = Object.assign({}, row);
       },
@@ -363,6 +471,8 @@
           picture: '',
           language: this.get_lang(),
           position: '',
+          access_code: '',
+          s_on_s: false,
 //          wide_picture: ''
         };
         //this.addForm.language = this.get_lang();
@@ -415,6 +525,14 @@
           }
         });
       },
+      handleRowClick: function (row,event,column) {
+        //console.log("row click",row,event,column)
+        if (column.className == "el-table__expand-column" || column.label == 'Edit') {
+        } else {
+          this.handleEdit(1, row)
+        }
+      } ,
+
       selsChange: function (sels) {
         this.sels = sels;
       },

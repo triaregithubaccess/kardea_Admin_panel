@@ -17,6 +17,7 @@
     el-table(:data='articles', highlight-current-row='',
         v-loading='listLoading',
         @selection-change='selsChange',
+        @row-click='handleRowClick',
         @sort-change='sortChange',
         @expand="exp",
         style='width: 100%;')
@@ -108,6 +109,8 @@
                 i( v-else class="el-icon-plus avatar-uploader-icon")
             el-form-item(label='Tags',  props='tags')
               viewtags(:dynamicTags='editForm.tags', ref='editTagList', :lang="languages")
+            el-form-item(label='Internal Tags', props='internal_tags')
+              viewtags(:dynamicTags='editForm.internal_tags',  ref='editIntTagList', :internal="true")
 
             el-form-item(label='Publish at', prop='published_at')
               el-date-picker(v-model='editForm.published_at',type="datetime",placeholder="If empty - live now", :disabled="!pre")
@@ -168,6 +171,8 @@
 
             el-form-item(label='Tags', props='tags')
               viewtags(:dynamicTags='addForm.tags',  ref='addTagList', :dis='languages == "de,en" ? (che_id == undefined? true: false): false', :lang="languages")
+            el-form-item(label='Internal Tags', props='internal_tags')
+              viewtags(:dynamicTags='addForm.internal_tags',  ref='addIntTagList', :internal="true")
             el-form-item(label='Publish at', prop='published_at')
               el-date-picker(v-model='addForm.published_at',type="datetime",placeholder="If empty - live now")
             el-col( :span="5")
@@ -209,6 +214,7 @@
     source_name: '',
     published_at: '',
     tags: [],
+    internal_tags: [],
     push_on_publish: '',
     site_on_publish: '',
     fb_on_publish: '',
@@ -554,11 +560,20 @@
                 this.addFormVisible = false;
                 this.getArticles();
                 this.$refs['addTagList'].getTags();
+                //this.$refs['addIntTagList'].getTags('internal');
               });
             });
           }
         });
       },
+      handleRowClick: function (row,event,column) {
+        //console.log("row click",row,event,column)
+        if (column.className == "el-table__expand-column" || column.label == 'Edit') {
+        } else {
+          this.handleEdit(1, row)
+        }
+      } ,
+
       selsChange: function (sels) {
         this.sels = sels;
       },

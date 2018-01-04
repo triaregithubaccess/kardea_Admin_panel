@@ -17,6 +17,7 @@
     el-table(:data='users', highlight-current-row='',
         v-loading='listLoading',
         @sort-change='sortChange',
+        @row-click='handleRowClick',
         @selection-change='selsChange',
         style='width: 100%;')
       el-table-column(prop='user_name', label='Name', width='250', sortable='')
@@ -337,7 +338,15 @@
 					}
 				});
 			},
-			selsChange: function (sels) {
+      handleRowClick: function (row,event,column) {
+        //console.log("row click",row,event,column)
+        if (column.className == "el-table__expand-column" || column.label == 'Edit') {
+        } else {
+          this.handleEdit(1, row)
+        }
+      } ,
+
+      selsChange: function (sels) {
 				this.sels = sels;
 			},
 			//mass delete
