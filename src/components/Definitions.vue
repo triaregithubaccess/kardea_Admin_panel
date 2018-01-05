@@ -157,7 +157,7 @@
         formRules: {
           term: [ { required: true,validator: nonEmptyAndRequired, message: 'Please input Term', trigger: 'blur' } ] ,
           explanation: [ { required: true,validator: nonEmptyAndRequired, message: 'Please input Explanation', trigger: 'blur' } ] ,
-
+          language: [ { required: true, message: 'Please input Language', trigger: 'blur' } ],
         },
 
       }

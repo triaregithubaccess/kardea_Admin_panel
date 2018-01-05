@@ -99,7 +99,10 @@
                       el-table-column(label="%", prop="proc", align="center", :formatter="proc_formatter")
 
 
-    el-row()
+    el-row( style="margin-bottom:20px;margin-top:20px;" )
+      el-col( :span="9")
+        el-card( class="box-card" , style="width:390px;")
+          el-button(type="danger", @click="goGoogle") Load Google Sheet with Tags
 
 
 </template>
@@ -111,10 +114,12 @@
   import echarts from '../views/charts/echarts.vue'
   import daly from '../components/Daly.vue'
   //import NProgress from 'nprogress'
-  import { getDashboardInfo, getDashboardGraphInfo, getDashboardDalyInfo, getDashboardPieInfo, getDashboardDemographInfo } from '../api/api';
+  import { getDashboardInfo, getDashboardGraphInfo, getDashboardDalyInfo, getDashboardPieInfo, getDashboardDemographInfo, loadGoogleSheet } from '../api/api';
+  import ElButton from "../../node_modules/element-ui/packages/button/src/button";
   export default {
     components:
       {
+        ElButton,
         echarts,
         daly
       },
@@ -212,8 +217,18 @@
       }
     },
     methods: {
+      goGoogle: function () {
+        this.$confirm('Are you sure that you want to update Internal tags and questions?', 'warning', {}).then(() => {
+          loadGoogleSheet({}, this.$router.token).then((res) => {
+            this.$message({
+              message: 'Updated successfully',
+              type: 'success'
+            });
+          })
+        }).catch((err) => {console.log("in catch update Google Data", err);} );
+      },
       proc_formatter: function (row, col) {
-        var str = ""+row.proc+""
+        var str = "" + row.proc + ""
         var i = str.indexOf('.')
         if (i<0) {i = str.length}
         str = str.substr(0,i+3)
@@ -244,7 +259,7 @@
       },
       getPieData: function() {
         getDashboardPieInfo({not_active_days: this.ina, new_user_days: this.new_u, language: this.languages}, this.$router.token).then((res) => {
-          console.log("for Graph=", res, res.data.result)
+          //console.log("for Graph=", res, res.data.result)
           this.p_data = res.data.result;
 
         }).catch((err) => {console.log("in catch get Dashboard Pie Data", err);} );
