@@ -202,7 +202,8 @@
   import dtags from './Tags'
   import commentsList from './Comments'
 
-  let init_state = {
+  let init_state = function() {
+    return {
     headline: '',
     subtitle: '',
     abstract: '',
@@ -221,7 +222,7 @@
     wp_link: '',
     desss: false,
     iuu: image_upload_url2
-  };
+  }};
 
   export default {
     props: ["che_id","pre", "lang"],
@@ -241,14 +242,19 @@
         if (b != '') {
           this.editForm.channel_id = '';
           this.editForm.tags = [];
+          this.editForm.internal_tags = [];
         }
         this.getChannels();
       },
       'addForm.language': function () {
         this.languages = this.addForm.language
-
-        this.addForm.channel_id = '';
+        if (this.che_id != null){
+          'nope'
+        }else {
+          this.addForm.channel_id = '';
+        }
         this.addForm.tags.splice(0)
+        this.addForm.internal_tags.splice(0)
         this.getChannels();
       },
       'languages': function () {
@@ -256,7 +262,7 @@
       },
       'editFormVisible': function (a,b) {
         //console.log("edit FormVi:a b", a,b)
-        if (a){console.log("set true", a)}else{
+        if (a){}else{
           //console.log("set false", a)
           this.editForm.language = '';
         }
@@ -346,7 +352,7 @@
           picture: [ { required: true, message: 'Please upload Picture', trigger: 'blur' } ],
         },
         // Edit
-        editForm: init_state,
+        editForm: init_state(),
 
         addFormVisible: false,
         addLoading: false,
@@ -356,7 +362,7 @@
           ]
         },
 
-        addForm: init_state,
+        addForm: init_state(),
 
       }
     },
@@ -481,20 +487,24 @@
         this.getChannels();
         this.editForm = Object.assign({}, row);
         this.editForm.desss = this.editForm.site_on_publish
+        if (this.editForm.internal_tags == undefined) {
+          this.editForm.internal_tags = []
+        }
       },
       // Create
       handleAdd: function () {
+        this.addForm['language'] =  this.get_lang();
+
+        if (this.che_id != null) {
+          this.addForm.channel_id = this.che_id;
+          this.addForm.language = this.lang;
+
+        } else {
+          this.addForm.channel_id = ''
+
+        }
         this.getChannels();
         this.addFormVisible = true;
-
-        this.addForm = init_state;
-        this.addForm['language'] =  this.get_lang();
-        if (this.che_id != null) {
-              this.addForm.channel_id = this.che_id;
-              this.addForm.language = this.lang;
-            }   else {
-          this.addForm.channel_id = ''
-        }
       },
       // Edit save
       editSubmit: function () {
@@ -608,6 +618,7 @@
       //console.log("Art my-props=", this.che_id, this.pre);
       if (this.che_id != null){
         this.per_page_const = 5;
+        this.addForm.channel_id = this.che_id
       }
       this.getArticles();
     }

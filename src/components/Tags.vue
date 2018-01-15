@@ -50,10 +50,8 @@
 
 
 
-
     data() {
       return {
-        dis2: this.generateData2(),
         inputVisible: false,
         inputValue: '',
         all_tags: []
@@ -63,23 +61,8 @@
       filterMethod(query, item) {
         return item.initial.toLowerCase().indexOf(query.toLowerCase()) > -1;
       },
-      generateData2() {
-        const data = [];
-        const states = ['California', 'Illinois', 'Maryland', 'Texas', 'Florida', 'Colorado', 'Connecticut '];
-        const initials = ['CA', 'IL', 'MD', 'TX', 'FL', 'CO', 'CT'];
-        states.forEach((city, index) => {
-          data.push({
-            label: city,
-            key: index,
-            initial: initials[index]
-          });
-        });
-        return data;
-      },
 
-
-
-  get_lang() {
+      get_lang() {
         return this.lang
 //        if (this.languages == 'de,en') { return ''
 //        }else{ return this.languages }

@@ -84,6 +84,9 @@
 
       let formRules = {};
       formRules[this.myp.f1]  = [ { required: true, validator: nonEmptyAndRequired, message: 'Please input '+ this.myp.f1, trigger: 'blur' } ]
+      if (this.myp.need_lang) {
+        formRules["language"] = [ { required: true, message: 'Please input Language', trigger: 'blur' } ]
+      }
       let filters = {};
       filters[this.myp.f1] = '';
 
