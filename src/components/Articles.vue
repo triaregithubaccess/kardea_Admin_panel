@@ -233,7 +233,7 @@
       },
     watch: {
       'editForm.language': function (a,b) {
-        //console.log("edit Form:a b", a,b, "---", a == '', b == '')
+        console.log("edit Form:a b", a,b, "---", a == '', b == '')
         if (this.editForm.language != '') {
           this.languages = this.editForm.language
         }
@@ -261,7 +261,7 @@
         this.getArticles();
       },
       'editFormVisible': function (a,b) {
-        //console.log("edit FormVi:a b", a,b)
+        console.log("edit FormVi:a b", a,b)
         if (a){}else{
           //console.log("set false", a)
           this.editForm.language = '';
@@ -486,10 +486,11 @@
         this.editFormVisible = true;
         this.getChannels();
         this.editForm = Object.assign({}, row);
+        if (row.internal_tags == undefined) { row.internal_tags = [] }
+        if (row.tags == undefined) { row.tags = [] }
+        this.editForm.internal_tags = JSON.parse ( JSON.stringify(row.internal_tags) )
+        this.editForm.tags = JSON.parse ( JSON.stringify(row.tags) )
         this.editForm.desss = this.editForm.site_on_publish
-        if (this.editForm.internal_tags == undefined) {
-          this.editForm.internal_tags = []
-        }
       },
       // Create
       handleAdd: function () {
@@ -504,10 +505,13 @@
 
         }
         this.getChannels();
+        this.addForm.tags = []
+        this.addForm.internal_tags = []
         this.addFormVisible = true;
       },
       // Edit save
       editSubmit: function () {
+        console.log("editSubmit....")
         this.$refs.editForm.validate((valid) => {
           if (valid) {
             this.$confirm('Are you sure ', 'warning', {}).then(() => {

@@ -67,6 +67,8 @@ export const editUser = (params, token) => { return axios.put(`${base}/user?admi
 
 export const addUser = (params, token) => { return axios.post(`${base}/users/login_with_email?token=${token}`,  params ); };
 
+export const loadGoogleSheet = (params, token) => { return axios.get(`${base}/load_sheet?token=${token}`,  params ); };
+
 export const api_domen =  `${base}`
 export const image_upload_url2 =  `${base}/user/upload?width=103&height=103`
 
