@@ -3,8 +3,8 @@ import axios from 'axios';
 axios.defaults.headers.common['platform'] = 'admin'
 
 //let base = 'http://localhost:5505';
-//let base = 'https://api.kardea.de';
-let base = 'http://138.201.108.157:5505';
+let base = 'https://api.kardea.de';
+//let base = 'http://138.201.108.157:5505';
 
 export const requestLogin = params => { return axios.post(`${base}/users/login_with_email`, params).then(res => res.data); };
 export const requestResetPassword = (params, token) => { return axios.post(`${base}/user/new_password?token=${token}`, params).then(res => res.data); };
@@ -26,7 +26,7 @@ export const getTagForAnalyticsListPage = (params, token) => {return axios.get(`
 export const getArticleListPage = params => {return axios.get(`${base}/articles`, { params: params }); };
 export const getArticleListPageByChe = params => {return axios.get(`${base}/channels/${params.che_id}/articles`, { params: params }); };
 export const editArticle = (params, token) => {return axios.post(`${base}/articles/${params._id}?token=${token}`, params); };
-export const removeArticle = (params, token) => {return axios.delete(`${base}/articles/${params._id}?token=${token}`, params); };
+export const removeArticle = (params, token) => {return axios.delete(`${base}/articles/${params._id}?token=${token}`, {params: params }); };
 export const addArticle = (params, token) => {return axios.put(`${base}/articles?token=${token}`, params); };
 
 export const getTagListPage = params => {return axios.get(`${base}/tags?select=_id,name,language`, { params: params }); };

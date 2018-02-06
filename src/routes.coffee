@@ -19,6 +19,7 @@ import Page4 from './views/nav2/Page4.vue'
 import Page5 from './views/nav2/Page5.vue'
 import Page6 from './views/nav3/Page6.vue'
 import echarts from  './views/charts/echarts.vue'
+import tmc     from  './views/components/tinymce.vue'
 
 routes = [
   # when will add more routes - check line 27 in Home.vue ("$router.options.routes[4].children[0].path" )

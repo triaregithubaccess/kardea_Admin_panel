@@ -60,7 +60,8 @@
       el-table-column(prop='language', label='Lang', width='80')
       el-table-column(label='Picture', width='110')
         template( scope="scope")
-          img(:src="scope.row.picture   + '?width=100&height=100'")
+          img( v-if="is_our(scope.row.picture)" ,:src="scope.row.picture   + '?width=100&height=100'", class="avatar100")
+          img( v-else,:src="scope.row.picture", class="avatar100")
       el-table-column(label='WordPress', width='200', sortable='')
         template( scope="scope")
           a(:href="scope.row.wp_link", target="_blank") {{scope.row.wp_link}}
@@ -125,9 +126,17 @@
                 el-checkbox( v-model='editForm.fb_on_publish', disabled)
 
 
-          el-col( :span="7", :offset="2")
+          el-col( :span="8", :offset="2")
             el-form-item(label='Full text', prop='full_text')
-              el-input(type="textarea" , v-model='editForm.full_text', auto-complete='off', :rows="29")
+              .el-form-item(id="addB")
+                .grey Optimal size: under 5 Mb and Aspect ration: 3x2
+                el-upload(class="editor-uploader",
+                :action="upload_url",
+                :show-file-list="false",
+                :on-success="handlePictureSuccessEditorEdit" ,
+                :before-upload="beforePictureUpload")
+                  el-button(type='primary') Upload picture
+              editor( :text2="editForm.full_text", @editor_changed='handle_editor_changed_edit',  ref='to_editor_edit', e_id="edit_mce")
 
       .dialog-footer(slot='footer')
         el-button(@click.native='editFormVisible = false') Cancel
@@ -184,9 +193,17 @@
             el-col( :span="5")
               el-form-item(label='To FB', prop='fb_on_publish')
                 el-checkbox( v-model='addForm.fb_on_publish', disabled)
-          el-col( :span="7", :offset="2")
+          el-col( :span="8", :offset="2")
             el-form-item(label='Full text', prop='full_text')
-              el-input(type="textarea" , v-model='addForm.full_text', auto-complete='off', :rows="29")
+              .el-form-item(id="addB")
+                .grey Optimal size: under 5 Mb and Aspect ration: 3x2
+                el-upload(class="editor-uploader",
+                :action="upload_url",
+                :show-file-list="false",
+                :on-success="handlePictureSuccessEditorAdd" ,
+                :before-upload="beforePictureUpload")
+                  el-button(type='primary') Upload picture
+              editor( :text2="addForm.full_text", @editor_changed='handle_editor_changed_add',  ref='to_editor_add', e_id="add_mce")
 
       .dialog-footer(slot='footer')
         el-button(@click.native='addFormVisible = false') Cancel
@@ -201,6 +218,7 @@
   import { getArticleListPage,getChannelListPage, getArticleListPageByChe, getChannelShortListPage,removeArticle, editArticle, addArticle,  api_domen, image_upload_url2 } from '../api/api';
   import dtags from './Tags'
   import commentsList from './Comments'
+  import tmc from '../views/components/tinymce'
 
   let init_state = function() {
     return {
@@ -229,11 +247,13 @@
     components:
       {
         viewtags: dtags,
-        comments: commentsList
+        comments: commentsList,
+        editor: tmc
+
       },
     watch: {
       'editForm.language': function (a,b) {
-        console.log("edit Form:a b", a,b, "---", a == '', b == '')
+        //console.log("edit Form:a b", a,b, "---", a == '', b == '')
         if (this.editForm.language != '') {
           this.languages = this.editForm.language
         }
@@ -261,7 +281,7 @@
         this.getArticles();
       },
       'editFormVisible': function (a,b) {
-        console.log("edit FormVi:a b", a,b)
+        //console.log("edit FormVi:a b", a,b)
         if (a){}else{
           //console.log("set false", a)
           this.editForm.language = '';
@@ -367,6 +387,16 @@
       }
     },
     methods: {
+      handle_editor_changed_add(xx) {
+        //console.log('in add art new full_text:',xx)
+        this.addForm.full_text = xx;
+      } ,
+      handle_editor_changed_edit(xx) {
+        //console.log('in edit art new full_text:',xx)
+        this.editForm.full_text = xx;
+      } ,
+
+
       get_lang() {
         if (this.languages == 'de,en') { return ''
         }else{ return this.languages }
@@ -398,6 +428,34 @@
       formatDate: function (row, column) {
         let cur = new Date(row[column.property]);
         return util.formatDate.format(cur, 'yyyy-MM-dd hh:mm:ss');
+      },
+      handlePictureSuccessEditorAdd(file, fileList) {
+        const uid = '1234567890'
+        let new_img_url = api_domen + file.result
+        let new_img = {
+          hasSuccess: true,
+          uid:  1508615239083,
+          width: 222,
+          height: 222,
+          url: new_img_url
+        }
+        this.$emit('successCBK', [new_img])
+        this.$refs.to_editor_add.imageSuccessCBK222([new_img]);
+
+      },
+      handlePictureSuccessEditorEdit(file, fileList) {
+        const uid = '1234567890'
+        let new_img_url = api_domen + file.result
+        let new_img = {
+          hasSuccess: true,
+          uid:  1508615239083,
+          width: 222,
+          height: 222,
+          url: new_img_url
+        }
+        this.$emit('successCBK', [new_img])
+        this.$refs.to_editor_edit.imageSuccessCBK222([new_img]);
+
       },
 
       //Get the article list
@@ -457,7 +515,8 @@
           this.listLoading = true;
           //NProgress.start();
 //          console.log("in DELETE:", this.$router.token, row._id, row);
-          let para = { _id: row._id};
+          let para = { _id: row._id, pre: this.pre};
+          console.log(para)
           removeArticle(para, this.$router.token ).then((res) => {
             let meta = res.data.meta;
 //            console.log("meta and res",meta, res)
@@ -491,6 +550,8 @@
         this.editForm.internal_tags = JSON.parse ( JSON.stringify(row.internal_tags) )
         this.editForm.tags = JSON.parse ( JSON.stringify(row.tags) )
         this.editForm.desss = this.editForm.site_on_publish
+
+        this.$nextTick(() => { this.$refs.to_editor_edit.init_content(this.editForm.full_text)})
       },
       // Create
       handleAdd: function () {
@@ -508,6 +569,10 @@
         this.addForm.tags = []
         this.addForm.internal_tags = []
         this.addFormVisible = true;
+        this.$nextTick(() => {
+          //console.log("Next tick")
+          this.$refs.to_editor_add.init_content(this.addForm.full_text)});
+
       },
       // Edit save
       editSubmit: function () {
@@ -588,6 +653,17 @@
         }
       } ,
 
+      is_our: function (url) {
+        if (url == undefined) {
+          return false
+        }
+        let str = url.substr(0,13)
+        console.log(str)
+        if (str == 'http://localh' || str == 'https://api.k'|| str == 'http://138.20') {
+          return true
+        }
+        return false
+      },
       selsChange: function (sels) {
         this.sels = sels;
       },
@@ -655,6 +731,11 @@
 .avatar {
   width: 178px;
   height: 178px;
+  display: block;
+}
+.avatar100 {
+  width: 100px;
+  height: 67px;
   display: block;
 }
 
