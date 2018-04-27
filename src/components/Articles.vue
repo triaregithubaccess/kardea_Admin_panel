@@ -52,8 +52,9 @@
       el-table-column(v-if='che_id == undefined', prop='channel_name', label='Topic', width='150', sortable='')
       el-table-column(prop='headline', label='Headline', width='150', sortable='')
       el-table-column(prop='subtitle', label='Subtitle', width='150', sortable='')
-      el-table-column(prop='source_name' label='Source name', width='150', sortable='')
-      el-table-column(label='Source', width='300', sortable='')
+      el-table-column(v-if='che_id == undefined && pre', prop='published_at', label='Published at', width='200', sortable='', :formatter='formatDate')
+      el-table-column(v-if='!pre', prop='source_name', label='Source name', width='150', sortable='')
+      el-table-column(v-if='!pre', label='Source', width='300', sortable='')
         template( scope="scope")
           a(:href="scope.row.source", target="_blank") {{scope.row.source}}
 
@@ -62,7 +63,7 @@
         template( scope="scope")
           img( v-if="is_our(scope.row.picture)" ,:src="scope.row.picture   + '?width=100&height=100'", class="avatar100")
           img( v-else,:src="scope.row.picture", class="avatar100")
-      el-table-column(label='WordPress', width='200', sortable='')
+      el-table-column(v-if='!pre', label='WordPress', width='200', sortable='')
         template( scope="scope")
           a(:href="scope.row.wp_link", target="_blank") {{scope.row.wp_link}}
       el-table-column(v-if='che_id == undefined', prop='updated_at', label='Updated at', width='200', sortable='', :formatter='formatDate')
@@ -504,6 +505,7 @@
           this.total = res.data.count;
           this.articles = res.data.result;
           this.listLoading = false;
+//          this.filters.name = ''
           //NProgress.done();
         }).catch((err) => {console.log("in catch ggg", err);} );
       },
@@ -576,12 +578,13 @@
       },
       // Edit save
       editSubmit: function () {
-        console.log("editSubmit....")
+//        console.log("editSubmit....")
         this.$refs.editForm.validate((valid) => {
           if (valid) {
             this.$confirm('Are you sure ', 'warning', {}).then(() => {
               this.editLoading = true;
               //NProgress.start();
+
               let para = Object.assign({}, this.editForm);
               // find channel by id and get title
               let che = _.find(this.channels, (x) =>{ return x._id == para.channel_id })
@@ -695,7 +698,7 @@
       }
     },
     mounted() {
-      //console.log("Art my-props=", this.che_id, this.pre);
+      console.log("Art my-props=", this.che_id, this.pre);
       if (this.che_id != null){
         this.per_page_const = 5;
         this.addForm.channel_id = this.che_id

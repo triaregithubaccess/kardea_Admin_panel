@@ -65,6 +65,10 @@
             el-option(v-for="lang in langs", :key="lang.value", :label="lang.label", :value="lang.value")
         el-form-item(label='Auto subscribed', prop='s_on_s')
           el-checkbox( v-model='editForm.s_on_s', :disabled="editForm.access_code != undefined && editForm.access_code.length > 0")
+        el-form-item(label='Show in Topic only', prop='in_channel_only')
+          el-checkbox( v-model='editForm.in_channel_only')
+        el-form-item(label='Related to the user health', prop='by_tags_only')
+          el-checkbox( v-model='editForm.by_tags_only')
         el-form-item(label='Picture', prop='picture')
           el-upload(class="avatar-uploader",label='Picture',
           :action="upload_url",
@@ -103,6 +107,10 @@
             el-option(v-for="lang in langs", :key="lang.value", :label="lang.label", :value="lang.value")
         el-form-item(label='Auto subscribed', prop='s_on_s')
           el-checkbox( v-model='addForm.s_on_s' , :disabled="addForm.access_code != undefined && addForm.access_code.length > 0")
+        el-form-item(label='Show in Topic only', prop='in_channel_only')
+          el-checkbox( v-model='addForm.in_channel_only')
+        el-form-item(label='Related to the user health', prop='by_tags_only')
+          el-checkbox( v-model='addForm.by_tags_only')
 
         el-form-item(label='Picture', prop='picture')
           .grey Optimal size: under 5 Mb
@@ -293,11 +301,12 @@
           title: '',
           description: '',
           picture: '',
-//          wide_picture: '',
           language: '',
           position: '',
           access_code: '',
           s_on_s: false,
+          in_channel_only: false,
+          by_tags_only: false,
           iuu: image_upload_url2,
         },
 
@@ -308,10 +317,11 @@
           title: '',
           description: '',
           picture: '',
-//          wide_picture: '',
           position: '',
           access_code: '',
           s_on_s: false,
+          in_channel_only: false,
+          by_tags_only: false,
           language: '',
           iuu: image_upload_url2,
 
@@ -424,12 +434,10 @@
       },
       // Edit
       handleEdit: function (index, row) {
-        if (row.s_on_s == undefined) {
-          row.s_on_s = false
-        }
-        if (row.access_code == undefined) {
-          row.access_code = ''
-        }
+        if (row.s_on_s == undefined) { row.s_on_s = false }
+        if (row.access_code == undefined) { row.access_code = '' }
+        if (row.in_channel_only == undefined) { row.in_channel_only = '' }
+        if (row.by_tags_only == undefined) { row.by_tags_only = '' }
         this.editFormVisible = true;
         this.editForm = Object.assign({}, row);
       },
@@ -473,7 +481,8 @@
           position: '',
           access_code: '',
           s_on_s: false,
-//          wide_picture: ''
+          in_channel_only: false,
+          by_tags_only: false
         };
         //this.addForm.language = this.get_lang();
         //console.log(this.addForm)
